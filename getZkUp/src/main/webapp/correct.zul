@@ -1,0 +1,9 @@
+<zk>
+    <window apply="tutorial.TestComposer">
+
+
+        <div class="container" id="listboxDocumentos">-->
+            <button iconSclass="z-icon-times" forward="onClick=listboxDocumentos.onDeleteItem(1)"> Correct  </button>
+       </div>
+    </window>
+</zk>

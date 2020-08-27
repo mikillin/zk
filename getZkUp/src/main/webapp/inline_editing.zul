@@ -1,0 +1,21 @@
+<zk>
+    <div viewModel="@id('vm') @init('tutorial.inline.InlineEditingViewModel')">
+        <div hflex="min" model="@init(vm.allFrageboegen) @template('row')" id="listboxDocumentos">
+            <div height="22px">
+                <div width="330px" >title</div>
+
+                <div width="150px">Button</div>
+            </div>
+            <template name="row">
+                <div>
+                    <textbox width="100%"
+                             value="@bind(each.id)"/>
+
+                    <custom-attributes b="${each.id}"/>
+                    <button onClick="@command('doSomeAction',query=b)">Button
+                    </button>
+                </div>
+            </template>
+        </div>
+    </div>
+</zk>

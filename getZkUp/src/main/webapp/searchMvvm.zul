@@ -1,0 +1,79 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+
+    <window title="Search" width="600px" border="normal" onOK="@command('search')"
+            viewModel="@id('vm') @init('tutorial.SearchViewModel')">
+        <style>
+            div.item.z-row-content.z-label {
+            color: blue;
+            font-style: oblique;
+            }
+
+            .red {
+            color: red;
+            font-style: oblique;
+            }
+
+            .mycss-listcell{
+            color:red
+            }
+            .mycss-listcell-cnt{
+            border:1px solid red;
+            background-image: linear-gradient(red, yellow);
+            }
+
+            .banner {
+            background-color:#102d35;
+            color: white;
+            padding: 5px 10px;
+            width: 200px;
+            height: 20px;
+            }
+
+            .btnCls{
+            color: pink;
+            }
+
+        </style>
+        <div>
+            Keyword:
+            <textbox value="@save(vm.keyword)"/>
+            <button label="Search" image="/img/search.png" onClick="@command('search')"/>
+            <button iconSclass="z-icon-times" forward="onClick=listboxDocumentos.onDeleteItem(1)"/>
+        </div>
+
+
+        <div sclass="filter" onClick="alert('main filter element')" children="@load(vm.items)">
+            <div sclass="row">
+                <div sclass="left"> fertig</div>
+                <div sclass="right date">von </div>
+            </div>
+            <div sclass="row">
+                <!--                    <div sclass="@bind(item.quantity lt 3 ?'red left':'left')">Status: fertig</div>-->
+                <div sclass="left">Status: fertig</div>
+                <div sclass="right">
+                    <custom-attributes b="${each.id}"/>
+                    <button iconSclass="z-icon-times" onClick="@command('report',query=b);event.stopPropagation();"
+                            image="/img/network.gif"></button>
+                </div>
+            </div>
+        </div>
+
+
+        <!--        <div class="container"  id="listboxDocumentos">-->
+        <!--            <div class="row" id="main1" children="@init(vm.items)">-->
+        <!--                <template name="children">-->
+        <!--                    <div class="col-sm-6 col-lg-3">-->
+        <!--                        <label value="@init(each.id)" width="75%" zclass="btnCls"/>-->
+        <!--                        &lt;!&ndash;                                <button value="@init(each.id)" width="75%" zclass="btnCls" ideach="@{each.id}" onClick="@command('test')"&ndash;&gt;-->
+        <!--                        <button value="@init(each.id)" width="75%" zclass="btnCls"-->
+        <!--                                forward="onClick=SearchViewModel.onDeleteItem(${each})">${each.id}-->
+
+        <!--                        </button>-->
+
+        <!--                    </div>-->
+        <!--                </template>-->
+        <!--            </div>-->
+        <!--        </div>-->
+    </window>
+</zk>

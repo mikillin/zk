@@ -1,0 +1,58 @@
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+
+    <window title="Search" width="600px" border="normal"
+            apply="tutorial.SearchViewModelChildrenWork">
+        <div>
+            Keyword1:
+            <textbox id="keywordBox"/>
+            <button id="searchButton" label="Search" image="/img/search.png"/>
+        </div>
+        <listbox id="carListbox" emptyMessage="No car found in the result">
+            <listhead>
+                <listheader label="Model"/>
+                <listheader label="Make"/>
+                <listheader label="Price" width="20%"/>
+            </listhead>
+            <template name="model">
+                <listitem>
+                    <listcell label="${each.model}"></listcell>
+                    <listcell label="${each.make}"></listcell>
+                    <listcell>
+                        <zk if="${each.price>30000}">
+                            <image src="/img/search.png" onClick='alert("click on image");'>
+                                <attribute w:name="onClick"><![CDATA[
+alert("click on image");
+					event.stop();
+
+			]]></attribute>
+                            </image>
+                        </zk>
+                        $
+                        <label value="${each.price}"/>
+                    </listcell>
+                </listitem>
+            </template>
+
+
+        </listbox>
+
+        <hlayout style="margin-top:20px" width="100%">
+            <image id="previewImage" width="250px"/>
+            <vlayout hflex="1">
+                <label id="modelLabel"/>
+                <label id="makeLabel"/>
+                <label id="priceLabel"/>
+                <label id="descriptionLabel"/>
+            </vlayout>
+        </hlayout>
+        <label id="lb"/>
+        <checkbox id="cb" label="Stop Event" checked="true"/>
+        <button label="Go" onClick='lb.value="Clicked!"'>
+            <attribute w:name="onClick"><![CDATA[
+				if(this.$f('cb').isChecked()) {
+					event.stop();
+				}
+			]]></attribute>
+        </button>
+    </window>
+</zk>
