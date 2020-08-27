@@ -16,6 +16,8 @@ import org.zkoss.zul.ListModelList;
 public class SearchViewModel {
 
     private String keyword;
+    private String from;
+    private String till;
     private List<Car> carList = new ListModelList<Car>();
     private List<Fragebogen> fragebogensList = new ListModelList<Fragebogen>();
 
@@ -91,6 +93,22 @@ public class SearchViewModel {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getTill() {
+        return till;
+    }
+
+    public void setTill(String till) {
+        this.till = till;
     }
 
     private String getChartCode(){
