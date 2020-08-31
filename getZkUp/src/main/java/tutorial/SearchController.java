@@ -2,11 +2,9 @@ package tutorial;
 
 
 import org.zkoss.zk.ui.*;
-import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.*;
 import org.zkoss.zk.ui.select.annotation.*;
 import org.zkoss.zul.*;
-import org.zkoss.zul.ext.*;
 
 import java.util.*;
 
@@ -30,42 +28,20 @@ public class SearchController extends SelectorComposer<Component> {
     private Image previewImage;
 
     private ListModelList<Car> dataModel = new ListModelList<>();
-    private CarService carService = new CarServiceImpl();
+    private FragebogenService carService = new FragebogenServiceImpl();
 
-//    @Override
-//    public void doAfterCompose(Component comp) throws Exception {
-//        super.doAfterCompose(comp);
-//        carListbox.setModel(dataModel);
-//    }
-
+    @Override
+    public void doAfterCompose(Component comp) throws Exception {
+        super.doAfterCompose(comp);
+        carListbox.setModel(dataModel);
+    }
 
     @Listen("onClick = #searchButton; onOK = window")
     public void search() {
         String keyword = keywordBox.getValue();
         dataModel.clear();
-        dataModel.addAll(carService.search(keyword));
+//        dataModel.addAll(carService.search(keyword));
     }
-
-    @Listen("onClick = #searchButton")
-    public void okClicked() {
-        String keyword = keywordBox.getValue();
-        dataModel.clear();
-        dataModel.addAll(carService.search(keyword));
-    }
-
-
-    @Listen("onDeleteItem = #listboxDocumentos")
-    public void delete(final Event event) {
-        System.out.printf("");
-    }
-
-//    @Listen("onCreate = #AllUsers")
-//    public void ListAllUsers()
-//    {
-//        UserModel Users = new UserModel();
-//        List<User> UsersList = new ArrayList<User>(Users.getAllUsers());
-//        AllUsers.setModel(new ListModelList<User>(UsersList));
-//    }
 
 
     @Listen("onSelect = #carListbox")

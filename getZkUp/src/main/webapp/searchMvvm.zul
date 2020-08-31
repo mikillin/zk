@@ -1,107 +1,363 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<?script src="https://www.gstatic.com/charts/loader.js"?>
-
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
-    <window title="Search" width="600px" border="normal" onOK="@command('search')"
-            viewModel="@id('vm') @init('tutorial.SearchViewModel')">
+
+    <window title="Search" width="100%" border="normal" onOK="@command('search')"
+            viewModel="@id('vm') @init('tutorial.SearchViewModel')"
+
+    >
+        <!--        apply = "tutorial.EmployeeDialogController"-->
         <style>
-            div.item.z-row-content.z-label {
-            color: blue;
-            font-style: oblique;
+            div.filter {
+            width: 280px;
+            height: 100px;
+            border: 2px solid grey;
+            border-radius: 15px;
+            margin: 10px;
+
+
             }
 
-            .red {
-            color: red;
-            font-style: oblique;
+            <!--            body>div>div {-->
+            <!--            flex-direction: row;-->
+            <!--            flex-wrap: wrap;-->
+            <!--            align-items: flex-start;-->
+            <!--            }-->
+
+            div.row {
+            height: 45px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            padding: 15px 5px 10px 5px;
             }
 
-            .mycss-listcell{
-            color:red
-            }
-            .mycss-listcell-cnt{
-            border:1px solid red;
-            background-image: linear-gradient(red, yellow);
+            div.right {
+            display: flex;
+            justify-content: flex-end;
+            width: 80px;
             }
 
-            .banner {
-            background-color:#102d35;
-            color: white;
-            padding: 5px 10px;
-            width: 200px;
-            height: 20px;
+            div.left {
+            display: flex;
+            justify-content: flex-start;
+            width: 90px;
             }
 
-            .btnCls{
-            color: pink;
+            div.filter-block .z-label, div.date .z-label {
+            font-size: 12px;
             }
+
+
+            img.icon {
+            max-width: 20px;
+            max-height: 40px;
+            }
+
+            div.filter-block {
+            border: 2px solid lightgrey;
+            border-radius: 10px;
+            padding: 15px;
+            width: 250px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            }
+
+            div.container {
+            overflow-y: auto;
+            height: 100%
+            }
+
+            div.search {
+            padding: 20px;
+            }
+
+            input.search {
+            padding: 10px;
+            border-radius: 15px;
+            height: 28px;
+            width: 170px;
+            font-size: 15px;
+            }
+
+            textarea:focus,
+            input:focus {
+            outline: none;
+            }
+
+            input.search {
+            padding: 15px;
+            }
+
+            div.mainrow {
+            width:210px;
+            margin: 10px;
+            border-style: dotted;
+            border-width: 2px;
+            border-color: lightgrey;
+            cursor: pointer;
+            <!--            box-shadow: 3px 5px lightgrey;-->
+
+            }
+
+            img.report {cursor: help;}
+
+
+            /* width */
+            ::-webkit-scrollbar {
+            width: 10px;
+            }
+            /*handle*/
+            ::-webkit-scrollbar-thumb {
+            background-color: blue;
+            border: 3px solid transparent;
+            border-radius: 2px;
+            background-clip: content-box;
+            }
+
+            /* Track */
+            ::-webkit-scrollbar-track {
+            width: 2px;
+            margin:15px;
+
+            }
+
+            div.prep {
+            display: flex;
+            justify-content: flex-end;
+            }
+
+            div.controls {
+            display: flex;
+            flex-direction: column;
+            }
+
+
+            div.controls{
+
+            max-width:150px;
+            }
+
+            div.charts{
+            border-style: double;
+            border-width: 2px;
+            border-color: lightgrey;
+            display: flex;
+            flex-direction: row;
+            border-radius: 10px;
+
+
+            height: 250px;
+            max-width: 550px;
+
+            padding: 10px;
+            }
+            .control-elements {
+            margin-top: 5px;
+            margin-bottom: 2px;
+            margin-left: 2px;
+            font-size: 15px;
+            }
+
+            .control-elements.select {
+            height:30px;
+            line-height:30px;
+            }
+
+
+            <!--            aktivitaet block-->
+
+            div.aktivitaet-block {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: row;
+            height: 50px;
+
+            }
+
+            div.aktivitaeten-head{
+            width: 150px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            }
+
+
+            div.aktivitaeten{
+            width: 650px;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            padding: 0 10px 0 10px;
+            }
+
+            div.aktivitaet-item {
+            width:300px;
+            height: 45px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 5px 0 5px;
+
+            border-style: dotted;
+            border-width: 2px;
+            border-color: lightgrey;
+            border-radius: 10px;
+            }
+
+            div.aktivitaet-radiogroup {
+            display: flex;
+            flex-direction: row-reverse;
+            padding-top: 7px;
+            align-items: center
+            }
+
 
         </style>
+        <borderlayout height="750px">
+            <north title="allgemein" maxsize="300" size="100%">
+                <borderlayout>
+                    <west size="80%">
+                        <borderlayout>
+                            <north size="100px">
+                                <div sclass="aktivitaet-block">
+                                    <div sclass="aktivitaeten-head">
+                                        <div>
+                                            <label value="Letzte Aktivitäten"/>
+                                        </div>
+                                        <div sclass="aktivitaet-radiogroup">
+                                            <listbox selectedItem="@bind(vm.aktivitaetZeitraum)" mold="select"
+                                                     onSelect="@command('renderActivityMessages')" sclass="control-elements select">
+                                                <listitem label="Heute" value="t"/>
+                                                <listitem label="1 Woche" value="w"/>
+                                                <listitem label="1 Monat" value="m"/>
+                                            </listbox>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="aktivitaeten" children="@init(vm.activeActivityMessages)">
+                                        <template name="children">
+                                            <div sclass="aktivitaet-item">
+                                                <div sclass="description"><label value="${each.description}"/></div>
+                                                <div sclass="date"><label value="${each.date}"/></div>
+
+                                            </div>
+                                        </template>
+                                    </div>
+
+
+                                </div>
+                            </north>
+                            <south size="70%">
+                                <div sclass="charts" id="lineChartId">
+                                    <div sclass="controls">
+
+
+                                        <label value="Aktivität" sclass="control-elements"></label>
+                                        <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                                                 onSelect="@command('renderChart')" sclass="control-elements select">
+                                            <listitem label="Laufen" value="Laufen"/>
+                                            <listitem label="Schlafen" value="Schlafen"/>
+                                            <listitem label="Biegen" value="Biegen"/>
+                                        </listbox>
+                                        <label value="von" sclass="control-elements"></label>
+                                        <datebox id="chart1_db0" cols="12" format="short "
+                                                 onCreate="self.value = new Date()"
+                                                 value="@bind(vm.chart1_db0)" onChange="@command('renderChart')"
+                                                 constraint="no empty,no future" weekOfYear="true" placeholder="from"
+                                                 sclass="control-elements"/>
+
+                                        <label value="bis" sclass="control-elements"></label>
+                                        <datebox id="chart1_db1" cols="12" format="short "
+                                                 onCreate="self.value = new Date()"
+                                                 value="@bind(vm.chart1_db1)" onChange="@command('renderChart')"
+                                                 constraint="no empty,no future" weekOfYear="true" placeholder="till"
+                                                 sclass="control-elements"/>
+
+                                    </div>
+                                    <div sclass="chartItem" id="lineChart">
+
+                                    </div>
+
+                                </div>
+                            </south>
+
+                        </borderlayout>
+                    </west>
+
+                    <east size="300px">
+                        <div sclass="filter-block">
+                            <div sclass="search">
+
+                                <textbox type="text" sclass="search" value="@save(vm.keyword)"
+                                         placeholder="Suchen nach.."
+                                         onChanging="@command('search')"></textbox>
+                            </div>
+
+
+                            <div class="container">
+                                <div class="row" id="main1" children="@init(vm.items)">
+
+                                    <template name="children">
+
+                                        <div sclass="mainrow" onClick="alert(b)">
+                                            <custom-attributes b="${each.id}"/>
+                                            <div sclass="row">
+                                                <div sclass="left">
+                                                    <label value="${each.name}"/>
+                                                </div>
+                                                <div sclass="prep">
+                                                    von
+                                                </div>
+                                                <div sclass="right date">
+                                                    <label value="${each.date}"/>
+                                                </div>
+                                            </div>
+                                            <div sclass="row">
+                                                <!--                    <div sclass="@bind(item.quantity lt 3 ?'red left':'left')">Status: fertig</div>-->
+                                                <div sclass="left">Status:
+                                                    <label value="${each.status}"/>
+                                                </div>
+                                                <div sclass="right">
+                                                    <image src="/img/document.png" sclass="icon report"
+                                                           onClick="@command('doSomeAction',query=b)"/>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </east>
+                </borderlayout>
+            </north>
+
+        </borderlayout>
+
+
         <div>
-            Keyword:
-            <textbox value="@save(vm.keyword)"/>
-            <button label="Search" image="/img/search.png" onClick="@command('search')"/>
-            <button iconSclass="z-icon-times" forward="onClick=listboxDocumentos.onDeleteItem(1)"/>
+
+
         </div>
-
-
-        <div sclass="filter" onClick="alert('main filter element')" children="@load(vm.items)">
-            <div sclass="row">
-                <div sclass="left"> fertig</div>
-                <div sclass="right date">von </div>
-            </div>
-            <div sclass="row">
-                <!--                    <div sclass="@bind(item.quantity lt 3 ?'red left':'left')">Status: fertig</div>-->
-                <div sclass="left">Status: fertig</div>
-                <div sclass="right">
-                    <custom-attributes b="${each.id}"/>
-                    <button iconSclass="z-icon-times" onClick="@command('report',query=b);event.stopPropagation();"
-                            image="/img/network.gif"></button>
-                </div>
-            </div>
-        </div>
-
-        <div id="chart_div" style="width: 100%; height: 500px;"></div>
-
-
-        <!--        <div class="container"  id="listboxDocumentos">-->
-        <!--            <div class="row" id="main1" children="@init(vm.items)">-->
-        <!--                <template name="children">-->
-        <!--                    <div class="col-sm-6 col-lg-3">-->
-        <!--                        <label value="@init(each.id)" width="75%" zclass="btnCls"/>-->
-        <!--                        &lt;!&ndash;                                <button value="@init(each.id)" width="75%" zclass="btnCls" ideach="@{each.id}" onClick="@command('test')"&ndash;&gt;-->
-        <!--                        <button value="@init(each.id)" width="75%" zclass="btnCls"-->
-        <!--                                forward="onClick=SearchViewModel.onDeleteItem(${each})">${each.id}-->
-
-        <!--                        </button>-->
-
-        <!--                    </div>-->
-        <!--                </template>-->
-        <!--            </div>-->
-        <!--        </div>-->
     </window>
-
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-        ['Year', 'Sales', 'Expenses'],
-        ['2013',  1000,      400],
-        ['2014',  1170,      460],
-        ['2015',  660,       1120],
-        ['2016',  1030,      540]
-        ]);
-
-        var options = {
-        title: 'Company Performance',
-        hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
-        vAxis: {minValue: 0}
-        };
-
-        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-        }
-    </script>
 </zk>

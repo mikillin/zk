@@ -1,10 +1,15 @@
 package tutorial;
 
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+
 public class Fragebogen {
     private String id;
     private String name;
     private String date;
     private String status;
+    private Gson data;
 
 
     public String getId() {
@@ -37,5 +42,13 @@ public class Fragebogen {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Gson getData() {
+        return data;
+    }
+
+    public void setData(Gson data) {
+        this.data = data;
     }
 }

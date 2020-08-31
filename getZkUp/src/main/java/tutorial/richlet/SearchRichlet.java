@@ -28,12 +28,12 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.ext.Selectable;
 
 import tutorial.Car;
-import tutorial.CarService;
-import tutorial.CarServiceImpl;
+import tutorial.FragebogenService;
+import tutorial.FragebogenServiceImpl;
 
 public class SearchRichlet extends GenericRichlet {
 
-	private CarService carService = new CarServiceImpl();
+	private FragebogenService carService = new FragebogenServiceImpl();
 
 	@Override
 	public void service(Page page) throws Exception {
@@ -98,8 +98,7 @@ public class SearchRichlet extends GenericRichlet {
 			@Override
 			public void onEvent(Event event) throws Exception {
 				String keyword = keywordBox.getValue();
-				List<Car> result = carService.search(keyword);
-				carListbox.setModel(new ListModelList<Car>(result));
+
 			}
 			
 		});

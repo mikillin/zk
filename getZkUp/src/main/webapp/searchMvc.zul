@@ -1,7 +1,7 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 
     <window title="Search" width="600px" border="normal"
-            apply="tutorial.SearchViewModelChildrenWork">
+            apply="tutorial.SearchController">
         <div>
             Keyword1:
             <textbox id="keywordBox"/>
