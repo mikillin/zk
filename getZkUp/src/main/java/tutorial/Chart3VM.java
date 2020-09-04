@@ -1,22 +1,21 @@
 package tutorial;
 
+import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.Datebox;
+import org.zkoss.zul.ListModelList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 public class Chart3VM {
-    private List<Activity> activities = new LinkedList<Activity>();
-    private List<Activity> comparedActivities = new LinkedList<Activity>();
-    private List<String> activitiesNames = new LinkedList<String>();
+    private List<Activity> activities = new ListModelList<Activity>();
+    private List<Activity> comparedActivities = new ListModelList<Activity>();
+    private List<String> activitiesNames = new ListModelList<String>();
+    private Set<String> selectedNames = new HashSet<String>();
 
     @Wire("#aktivitaet")
     private String aktivitaet;
@@ -33,17 +32,48 @@ public class Chart3VM {
     @Wire("#chart1_db1")
     private Date chart1_db1;
 
+    @Wire("#compareMessage")
+    private String compareMessage;
+
     @Init
     public void init() {
+        activitiesNames.add("Aktivität");
         this.fillActivities();
+
     }
 
 
     @Command
+    public void deleteActivity(@BindingParam("query") String name) {
+        //selectedNames.remove(name);
+
+        Set temp = new HashSet();
+        temp.addAll(selectedNames);
+        temp.remove(name);
+        selectedNames.clear();
+        selectedNames.addAll(temp);
+
+        List<Activity> tmp = new ArrayList<Activity>();
+
+        tmp.addAll(comparedActivities);
+        comparedActivities.clear();
+
+        for (Activity comparedActivity : tmp) {
+            if (!comparedActivity.getName().equals(name))
+                comparedActivities.add(comparedActivity);
+        }
+
+
+        this.fillActivitiesNames();
+    }
+
+    @Command
     public void renderChart() {
 
-        if (this.aktivitaet == null || this.chart1_db0 == null || this.chart1_db1 == null)
+        if (this.aktivitaet == null || this.aktivitaet.equals("Aktivität") || this.chart1_db0 == null || this.chart1_db1 == null)
             return;
+
+        selectedNames.add(this.aktivitaet);
 
         Activity beginActivity = null;
         Activity endActivity = null;
@@ -54,8 +84,8 @@ public class Chart3VM {
             beginActivity = activities.get(0);
             endActivity = activities.get(0);
 
-            comparedBeginDateTime = chart1_db0.getTime() - beginActivity.getDate().getTime();
-            comparedEndDateTime = chart1_db1.getTime() - endActivity.getDate().getTime();
+            comparedBeginDateTime = Math.abs(chart1_db0.getTime() - beginActivity.getDate().getTime());
+            comparedEndDateTime = Math.abs(chart1_db1.getTime() - endActivity.getDate().getTime());
         } else {
             System.err.println(">>> Error: the size of activities is wrong");
             return;
@@ -64,40 +94,31 @@ public class Chart3VM {
         for (Activity activity : activities) {
 
             if (aktivitaet.equals(activity.getName())) {
-                if (Math.abs(beginActivity.getDate().getTime() - activity.getDate().getTime()) < comparedBeginDateTime) {
-                    comparedBeginDateTime = Math.abs(beginActivity.getDate().getTime() - activity.getDate().getTime());
+                if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < comparedBeginDateTime) {
+                    comparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
                     beginActivity = activity;
                 }
-                if (Math.abs(endActivity.getDate().getTime() - activity.getDate().getTime()) < comparedEndDateTime) {
-                    comparedEndDateTime = Math.abs(endActivity.getDate().getTime() - activity.getDate().getTime());
+                if (Math.abs(chart1_db1.getTime() - activity.getDate().getTime()) < comparedEndDateTime) {
+                    comparedEndDateTime = Math.abs(chart1_db1.getTime() - activity.getDate().getTime());
                     endActivity = activity;
                 }
             }
+        }
+        compareMessage = "";
+        if (beginActivity.getDate().compareTo(this.chart1_db0) != 0) {
+            compareMessage += "Im Vergliech wird als Startdatum " + beginActivity.getDate().toString() + " benutzt.\n";
+        }
 
+        if (endActivity.getDate().compareTo(this.chart1_db0) != 0) {
+            compareMessage += "Im Vergliech wird als Enddatum " + beginActivity.getDate().toString() + " benutzt.";
 
         }
 
-        Activity comparedActivity = new Activity(comparedActivities.size(), aktivitaet, null, endActivity.getValue() / beginActivity.getValue() * 100);
+        Activity comparedActivity = new Activity(comparedActivities.size(), aktivitaet, null, (int) (((new Double(endActivity.getValue() - beginActivity.getValue())) / beginActivity.getValue()) * 100));
         comparedActivities.add(comparedActivity);
 
-        if (!beginActivity.getDate().equals(chart1_db0)) {
-            nearestSelectedDateBegin = beginActivity.getDate();
-        } else {
-            nearestSelectedDateBegin = null;
 
-        }
-
-        if (!beginActivity.getDate().equals(chart1_db0)) {
-            nearestSelectedDateEnd = endActivity.getDate();
-        } else {
-            nearestSelectedDateEnd = null;
-
-        }
-
-        for (String activityName : activitiesNames) {
-            if (activityName.equals(aktivitaet))
-                activitiesNames.remove(activityName);
-        }
+        this.fillActivitiesNames();
     }
 
 
@@ -105,11 +126,11 @@ public class Chart3VM {
 
         this.activities.clear();
         try {
-            this.activities.add(new Activity(1, "Biegen", new Date(), 20));
+            this.activities.add(new Activity(1, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 20));
             this.activities.add(new Activity(2, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 30));
             this.activities.add(new Activity(3, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 40));
             this.activities.add(new Activity(4, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 50));
-            this.activities.add(new Activity(5, "Laufen", new Date(), 20));
+            this.activities.add(new Activity(5, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 20));
             this.activities.add(new Activity(6, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 10));
             this.activities.add(new Activity(7, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 5));
             this.activities.add(new Activity(8, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 1));
@@ -128,6 +149,8 @@ public class Chart3VM {
         this.activitiesNames.clear();
 
         for (Activity activity : this.activities) {
+            if (selectedNames.contains(activity.getName()))
+                continue;
             names.add(activity.getName());
         }
 
@@ -201,5 +224,13 @@ public class Chart3VM {
 
     public void setChart1_db1(Date chart1_db1) {
         this.chart1_db1 = chart1_db1;
+    }
+
+    public String getCompareMessage() {
+        return compareMessage;
+    }
+
+    public void setCompareMessage(String compareMessage) {
+        this.compareMessage = compareMessage;
     }
 }
