@@ -1,0 +1,146 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+
+    <?script type="text/javascript" src="/scripts/charts/loader.js"?>
+    <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+
+
+    <window width="100%"  height="100%" onOK="@command('renderChart')" viewModel="@id('vm') @init('tutorial.Chart2VM')">
+        <div sclass="charts" id="lineChartId">
+            <div sclass="controls">
+
+
+                <label id="msg" value="@load(vm.message)" />
+                <textbox onChanging="@command('showTyping',v=event.value)" />
+
+
+
+                <label value="@bind(vm.index)"/>
+
+                <button label="button01" onClick="@command('showIndex', index=9)"/>
+                <button label="button02" onClick="@command('showIndex')"/>
+
+
+<!--                <label value="Aktivität" sclass="control-elements"></label>-->
+<!--                <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"-->
+<!--                         onSelect="@command('renderChart')" sclass="control-elements select"-->
+<!--                         selectedIndex="@bind(vm.pickedIndex)">-->
+<!--                    <listitem label="Laufen" value="Laufen"/>-->
+<!--                    <listitem label="Schlafen" value="Schlafen"/>-->
+<!--                    <listitem label="Biegen" value="Biegen"/>-->
+<!--                </listbox>-->
+
+
+                <label value="Aktivität" sclass="control-elements"></label>
+                <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                         onSelect="@command('renderChart')" sclass="control-elements select"
+                         selectedIndex="@bind(vm.pickedIndex)"
+                         model="@bind(vm.activitiesNames)">
+
+
+                    <template name="children">
+                        <listitem label="${each}"/>
+                    </template>
+                </listbox>
+
+                <label value="Title" sclass="control-elements"></label>
+
+                <textbox id="titleTextbox" value="@bind(vm.titleTextbox)"
+                         constraint="no empty" />
+
+                <label value="xxx" sclass="control-elements"></label>
+                <datebox id="xxx"
+
+                         value="@bind(vm.xxx) "
+
+                         sclass="control-elements" />
+
+
+
+                <label value="ab" sclass="control-elements"></label>
+                <datebox id="chart1_db0"
+
+                         value="@load(vm.chart1_db0)"
+
+                         sclass="control-elements"/>
+
+                <label value="bis" sclass="control-elements"></label>
+                <datebox id="chart1_db1" cols="12"
+
+                         value="@bind(vm.chart1_db1)" onChange="@command('renderChart')"
+                         constraint="no future" weekOfYear="true" placeholder="bis"
+                         showTodayLink="true"
+                         sclass="control-elements"/>
+
+                <button label="1 Woche" width="125px" onClick="@command('woche')"/>
+                <button label="1 Monat" width="125px" onClick="@command('monat')"/>
+                <button label="1 Jahr" width="125px" onClick="@command('jahr')"/>
+
+
+
+
+                <label value="Aktivität" sclass="control-elements"></label>
+                <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                         onSelect="@command('renderChart')" sclass="control-elements select"
+                         children="@init(vm.comparedActivities)">
+                    <template name="children">
+                        <listitem label="${each.name}"/>
+                        <listitem label="${each.value}"/>
+
+                    </template>
+                </listbox>
+
+                <label value="nearest" sclass="control-elements"></label>
+                <datebox id="nearest_selected_date_begin" cols="12" format="short "
+                         onCreate="self.value = new Date()"
+                         value="@bind(vm.chart1_db1)" onChange="@command('renderChart')"
+                         constraint="no empty,no future" weekOfYear="true" placeholder="till"
+                         sclass="control-elements"/>
+
+                <datebox id="nearest_selected_date_end" cols="12" format="short "
+                         onCreate="self.value = new Date()"
+                         value="@bind(vm.chart1_db1)" onChange="@command('renderChart')"
+                         constraint="no empty,no future" weekOfYear="true" placeholder="till"
+                         sclass="control-elements"/>
+
+
+            </div>
+
+<!--            <div class="container">-->
+<!--                <div class="row" id="main1" children="@init(vm.activities)">-->
+
+<!--                    <template name="children">-->
+
+<!--                        <div sclass="mainrow" onClick="alert(b)">-->
+<!--                            <custom-attributes b="${each.id}"/>-->
+<!--                            <div sclass="row">-->
+<!--                                <div sclass="left">-->
+<!--                                    <label value="${each.name}"/>-->
+<!--                                </div>-->
+<!--                                <div sclass="prep">-->
+<!--                                    von-->
+<!--                                </div>-->
+<!--                                <div sclass="right date">-->
+<!--                                    <label value="${each.date}"/>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div sclass="row">-->
+<!--                                <div sclass="@bind(item.quantity lt 3 ?'red left':'left')">Status: fertig</div>-->
+<!--                                <div sclass="left">Status:-->
+<!--                                    <label value="${each.status}"/>-->
+<!--                                </div>-->
+<!--                                <div sclass="right">-->
+<!--                                    <image src="/img/document.png" sclass="icon report"-->
+<!--                                           onClick="@command('doSomeAction',query=b)"/>-->
+
+
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </template>-->
+<!--                </div>-->
+<!--            </div>-->
+
+        </div>
+    </window>
+</zk>

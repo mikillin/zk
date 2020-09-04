@@ -1,0 +1,73 @@
+<zk>
+    <window width="100%" height="100%"  >
+        <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart3VM')">
+            <div sclass="controls">
+
+                <label value="Aktivität" sclass="control-elements"></label>
+                <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                         onSelect="@command('renderChart')" sclass="control-elements select"
+                         model="@bind(vm.activitiesNames)">
+                    <template name="children">
+                        <listitem label="${each}"/>
+                    </template>
+                </listbox>
+
+
+                <label value="ab" sclass="control-elements"></label>
+                <datebox id="chart1_db0" value="@bind(vm.chart1_db0)" onChange="@command('renderChart')"
+                         constraint="no empty, no future" weekOfYear="true" placeholder="ab"
+                         showTodayLink="true"
+                         sclass="control-elements"/>
+
+                <label value="bis" sclass="control-elements"></label>
+                <datebox id="chart1_db1" value="@bind(vm.chart1_db1)" onChange="@command('renderChart')"
+                         constraint="no empty, no future" weekOfYear="true" placeholder="bis"
+                         showTodayLink="true"
+
+                         sclass="control-elements"/>
+
+<!--                <button id="woche" label="1 Woche" width="125px"/>-->
+<!--                <button id="monat" label="1 Monat" width="125px"/>-->
+<!--                <button id="jahr" label="1 Jahr" width="125px"/>-->
+<!--                <button id="suchen" label="Suchen" onClick="@command('renderChart')" width="125px"/>-->
+
+            </div>
+
+                        <div class="container">
+                            <div class="row" id="main1" children="@init(vm.activities)">
+
+                                <template name="children">
+
+                                    <div sclass="mainrow" onClick="alert(b)">
+                                        <custom-attributes b="${each.id}"/>
+                                        <div sclass="row">
+                                            <div sclass="left">
+                                                <label value="${each.name}"/>
+                                            </div>
+                                            <div sclass="prep">
+                                                von
+                                            </div>
+                                            <div sclass="right date">
+                                                <label value="${each.date}"/>
+                                            </div>
+                                        </div>
+                                        <div sclass="row">
+                                            <div sclass="@bind(item.quantity lt 3 ?'red left':'left')">Status: fertig</div>
+                                            <div sclass="left">Status:
+                                                <label value="${each.status}"/>
+                                            </div>
+                                            <div sclass="right">
+                                                <image src="/img/document.png" sclass="icon report"
+                                                       onClick="@command('doSomeAction',query=b)"/>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+        </div>
+    </window>
+</zk>

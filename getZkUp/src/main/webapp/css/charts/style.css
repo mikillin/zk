@@ -1,0 +1,39 @@
+div.prep {
+    display: flex;
+    justify-content: flex-end;
+}
+
+div.controls {
+    display: flex;
+    flex-direction: column;
+}
+
+
+div.controls {
+    max-width: 150px;
+}
+
+div.charts {
+    border-style: double;
+    border-width: 2px;
+    border-color: lightgrey;
+    display: flex;
+    flex-direction: row;
+    border-radius: 10px;
+    height: 250px;
+    max-width: 550px;
+    padding: 10px;
+}
+
+
+.control-elements {
+    margin-top: 5px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    font-size: 15px;
+}
+
+.control-elements.select {
+    height: 30px;
+    line-height: 30px;
+}

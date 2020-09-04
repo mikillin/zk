@@ -1,0 +1,14 @@
+<zk>
+	<vlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('fiddle.DateboxViewModel')">
+		<hlayout>
+			date <datebox id="date1" value="@bind(vm.date)" format="dd/MM/yyyy"></datebox>
+		</hlayout>
+		<hlayout>
+			timestamp <datebox id="date2" value="@bind(vm.timestamp)" format="dd/MM/yyyy"></datebox>
+		</hlayout>
+		<hlayout>
+			<button onClick="@command('click')" label="click"></button>
+			<label value="@load(vm.message)"></label>
+		</hlayout>
+	</vlayout>
+</zk>

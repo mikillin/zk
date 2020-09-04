@@ -1,0 +1,26 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+   <window apply="tutorial.X" >
+
+        <div>
+            Input:
+            <textbox id="input"/>
+        </div>
+        <div>
+            Output:
+            <label id="output"/>
+        </div>
+        <button id="ok" label="Submit"/>
+        <button id="cancel" label="Clear"/>
+
+        <datebox id="chart1_db1"
+                 value="@bind(vm.chart1_db1) "
+                 sclass="control-elements"/>
+
+        <div viewModel="@id('vm')@init('tutorial.Xmodel')">
+            <label id="msg2" value="@load(vm.message)"/>
+            <textbox onChanging="@command('showTyping',v=event.value)"/>
+        </div>
+
+    </window>
+</zk>

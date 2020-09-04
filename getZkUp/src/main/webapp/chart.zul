@@ -1,34 +1,46 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <window title="Search">
 
 
-        <div id="chart_div" style="width: 100%; height: 500px;"></div>
+
+<!--    /////// doesn't see the libraries!!!! -->
 
 
+
+    <?script type="text/javascript" src="/scripts/charts/loader.js"?>
+    <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+
+
+    <window width="100%" onOK="@command('renderChart')" viewModel="@id('vm') @init('tutorial.ChartVM')">
+        <div sclass="charts" id="lineChartId">
+            <div sclass="controls">
+
+                <label value="Aktivität" sclass="control-elements"></label>
+                <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                         onSelect="@command('renderChart')" sclass="control-elements select">
+                    <listitem label="Laufen" value="Laufen"/>
+                    <listitem label="Schlafen" value="Schlafen"/>
+                    <listitem label="Biegen" value="Biegen"/>
+                </listbox>
+
+                <label value="von" sclass="control-elements"></label>
+                <datebox id="chart1_db0" cols="12" format="short "
+                         onCreate="self.value = new Date()"
+                         value="@bind(vm.chart1_db0)" onChange="@command('renderChart')"
+                         constraint="no empty,no future" weekOfYear="true" placeholder="from"
+                         sclass="control-elements"/>
+
+                <label value="bis" sclass="control-elements"></label>
+                <datebox id="chart1_db1" cols="12" format="short "
+                         onCreate="self.value = new Date()"
+                         value="@bind(vm.chart1_db1)" onChange="@command('renderChart')"
+                         constraint="no empty,no future" weekOfYear="true" placeholder="till"
+                         sclass="control-elements"/>
+            </div>
+
+            <div sclass="chartItem" id="lineChart">
+            </div>
+
+        </div>
     </window>
-
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-        ['Year', 'Sales', 'Expenses'],
-        ['2013', 1000, 400],
-        ['2014', 1170, 460],
-        ['2015', 660, 1120],
-        ['2016', 1030, 540]
-        ]);
-
-        var options = {
-        title: 'Company Performance',
-        hAxis: {title: 'Year', titleTextStyle: {color: '#333'}},
-        vAxis: {minValue: 0}
-        };
-
-        var chart = new google.visualization.AreaChart(document.getElementsByTagName('body')[0].children[0].children[0]);
-        chart.draw(data, options);
-        }
-    </script>
 </zk>

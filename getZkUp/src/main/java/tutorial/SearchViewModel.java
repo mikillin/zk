@@ -10,6 +10,7 @@ import org.zkoss.bind.annotation.*;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -38,6 +39,8 @@ public class SearchViewModel {
 
     private List<ActivityMessage> activityMessages = new ListModelList<ActivityMessage>();
     private List<ActivityMessage> activeActivityMessages = new ListModelList<ActivityMessage>();
+    private List<Activity> activities = new ListModelList<Activity>();
+
 
     private String message = "message from java";
 
@@ -48,6 +51,7 @@ public class SearchViewModel {
 
         this.search();
         this.fillInitActivityMessages();
+        this.fillActivities();
     }
 
 
@@ -57,9 +61,24 @@ public class SearchViewModel {
     @Listen("onCheck = #transmissionRadiogroup")
     public void changeTransmission() {
         Radio selectedItem = transmissionRadiogroup.getSelectedItem();
-        System.out.println("hallo 2");
     }
 
+
+    private void fillActivities() {
+        try {
+            this.activities.add(new Activity(1, "Biegen", new Date(), 20));
+            this.activities.add(new Activity(2, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 30));
+            this.activities.add(new Activity(3, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"),40));
+            this.activities.add(new Activity(4, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 50));
+            this.activities.add(new Activity(5, "Laufen", new Date(), 20));
+            this.activities.add(new Activity(6, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 10));
+            this.activities.add(new Activity(7, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"),5));
+            this.activities.add(new Activity(8, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 1));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void fillInitActivityMessages() {
 
@@ -96,7 +115,7 @@ public class SearchViewModel {
 
     @Command
     public void renderActivityMessages() {
-        System.out.printf("Hallo!");
+
         this.activeActivityMessages.clear();
 
         Date currentTag = new Date();
@@ -114,17 +133,16 @@ public class SearchViewModel {
             } else if (aktivitaetZeitraum.equals("m")) {
                 Date compareDate = new Date();
                 int month = compareDate.getMonth();
-                if (month == 0)
-                {
+                if (month == 0) {
                     compareDate.setMonth(11);
-                    compareDate.setYear(compareDate.getYear()-1);
+                    compareDate.setYear(compareDate.getYear() - 1);
                 } else {
-                    compareDate.setMonth(compareDate.getMonth()-1);
+                    compareDate.setMonth(compareDate.getMonth() - 1);
                 }
 
 
-                    if (activityMessage.getDate().getTime() >= compareDate.getTime())
-                        this.activeActivityMessages.add(activityMessage);
+                if (activityMessage.getDate().getTime() >= compareDate.getTime())
+                    this.activeActivityMessages.add(activityMessage);
             }
 
 
