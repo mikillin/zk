@@ -20,11 +20,6 @@ public class Chart3VM {
     @Wire("#aktivitaet")
     private String aktivitaet;
 
-    @Wire("#nearest_selected_date_begin")
-    private Date nearestSelectedDateBegin;
-
-    @Wire("#nearest_selected_date_end")
-    private Date nearestSelectedDateEnd;
 
     @Wire("#chart1_db0")
     private Date chart1_db0;
@@ -37,7 +32,6 @@ public class Chart3VM {
 
     @Init
     public void init() {
-        activitiesNames.add("Aktivität");
         this.fillActivities();
 
     }
@@ -114,10 +108,13 @@ public class Chart3VM {
 
         }
 
+
+        //TODO: round till?
         Activity comparedActivity = new Activity(comparedActivities.size(), aktivitaet, null, (int) (((new Double(endActivity.getValue() - beginActivity.getValue())) / beginActivity.getValue()) * 100));
         comparedActivities.add(comparedActivity);
 
 
+        this.aktivitaet = null; // for not to use twice the same parameters
         this.fillActivitiesNames();
     }
 
@@ -130,10 +127,14 @@ public class Chart3VM {
             this.activities.add(new Activity(2, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 30));
             this.activities.add(new Activity(3, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 40));
             this.activities.add(new Activity(4, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 50));
-            this.activities.add(new Activity(5, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 20));
+            this.activities.add(new Activity(5, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 4));
             this.activities.add(new Activity(6, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 10));
-            this.activities.add(new Activity(7, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 5));
-            this.activities.add(new Activity(8, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 1));
+            this.activities.add(new Activity(7, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 15));
+            this.activities.add(new Activity(8, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 11));
+            this.activities.add(new Activity(9, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 220));
+            this.activities.add(new Activity(10, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 140));
+            this.activities.add(new Activity(11, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 15));
+            this.activities.add(new Activity(12, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 19));
 
 
             this.fillActivitiesNames();
@@ -194,21 +195,6 @@ public class Chart3VM {
         this.aktivitaet = aktivitaet;
     }
 
-    public Date getNearestSelectedDateBegin() {
-        return nearestSelectedDateBegin;
-    }
-
-    public void setNearestSelectedDateBegin(Date nearestSelectedDateBegin) {
-        this.nearestSelectedDateBegin = nearestSelectedDateBegin;
-    }
-
-    public Date getNearestSelectedDateEnd() {
-        return nearestSelectedDateEnd;
-    }
-
-    public void setNearestSelectedDateEnd(Date nearestSelectedDateEnd) {
-        this.nearestSelectedDateEnd = nearestSelectedDateEnd;
-    }
 
     public Date getChart1_db0() {
         return chart1_db0;

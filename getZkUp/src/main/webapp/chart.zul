@@ -3,10 +3,6 @@
 
 
 
-<!--    /////// doesn't see the libraries!!!! -->
-
-
-
     <?script type="text/javascript" src="/scripts/charts/loader.js"?>
     <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
 
@@ -23,7 +19,7 @@
                     <listitem label="Biegen" value="Biegen"/>
                 </listbox>
 
-                <label value="von" sclass="control-elements"></label>
+                <label value="ab" sclass="control-elements"></label>
                 <datebox id="chart1_db0" cols="12" format="short "
                          onCreate="self.value = new Date()"
                          value="@bind(vm.chart1_db0)" onChange="@command('renderChart')"

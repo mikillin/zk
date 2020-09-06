@@ -1,66 +1,193 @@
 <zk>
-    <window width="100%" height="100%">
+    <window width="100%" height="100%" apply="tutorial.Chart3VMC">
         <style>
-            div.row {
-            height: 45px;
+            button.time-period {
+            width: 100px;
+            padding: 5px;
+            color: grey;
+            border-radius: 5px;
+            background: WhiteSmoke;
+            border-width: 2px;
+            border-style: double;
+            border-color: grey;
+            margin: 0 10px 0 10px;
+            }
+
+            .list-compared-activities {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            margin-top: 19px;
+            border: lightgrey;
+            padding: 8px;
+<!--            border-width: 2px;-->
+<!--            border-style: double;-->
+            height: 90px;
+            border-radius: 5px;
+            width: 425px;
+            align-items: center;
+            overflow-y: auto;
+            }
+
+            div.result {
             display: flex;
             flex-direction: row;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            padding: 15px 5px 10px 5px;
+            background: WhiteSmoke;
+            border-radius: 21px;
+            height: 35px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            }
+
+            .column {
+            width: 100%;
+            height: 45px;
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+            }
+
+
+            div.charts {
+            width: 450px;
+            }
+
+
+            .compare-name {
+            width: 140px;
+            }
+
+            .arrow-image {
+            width: 40px;
+            }
+
+            .compare-value {
+            width: 50px;
+            }
+
+            .add-image-icon, .delete-image-icon {
+            width: 20px;
+            cursor: pointer;
+            margin : 0 10px 0 10px  ;
+            }
+
+            .charts {
+            border-style: double;
+            border-width: 2px;
+            border-color: lightgrey;
+            display: flex;
+            flex-direction: row;
+            border-radius: 10px;
+            height: 250px;
+            max-width: 550px;
+            padding: 10px;
+            }
+
+            .control-elements.z-datebox{
+            width: 150px;
+            display: flex;
+            flex-direction: row;
+            margin: 10px;
+            }
+
+            .control-elements.select.z-select {
+            width : 190px;
+            height: 35px;
+
+            }
+
+            row.time-period-buttons{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            }
+
+            .row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            }
+            .control-label {
+            padding: 0 10px 0 10px;
             }
         </style>
         <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart3VM')">
-            <div sclass="controls">
-
-                <label id="msg" value="@load(vm.compareMessage)"/>
-
-                <label value="Aktivität" sclass="control-elements"></label>
-                <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
-                          sclass="control-elements select"
-                         model="@bind(vm.activitiesNames)">
-                    <template name="children">
-                        <listitem label="${each}"/>
-                    </template>
-                </listbox>
+            <div sclass="controls red">
 
 
-                <label value="" sclass="control-elements"></label>
-                <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
-                         constraint="no empty, no future" weekOfYear="true"
-                         showTodayLink="true"
-                         sclass="control-elements"/>
+                <div sclass="row">
+                    <label value="Aktivität" sclass="control-elements control-label"></label>
+                    <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                             sclass="control-elements select"
+                             model="@bind(vm.activitiesNames)">
+                        <template name="children">
+                            <listitem label="${each}"/>
+                        </template>
+                    </listbox>
 
-                <label value=" zu vergleichen mit: " sclass="control-elements"></label>
-                <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
-                         constraint="no empty, no future" weekOfYear="true" placeholder=""
-                         showTodayLink="true"
+                    <image src="/img/add.png" id="suchen" onClick="@command('renderChart')" sclass="add-image-icon"/>
+                </div>
 
-                         sclass="control-elements"/>
+                <div sclass="row dates">
 
-                <!--                <button id="woche" label="1 Woche" width="125px"/>-->
-                <!--                <button id="monat" label="1 Monat" width="125px"/>-->
-                <!--                <button id="jahr" label="1 Jahr" width="125px"/>-->
-                                <button id="suchen" label="Suchen" onClick="@command('renderChart')" width="125px"/>
-
-            </div>
-
-
-
-            <vlayout children="@bind(vm.comparedActivities)">
-                <template name="children">
-                    <custom-attributes b="${each.name}"/>
-                    <div sclass="row"><label  value="@load(each.name)"></label>
-                    <label  value="@load(each.value)"></label>
-                    <label  value="%"></label>
-
-                            <image src="/img/document.png" sclass="icon report"
-                                   onClick="@command('deleteActivity',query=b)"/>
-
+                    <div sclass="row ">
+                        <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
+                                 constraint="no empty, no future" weekOfYear="true"
+                                 showTodayLink="true"
+                                 sclass="control-elements"/>
                     </div>
-                </template>
-            </vlayout>
+                    <div sclass="two-elements">
+                        <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
+                                 constraint="no empty, no future" weekOfYear="true" placeholder=""
+                                 showTodayLink="true"
+                                 sclass="control-elements datebox"/>
+                    </div>
 
+
+                </div>
+                <div>
+                    <label id="msg" value="@load(vm.compareMessage)"/>
+                </div>
+                <div sclass="row time-period-buttons">
+                    <button id="woche" label="1 Woche" zclass="time-period"/>
+                    <button id="monat" label="1 Monat" zclass="time-period"/>
+                    <button id="jahr" label="1 Jahr" zclass="time-period"/>
+                </div>
+
+                <vlayout sclass="list-compared-activities" children="@bind(vm.comparedActivities)">
+
+                    <template name="children">
+                        <div zclass="row">
+                        <custom-attributes b="${each.name}"/>
+                        <div sclass="row ">
+                            <div sclass="row result">
+                                <div sclass="compare-name">
+                                    <label value="@load(each.name)"></label>
+                                </div>
+                                <div sclass="arrow-image">
+                                    <image if="${each.value != 0}"
+                                           src="@bind(each.value lt 0 ?'/img/redArrow.png':'/img/greenArrow.png')"
+                                           width="20px"></image>
+                                </div>
+                                <div sclass="compare-value">
+                                    <label value="@load(each.value)"></label>
+                                    <label value="%"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div sclass="delete-image-icon">
+                            <image src="/img/cancel.png" sclass="icon report" width="20px"
+                                   onClick="@command('deleteActivity',query=b)"/>
+                        </div>
+                        </div>
+                    </template>
+
+                </vlayout>
+            </div>
 
 
         </div>

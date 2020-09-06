@@ -6,14 +6,11 @@ div.prep {
 div.controls {
     display: flex;
     flex-direction: column;
-}
 
-
-div.controls {
     max-width: 150px;
 }
 
-div.charts {
+div.charts, .list-compared-activities {
     border-style: double;
     border-width: 2px;
     border-color: lightgrey;
@@ -37,3 +34,16 @@ div.charts {
     height: 30px;
     line-height: 30px;
 }
+
+/*compare chart*/
+button.time-period{
+    width: 100px;
+    padding: 5px;
+    color: white;
+    border-radius: 5px;
+    background: dodgerblue;
+    border: none;
+}
+
+
+

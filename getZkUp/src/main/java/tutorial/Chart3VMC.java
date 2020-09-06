@@ -18,11 +18,7 @@ public class Chart3VMC extends SelectorComposer<Window> {
     @Wire("#chart1_db1")
     private Datebox chart1_db1;
 
-    @Wire("#nearest_selected_date_begin")
-    private Date nearestSelectedDateBegin;
 
-    @Wire("#nearest_selected_date_end")
-    private Date nearestSelectedDateEnd;
 
 
     @Listen("onClick=#woche")
@@ -32,6 +28,7 @@ public class Chart3VMC extends SelectorComposer<Window> {
         chart1_db0.setValue(new Date(resultWocheAgo.getTime() - 7 * 24 * 60 * 60 * 1000));
         chart1_db1.setValue(resetHoursMinutesSeconds(new Date()));
         Events.postEvent("onChange", chart1_db0, null);
+        Events.postEvent("onChange", chart1_db1, null);
 
     }
 
@@ -50,6 +47,7 @@ public class Chart3VMC extends SelectorComposer<Window> {
 
         chart1_db0.setValue(resultMonatAgo);
         Events.postEvent("onChange", chart1_db0, null);
+        Events.postEvent("onChange", chart1_db1, null);
     }
 
     @Listen("onClick=#jahr")
@@ -59,6 +57,7 @@ public class Chart3VMC extends SelectorComposer<Window> {
         chart1_db1.setValue(resetHoursMinutesSeconds(new Date()));
         chart1_db0.setValue(resultYearAgo);
         Events.postEvent("onChange", chart1_db0, null);
+        Events.postEvent("onChange", chart1_db1, null);
 
     }
 
@@ -75,10 +74,5 @@ public class Chart3VMC extends SelectorComposer<Window> {
     }
 
 
-    private boolean isInTimePeriod(Date beginDate, Date endDate, Date date) {
-        return (beginDate == null && endDate != null && endDate.after(date)) ||
-                (endDate == null && beginDate != null && beginDate.before(date)) ||
-                (beginDate != null && beginDate.before(date) &&
-                        endDate != null && endDate.after(date));
-    }
+
 }

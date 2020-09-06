@@ -5,7 +5,9 @@
     <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
 
 
-    <window width="100%"  height="100%" onOK="@command('renderChart')" viewModel="@id('vm') @init('tutorial.Chart2VM')">
+    <window width="100%"  height="100%" onOK="@command('renderChart')" viewModel="@id('vm') @init('tutorial.Chart2VM')"
+            zclass="/css/charts/style.css"
+    >
         <div sclass="charts" id="lineChartId">
             <div sclass="controls">
 
