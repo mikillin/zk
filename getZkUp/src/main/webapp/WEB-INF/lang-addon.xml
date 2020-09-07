@@ -2,8 +2,6 @@
     <addon-name>ophEPA-Loading</addon-name>
     <language-name>xul/html</language-name>
 
-    <javascript  package="zul.wnd" merge="true"/>
-
     <stylesheet href="/css/charts/style.css" type="text/css"/>
 
 

@@ -1,5 +1,5 @@
 <zk>
-    <window width="100%" height="100%" apply="tutorial.Chart3VMC">
+    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
         <style>
             button.time-period {
             width: 100px;
@@ -20,8 +20,6 @@
             margin-top: 19px;
             border: lightgrey;
             padding: 8px;
-<!--            border-width: 2px;-->
-<!--            border-style: double;-->
             height: 90px;
             border-radius: 5px;
             width: 425px;
@@ -48,12 +46,6 @@
             margin: 10px;
             }
 
-
-            div.charts {
-            width: 450px;
-            }
-
-
             .compare-name {
             width: 140px;
             }
@@ -69,10 +61,11 @@
             .add-image-icon, .delete-image-icon {
             width: 20px;
             cursor: pointer;
-            margin : 0 10px 0 10px  ;
+            margin : 0 10px 0 10px ;
             }
 
             .charts {
+            width: 450px;
             border-style: double;
             border-width: 2px;
             border-color: lightgrey;
@@ -111,24 +104,22 @@
             align-items: center;
             justify-content: center;
             }
+
             .control-label {
             padding: 0 10px 0 10px;
             }
         </style>
-        <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart3VM')">
+        <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
             <div sclass="controls red">
-
-
                 <div sclass="row">
                     <label value="Aktivität" sclass="control-elements control-label"></label>
-                    <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                    <listbox selectedItem="@bind(vm.activity)" mold="select"
                              sclass="control-elements select"
                              model="@bind(vm.activitiesNames)">
                         <template name="children">
                             <listitem label="${each}"/>
                         </template>
                     </listbox>
-
                     <image src="/img/add.png" id="suchen" onClick="@command('renderChart')" sclass="add-image-icon"/>
                 </div>
 
@@ -146,11 +137,6 @@
                                  showTodayLink="true"
                                  sclass="control-elements datebox"/>
                     </div>
-
-
-                </div>
-                <div>
-                    <label id="msg" value="@load(vm.compareMessage)"/>
                 </div>
                 <div sclass="row time-period-buttons">
                     <button id="woche" label="1 Woche" zclass="time-period"/>
@@ -159,37 +145,33 @@
                 </div>
 
                 <vlayout sclass="list-compared-activities" children="@bind(vm.comparedActivities)">
-
                     <template name="children">
                         <div zclass="row">
-                        <custom-attributes b="${each.name}"/>
-                        <div sclass="row ">
-                            <div sclass="row result">
-                                <div sclass="compare-name">
-                                    <label value="@load(each.name)"></label>
-                                </div>
-                                <div sclass="arrow-image">
-                                    <image if="${each.value != 0}"
-                                           src="@bind(each.value lt 0 ?'/img/redArrow.png':'/img/greenArrow.png')"
-                                           width="20px"></image>
-                                </div>
-                                <div sclass="compare-value">
-                                    <label value="@load(each.value)"></label>
-                                    <label value="%"></label>
+                            <custom-attributes b="${each.name}"/>
+                            <div sclass="row ">
+                                <div sclass="row result">
+                                    <div sclass="compare-name">
+                                        <label value="@load(each.name)"></label>
+                                    </div>
+                                    <div sclass="arrow-image">
+                                        <image if="${each.value != 0}"
+                                               src="@bind(each.value lt 0 ?'/img/redArrow.png':'/img/greenArrow.png')"
+                                               width="20px"></image>
+                                    </div>
+                                    <div sclass="compare-value">
+                                        <label value="@load(each.value)"></label>
+                                        <label value="%"></label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div sclass="delete-image-icon">
-                            <image src="/img/cancel.png" sclass="icon report" width="20px"
-                                   onClick="@command('deleteActivity',query=b)"/>
-                        </div>
+                            <div sclass="delete-image-icon">
+                                <image src="/img/cancel.png" sclass="icon report" width="20px"
+                                       onClick="@command('deleteActivity',query=b)"/>
+                            </div>
                         </div>
                     </template>
-
                 </vlayout>
             </div>
-
-
         </div>
     </window>
 </zk>

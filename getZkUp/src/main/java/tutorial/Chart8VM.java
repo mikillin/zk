@@ -11,14 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-public class Chart3VM {
+public class Chart8VM {
     private List<Activity> activities = new ListModelList<Activity>();
     private List<Activity> comparedActivities = new ListModelList<Activity>();
     private List<String> activitiesNames = new ListModelList<String>();
     private Set<String> selectedNames = new HashSet<String>();
 
-    @Wire("#aktivitaet")
-    private String aktivitaet;
+    @Wire("#activity")
+    private String activity;
 
 
     @Wire("#chart1_db0")
@@ -27,19 +27,15 @@ public class Chart3VM {
     @Wire("#chart1_db1")
     private Date chart1_db1;
 
-    @Wire("#compareMessage")
-    private String compareMessage;
 
     @Init
     public void init() {
         this.fillActivities();
-
     }
 
 
     @Command
     public void deleteActivity(@BindingParam("query") String name) {
-        //selectedNames.remove(name);
 
         Set temp = new HashSet();
         temp.addAll(selectedNames);
@@ -48,74 +44,66 @@ public class Chart3VM {
         selectedNames.addAll(temp);
 
         List<Activity> tmp = new ArrayList<Activity>();
-
         tmp.addAll(comparedActivities);
         comparedActivities.clear();
-
         for (Activity comparedActivity : tmp) {
             if (!comparedActivity.getName().equals(name))
                 comparedActivities.add(comparedActivity);
         }
-
-
         this.fillActivitiesNames();
     }
 
     @Command
     public void renderChart() {
 
-        if (this.aktivitaet == null || this.aktivitaet.equals("Aktivität") || this.chart1_db0 == null || this.chart1_db1 == null)
+        if (isAllParametersEntered())
             return;
 
-        selectedNames.add(this.aktivitaet);
+        selectedNames.add(this.activity);
 
-        Activity beginActivity = null;
-        Activity endActivity = null;
-        long comparedBeginDateTime = 0;
-        long comparedEndDateTime = 0;
+        Activity beginActivity;
+        Activity endActivity;
+        long bestComparedBeginDateTime;
+        long bestComparedEndDateTime;
 
         if (activities.size() > 0) {
             beginActivity = activities.get(0);
             endActivity = activities.get(0);
-
-            comparedBeginDateTime = Math.abs(chart1_db0.getTime() - beginActivity.getDate().getTime());
-            comparedEndDateTime = Math.abs(chart1_db1.getTime() - endActivity.getDate().getTime());
+            bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - beginActivity.getDate().getTime());
+            bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - endActivity.getDate().getTime());
         } else {
             System.err.println(">>> Error: the size of activities is wrong");
             return;
         }
 
         for (Activity activity : activities) {
-
-            if (aktivitaet.equals(activity.getName())) {
-                if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < comparedBeginDateTime) {
-                    comparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
+            if (this.activity.equals(activity.getName())) {
+                if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < bestComparedBeginDateTime) {
+                    bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
                     beginActivity = activity;
                 }
-                if (Math.abs(chart1_db1.getTime() - activity.getDate().getTime()) < comparedEndDateTime) {
-                    comparedEndDateTime = Math.abs(chart1_db1.getTime() - activity.getDate().getTime());
+                if (Math.abs(chart1_db1.getTime() - activity.getDate().getTime()) < bestComparedEndDateTime) {
+                    bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - activity.getDate().getTime());
                     endActivity = activity;
                 }
             }
         }
-        compareMessage = "";
-        if (beginActivity.getDate().compareTo(this.chart1_db0) != 0) {
-            compareMessage += "Im Vergliech wird als Startdatum " + beginActivity.getDate().toString() + " benutzt.\n";
-        }
-
-        if (endActivity.getDate().compareTo(this.chart1_db0) != 0) {
-            compareMessage += "Im Vergliech wird als Enddatum " + beginActivity.getDate().toString() + " benutzt.";
-
-        }
-
 
         //TODO: round till?
-        Activity comparedActivity = new Activity(comparedActivities.size(), aktivitaet, null, (int) (((new Double(endActivity.getValue() - beginActivity.getValue())) / beginActivity.getValue()) * 100));
+        Activity comparedActivity = new Activity(comparedActivities.size(), activity, null, calculateCompareValue(beginActivity, endActivity));
         comparedActivities.add(comparedActivity);
 
 
-        this.aktivitaet = null; // for not to use twice the same parameters
+        this.activity = null; // in purpose not to use twice the same parameters
         this.fillActivitiesNames();
+    }
+
+    private boolean isAllParametersEntered() {
+        return this.activity == null || this.chart1_db0 == null || this.chart1_db1 == null;
+    }
+
+    private int calculateCompareValue(Activity beginActivity, Activity endActivity) {
+        return (int) (((new Double(endActivity.getValue() - beginActivity.getValue())) / beginActivity.getValue()) * 100);
     }
 
 
@@ -161,8 +149,6 @@ public class Chart3VM {
 
     }
 
-
-    // getters & setters
     public List<Activity> getActivities() {
         return activities;
     }
@@ -187,12 +173,12 @@ public class Chart3VM {
         this.activitiesNames = activitiesNames;
     }
 
-    public String getAktivitaet() {
-        return aktivitaet;
+    public String getActivity() {
+        return activity;
     }
 
-    public void setAktivitaet(String aktivitaet) {
-        this.aktivitaet = aktivitaet;
+    public void setActivity(String activity) {
+        this.activity = activity;
     }
 
 
@@ -212,11 +198,5 @@ public class Chart3VM {
         this.chart1_db1 = chart1_db1;
     }
 
-    public String getCompareMessage() {
-        return compareMessage;
-    }
 
-    public void setCompareMessage(String compareMessage) {
-        this.compareMessage = compareMessage;
-    }
 }

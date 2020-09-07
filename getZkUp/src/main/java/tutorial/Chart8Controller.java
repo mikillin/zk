@@ -10,7 +10,9 @@ import org.zkoss.zul.Window;
 import java.util.Date;
 
 
-public class Chart3VMC extends SelectorComposer<Window> {
+public class Chart8Controller extends SelectorComposer<Window> {
+
+    public static final int AMOUNT_OF_MS_IN_7_DAYS = 7 * 24 * 60 * 60 * 1000;
 
     @Wire("#chart1_db0")
     private Datebox chart1_db0;
@@ -25,7 +27,7 @@ public class Chart3VMC extends SelectorComposer<Window> {
     public void woche() {
         Date resultWocheAgo = resetHoursMinutesSeconds(new Date());
 
-        chart1_db0.setValue(new Date(resultWocheAgo.getTime() - 7 * 24 * 60 * 60 * 1000));
+        chart1_db0.setValue(new Date(resultWocheAgo.getTime() - AMOUNT_OF_MS_IN_7_DAYS));
         chart1_db1.setValue(resetHoursMinutesSeconds(new Date()));
         Events.postEvent("onChange", chart1_db0, null);
         Events.postEvent("onChange", chart1_db1, null);
