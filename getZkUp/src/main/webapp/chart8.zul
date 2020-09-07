@@ -1,116 +1,48 @@
 <zk>
     <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+        <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+
         <style>
-            button.time-period {
-            width: 100px;
-            padding: 5px;
-            color: grey;
-            border-radius: 5px;
-            background: WhiteSmoke;
-            border-width: 2px;
-            border-style: double;
-            border-color: grey;
-            margin: 0 10px 0 10px;
-            }
+            div.row-half{
 
-            .list-compared-activities {
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            margin-top: 19px;
-            border: lightgrey;
-            padding: 8px;
-            height: 90px;
-            border-radius: 5px;
-            width: 425px;
-            align-items: center;
-            overflow-y: auto;
-            }
-
-            div.result {
             display: flex;
             flex-direction: row;
-            background: WhiteSmoke;
-            border-radius: 21px;
-            height: 35px;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: space-evenly;
+
+            height: 22px;
+            padding: 0 8px 0 8px;
+            }
+            .row.datebox {
+            padding: 0px 5px 10px 5px;
             }
 
-            .column {
-            width: 100%;
-            height: 45px;
-            display: flex;
-            flex-direction: column;
-            margin: 10px;
+            .row.result {
+            padding: 3px 5px 3px 5px
             }
 
-            .compare-name {
-            width: 140px;
+            div.row.time-period-buttons{
+            padding: 3px 5px 3px 5px
             }
 
-            .arrow-image {
-            width: 40px;
-            }
-
-            .compare-value {
-            width: 50px;
-            }
-
-            .add-image-icon, .delete-image-icon {
-            width: 20px;
-            cursor: pointer;
-            margin : 0 10px 0 10px ;
-            }
-
-            .charts {
+            .charts.narrow {
             width: 450px;
-            border-style: double;
-            border-width: 2px;
-            border-color: lightgrey;
-            display: flex;
-            flex-direction: row;
-            border-radius: 10px;
-            height: 250px;
-            max-width: 550px;
-            padding: 10px;
             }
 
-            .control-elements.z-datebox{
-            width: 150px;
-            display: flex;
-            flex-direction: row;
-            margin: 10px;
-            }
-
-            .control-elements.select.z-select {
-            width : 190px;
-            height: 35px;
-
-            }
-
-            row.time-period-buttons{
+            .row-no-paddings {
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
-
+            padding: 0;
             }
 
-            .row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
+            div.south{
+            margin-top: 20px;
             }
 
-            .control-label {
-            padding: 0 10px 0 10px;
-            }
         </style>
-        <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
-            <div sclass="controls red">
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
+            <div sclass="controls-block">
                 <div sclass="row">
                     <label value="Aktivität" sclass="control-elements control-label"></label>
                     <listbox selectedItem="@bind(vm.activity)" mold="select"
@@ -125,20 +57,20 @@
 
                 <div sclass="row dates">
 
-                    <div sclass="row ">
+                    <div sclass="">
                         <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
                                  constraint="no empty, no future" weekOfYear="true"
                                  showTodayLink="true"
-                                 sclass="control-elements"/>
+                                 sclass="control-elements datebox"/>
                     </div>
-                    <div sclass="two-elements">
+                    <div sclass="">
                         <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
                                  constraint="no empty, no future" weekOfYear="true" placeholder=""
                                  showTodayLink="true"
                                  sclass="control-elements datebox"/>
                     </div>
                 </div>
-                <div sclass="row time-period-buttons">
+                <div sclass="div.row-half time-period-buttons">
                     <button id="woche" label="1 Woche" zclass="time-period"/>
                     <button id="monat" label="1 Monat" zclass="time-period"/>
                     <button id="jahr" label="1 Jahr" zclass="time-period"/>
@@ -146,9 +78,9 @@
 
                 <vlayout sclass="list-compared-activities" children="@bind(vm.comparedActivities)">
                     <template name="children">
-                        <div zclass="row">
+                        <div zclass="row-no-paddings">
                             <custom-attributes b="${each.name}"/>
-                            <div sclass="row ">
+                            <div sclass="row-no-paddings">
                                 <div sclass="row result">
                                     <div sclass="compare-name">
                                         <label value="@load(each.name)"></label>
@@ -165,7 +97,7 @@
                                 </div>
                             </div>
                             <div sclass="delete-image-icon">
-                                <image src="/img/cancel.png" sclass="icon report" width="20px"
+                                <image src="/img/cancel.png" sclass="icon" width="20px"
                                        onClick="@command('deleteActivity',query=b)"/>
                             </div>
                         </div>

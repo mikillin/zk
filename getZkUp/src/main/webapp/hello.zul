@@ -1,7 +1,11 @@
 <window title="My First ZK Application" border="normal">
     Hello World!
 
-    <include id="chart" src="/chart.zul" width="100%" height="100%"></include>
-    <include id="chart2" src="/chart8.zul" width="100%" height="100%"></include>
+    <div>
+        <include id="chart" src="/chart.zul" width="100%" height="100%"></include>
+    </div>
+    <div>
+        <include id="chart8" src="/chart8.zul" width="100%" height="100%"></include>
+    </div>
 
 </window>

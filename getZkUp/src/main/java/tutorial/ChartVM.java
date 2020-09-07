@@ -20,7 +20,7 @@ public class ChartVM {
 
     public static final String AXIS_X_NAME = "'Date'";
     public static final String AXIS_Y_NAME = "'Auswertung'";
-    public static final int CHART_WIDTH = 350;
+    public static final int CHART_WIDTH = 300;
     public static final int CHART_HEIGHT = 200;
     public static final String TAG_TO_INSERT_CHART = "document.getElementsByClassName('chartItem')[0]";
     public static final String TITLE_TEXT_COLOR = "'#333'";

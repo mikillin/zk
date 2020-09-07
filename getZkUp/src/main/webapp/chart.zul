@@ -34,7 +34,7 @@
                          sclass="control-elements"/>
             </div>
 
-            <div sclass="chartItem" id="lineChart">
+            <div sclass="chartImage chartItem" id="lineChart">
             </div>
 
         </div>
