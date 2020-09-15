@@ -1,5 +1,5 @@
 <zk>
-    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+<window width="100%" height="100%" apply="tutorial.Chart8Controller">
         <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
 
         <style>
@@ -27,6 +27,7 @@
 
             .charts.narrow {
             width: 450px;
+            height: 300px;
             }
 
             .row-no-paddings {
@@ -142,17 +143,17 @@
             .compare-field {
             align-self: center;}
 
-            .time-period:active {
-            background-color: #f0f0f0;
-            padding: 10px;
-            }
-
             button.time-period {
             margin: 0 9px 9px 5px;
             }
         </style>
-        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
 
+
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')"> <div>
+            <button id = "buttonId" onClick="@command('valueForChangeCommand')" label="Change text"></button>
+            <textbox id="valueForChange" value="@bind('valueForChange')"></textbox>
+
+        </div>
             <div sclass="row">
                 <div sclass="column controls-block">
 
@@ -163,7 +164,8 @@
                                 selectedItem="@bind(vm.activityId)"
                                 mold="select"
                                 sclass="control-elements select"
-                                id="activity">
+                                id="activity"
+                        >
                             <listhead>
                                 <listheader label="Kategorie"/>
                                 <listheader label="Frage"/>

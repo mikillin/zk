@@ -1,10 +1,13 @@
 package tutorial;
 
+import org.jfree.text.TextBox;
+import org.zkoss.bind.annotation.Command;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import java.util.Date;
@@ -21,7 +24,14 @@ public class Chart8Controller extends SelectorComposer<Window> {
     private Datebox chart1_db1;
 
 
+    @Wire("#valueForChange")
+    private Textbox valueForChange;
 
+    @Listen("onClick=#valueForChange")
+    public void valueForChange() {
+
+        this.valueForChange.setValue(new Date().toString());
+    }
 
     @Listen("onClick=#woche")
     public void woche() {

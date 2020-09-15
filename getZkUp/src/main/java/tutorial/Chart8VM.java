@@ -14,7 +14,7 @@ public class Chart8VM {
     private List<Activity> activities = new ListModelList<Activity>();
     private List<Activity> comparedActivities = new ListModelList<Activity>();
     private List<String> activitiesNames = new ListModelList<String>();
-    private Set<String> selectedNames = new HashSet<String>();
+    private Set<Integer> selectedActivitiesIds = new HashSet<Integer>();
 
     @Wire("#activity")
     private String activityId;
@@ -26,6 +26,13 @@ public class Chart8VM {
     @Wire("#chart1_db1")
     private Date chart1_db1;
 
+    @Wire("#valueForChange")
+    private String valueForChange;
+
+    @Command("valueForChangeCommand")
+    public void valueForChangeCommand() {
+        this.valueForChange = new Date().toString();
+    }
 
     @Init
     public void init(@ContextParam(ContextType.VIEW) Component view) {
@@ -38,16 +45,16 @@ public class Chart8VM {
     public void deleteActivity(@BindingParam("query") int activityId) {
 
         Set temp = new HashSet();
-        temp.addAll(selectedNames);
-        temp.remove(getActivityById(activityId).getName()); //todo:
-        selectedNames.clear();
-        selectedNames.addAll(temp);
+        temp.addAll(selectedActivitiesIds);
+        temp.remove(activityId); //todo:
+        selectedActivitiesIds.clear();
+        selectedActivitiesIds.addAll(temp);
 
         List<Activity> tmp = new ArrayList<Activity>();
         tmp.addAll(comparedActivities);
         comparedActivities.clear();
         for (Activity comparedActivity : tmp) {
-            if (!comparedActivity.getName().equals(activityId))
+            if (comparedActivity.getId() != (activityId))
                 comparedActivities.add(comparedActivity);
         }
         this.fillActivitiesNames();
@@ -59,7 +66,7 @@ public class Chart8VM {
         if (isAllParametersEntered())
             return;
 
-        selectedNames.add(this.getActivityById(Integer.parseInt(this.activityId)).getName());
+        selectedActivitiesIds.add(Integer.parseInt(this.activityId));
 
         Activity beginActivity;
         Activity endActivity;
@@ -77,7 +84,7 @@ public class Chart8VM {
         }
 
         for (Activity activity : activities) {
-            if(Integer.parseInt(this.activityId) == activity.getId()){
+            if (Integer.parseInt(this.activityId) == activity.getId()) {
                 if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < bestComparedBeginDateTime) {
                     bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
                     beginActivity = activity;
@@ -116,6 +123,7 @@ public class Chart8VM {
         return null;
     }
 
+    /*stub*/
     private void fillActivities() {
 
         this.activities.clear();
@@ -151,7 +159,7 @@ public class Chart8VM {
         this.activitiesNames.clear();
 
         for (Activity activity : this.activities) {
-            if (selectedNames.contains(activity.getName()))
+            if (selectedActivitiesIds.contains(activity.getId()))
                 continue;
             names.add(activity.getName());
         }
@@ -184,12 +192,12 @@ public class Chart8VM {
         this.activitiesNames = activitiesNames;
     }
 
-    public Set<String> getSelectedNames() {
-        return selectedNames;
+    public Set<Integer> getSelectedActivitiesIds() {
+        return selectedActivitiesIds;
     }
 
-    public void setSelectedNames(Set<String> selectedNames) {
-        this.selectedNames = selectedNames;
+    public void setSelectedActivitiesIds(Set<Integer> selectedActivitiesIds) {
+        this.selectedActivitiesIds = selectedActivitiesIds;
     }
 
     public Date getChart1_db0() {
@@ -214,5 +222,13 @@ public class Chart8VM {
 
     public void setActivityId(String activityId) {
         this.activityId = activityId;
+    }
+
+    public String getValueForChange() {
+        return valueForChange;
+    }
+
+    public void setValueForChange(String valueForChange) {
+        this.valueForChange = valueForChange;
     }
 }
