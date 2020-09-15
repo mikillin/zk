@@ -46,7 +46,6 @@
 
             }
             .list-compared-activities {
-            background: aquamarine;
             display: flex;
             flex-direction: column;
             overflow: auto;
@@ -142,6 +141,15 @@
 
             .compare-field {
             align-self: center;}
+
+            .time-period:active {
+            background-color: #f0f0f0;
+            padding: 10px;
+            }
+
+            button.time-period {
+            margin: 0 9px 9px 5px;
+            }
         </style>
         <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
 
@@ -207,15 +215,8 @@
                                     <label value="@load(each.category)" sclass="compare-category"></label>
                                 </div>
                                 <div sclass="compare-name ">
-                                    <label value="@load(each.name)" sclass="compare-name" maxlength="80"
-                                           tooltip="@load(each.name.length() gt 80? 'tooltipPopup${each.id}, after_pointer': ''">
+                                    <label value="@load(each.name)" sclass="compare-name" maxlength="80">
                                     </label>
-                                    <popup id="tooltipPopup${each.id}">
-                                        <vlayout>
-                                            <label value="@load(each.name)"/>
-                                        </vlayout>
-                                    </popup>
-
                                 </div>
                             </div>
                             <div sclass="arrow-image compare-field">
