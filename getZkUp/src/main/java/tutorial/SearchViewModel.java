@@ -65,19 +65,19 @@ public class SearchViewModel {
 
 
     private void fillActivities() {
-        try {
-            this.activities.add(new Activity(1, "Biegen", new Date(), 20));
-            this.activities.add(new Activity(2, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 30));
-            this.activities.add(new Activity(3, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"),40));
-            this.activities.add(new Activity(4, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 50));
-            this.activities.add(new Activity(5, "Laufen", new Date(), 20));
-            this.activities.add(new Activity(6, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 10));
-            this.activities.add(new Activity(7, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"),5));
-            this.activities.add(new Activity(8, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 1));
+//        try {
+//            this.activities.add(new Activity(1, "Biegen", new Date(), 20));
+//            this.activities.add(new Activity(2, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 30));
+//            this.activities.add(new Activity(3, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"),40));
+//            this.activities.add(new Activity(4, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 50));
+//            this.activities.add(new Activity(5, "Laufen", new Date(), 20));
+//            this.activities.add(new Activity(6, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 10));
+//            this.activities.add(new Activity(7, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"),5));
+//            this.activities.add(new Activity(8, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 1));
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void fillInitActivityMessages() {

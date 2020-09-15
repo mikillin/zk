@@ -1,8 +1,7 @@
 package tutorial;
 
-import org.zkoss.bind.annotation.BindingParam;
-import org.zkoss.bind.annotation.Command;
-import org.zkoss.bind.annotation.Init;
+import org.zkoss.bind.annotation.*;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.ListModelList;
 
@@ -18,7 +17,7 @@ public class Chart8VM {
     private Set<String> selectedNames = new HashSet<String>();
 
     @Wire("#activity")
-    private String activity;
+    private String activityId;
 
 
     @Wire("#chart1_db0")
@@ -29,17 +28,18 @@ public class Chart8VM {
 
 
     @Init
-    public void init() {
+    public void init(@ContextParam(ContextType.VIEW) Component view) {
         this.fillActivities();
+//        this.thisWin = (Window) view;
     }
 
 
     @Command
-    public void deleteActivity(@BindingParam("query") String name) {
+    public void deleteActivity(@BindingParam("query") int activityId) {
 
         Set temp = new HashSet();
         temp.addAll(selectedNames);
-        temp.remove(name);
+        temp.remove(getActivityById(activityId).getName()); //todo:
         selectedNames.clear();
         selectedNames.addAll(temp);
 
@@ -47,7 +47,7 @@ public class Chart8VM {
         tmp.addAll(comparedActivities);
         comparedActivities.clear();
         for (Activity comparedActivity : tmp) {
-            if (!comparedActivity.getName().equals(name))
+            if (!comparedActivity.getName().equals(activityId))
                 comparedActivities.add(comparedActivity);
         }
         this.fillActivitiesNames();
@@ -59,7 +59,7 @@ public class Chart8VM {
         if (isAllParametersEntered())
             return;
 
-        selectedNames.add(this.activity);
+        selectedNames.add(this.getActivityById(Integer.parseInt(this.activityId)).getName());
 
         Activity beginActivity;
         Activity endActivity;
@@ -77,7 +77,7 @@ public class Chart8VM {
         }
 
         for (Activity activity : activities) {
-            if (this.activity.equals(activity.getName())) {
+            if(Integer.parseInt(this.activityId) == activity.getId()){
                 if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < bestComparedBeginDateTime) {
                     bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
                     beginActivity = activity;
@@ -90,16 +90,18 @@ public class Chart8VM {
         }
 
         //TODO: round till?
-        Activity comparedActivity = new Activity(comparedActivities.size(), activity, null, calculateCompareValue(beginActivity, endActivity));
+        Activity comparedActivity = new Activity(Integer.parseInt(activityId), this.getActivityById(Integer.parseInt(activityId)).getCategory(), getActivityById(Integer.parseInt(activityId)).getName(), null, calculateCompareValue(beginActivity, endActivity));
         comparedActivities.add(comparedActivity);
 
 
-        this.activity = null; // in purpose not to use twice the same parameters
+        this.activityId = ""; // in purpose not to use twice the same parameters
         this.fillActivitiesNames();
     }
 
+
+    //todo: id shouldn't be 0
     private boolean isAllParametersEntered() {
-        return this.activity == null || this.chart1_db0 == null || this.chart1_db1 == null;
+        return this.activityId.equals("") || this.chart1_db0 == null || this.chart1_db1 == null;
     }
 
     private int calculateCompareValue(Activity beginActivity, Activity endActivity) {
@@ -107,22 +109,33 @@ public class Chart8VM {
     }
 
 
+    private Activity getActivityById(int id) {
+        for (Activity activity : this.activities)
+            if (activity.getId() == id)
+                return activity;
+        return null;
+    }
+
     private void fillActivities() {
 
         this.activities.clear();
         try {
-            this.activities.add(new Activity(1, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 20));
-            this.activities.add(new Activity(2, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 30));
-            this.activities.add(new Activity(3, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 40));
-            this.activities.add(new Activity(4, "Biegen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 50));
-            this.activities.add(new Activity(5, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 4));
-            this.activities.add(new Activity(6, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 10));
-            this.activities.add(new Activity(7, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 15));
-            this.activities.add(new Activity(8, "Laufen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 11));
-            this.activities.add(new Activity(9, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 220));
-            this.activities.add(new Activity(10, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 140));
-            this.activities.add(new Activity(11, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 15));
-            this.activities.add(new Activity(12, "Schlafen", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 19));
+            this.activities.add(new Activity(1, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 20));
+            this.activities.add(new Activity(2, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 30));
+            this.activities.add(new Activity(3, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 40));
+            this.activities.add(new Activity(4, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 50));
+            this.activities.add(new Activity(5, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 4));
+            this.activities.add(new Activity(6, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 10));
+            this.activities.add(new Activity(7, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 15));
+            this.activities.add(new Activity(8, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 11));
+            this.activities.add(new Activity(9, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 220));
+            this.activities.add(new Activity(10, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 140));
+            this.activities.add(new Activity(11, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 15));
+            this.activities.add(new Activity(12, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 19));
+            this.activities.add(new Activity(13, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.08.2020"), 220));
+            this.activities.add(new Activity(14, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.08.2020"), 140));
+            this.activities.add(new Activity(15, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), 15));
+            this.activities.add(new Activity(16, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), 19));
 
 
             this.fillActivitiesNames();
@@ -145,8 +158,6 @@ public class Chart8VM {
 
         for (String name : names)
             this.activitiesNames.add(name);
-
-
     }
 
     public List<Activity> getActivities() {
@@ -173,14 +184,13 @@ public class Chart8VM {
         this.activitiesNames = activitiesNames;
     }
 
-    public String getActivity() {
-        return activity;
+    public Set<String> getSelectedNames() {
+        return selectedNames;
     }
 
-    public void setActivity(String activity) {
-        this.activity = activity;
+    public void setSelectedNames(Set<String> selectedNames) {
+        this.selectedNames = selectedNames;
     }
-
 
     public Date getChart1_db0() {
         return chart1_db0;
@@ -198,5 +208,11 @@ public class Chart8VM {
         this.chart1_db1 = chart1_db1;
     }
 
+    public String getActivityId() {
+        return activityId;
+    }
 
+    public void setActivityId(String activityId) {
+        this.activityId = activityId;
+    }
 }

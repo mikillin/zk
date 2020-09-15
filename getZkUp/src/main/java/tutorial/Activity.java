@@ -5,6 +5,7 @@ import java.util.Date;
 public class Activity {
 
     private int id;
+    private String category;
     private String name;
     private Date date;
     private int value;
@@ -12,9 +13,10 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity(int id, String name, Date date, int value) {
+    public Activity(int id, String category, String name, Date date, int value) {
 
         this.id = id;
+        this.category = category;
         this.name = name;
         this.date = date;
         this.value = value;
@@ -50,5 +52,13 @@ public class Activity {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

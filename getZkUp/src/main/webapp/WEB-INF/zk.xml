@@ -12,4 +12,8 @@
 	<language-config>
 		<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>
 	</language-config>
+	<library-property>
+		<name>org.zkoss.web.classWebResource.cache</name>
+		<value>false</value>
+	</library-property>
 </zk>

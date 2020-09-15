@@ -71,10 +71,10 @@
 
             div.container {
             overflow-y: auto;
-            overflow-x: auto;
+            overflow-x: hidden;
             height: 100%
             }
-
+    
             div.search {
             padding: 20px;
             }
@@ -293,7 +293,7 @@
                         </div>
                     </west>
 
-                    <east size="300px">
+                    <east size="350px">
                         <div sclass="filter-block">
                             <div sclass="search">
 

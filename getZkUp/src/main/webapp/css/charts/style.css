@@ -11,7 +11,7 @@ div.controls {
     /*margin: 2px;*/
 }
 
-div.charts, .list-compared-activities {
+div.charts {
     border-style: double;
     border-width: 2px;
     border-color: lightgrey;
@@ -19,8 +19,8 @@ div.charts, .list-compared-activities {
     flex-direction: row;
     justify-content: center;
     border-radius: 10px;
-    height: 250px;
-    max-width: 550px;
+    height: 280px;
+    max-width: 650px;
     padding: 10px;
 }
 
@@ -49,8 +49,6 @@ div.charts, .list-compared-activities {
 }
 
 
-
-
 /*compare chart #8*/
 button.time-period {
     width: 100px;
@@ -65,17 +63,20 @@ button.time-period {
 }
 
 .list-compared-activities {
+    background: aquamarine;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    /*margin-top: 19px;*/
-    border: lightgrey;
-    padding: 8px;
-    height: 90px;
-    border-radius: 5px;
-    width: 425px;
-    align-items: center;
-    overflow-y: auto;
+    overflow: auto;
+    align-self: flex-start;
+
+
+    /*border: lightgrey;*/
+    /*padding: 8px;*/
+    /*height: 290px;*/
+    /*border-radius: 5px;*/
+    /*width: 425px;*/
+    /*align-items: center;*/
+
 }
 
 div.result {
@@ -99,7 +100,6 @@ div.result {
 
 .compare-name {
     width: 140px;
-    padding-left: 20px;
 }
 
 .arrow-image {
@@ -125,7 +125,7 @@ div.result {
     flex-direction: row;
     border-radius: 10px;
     height: 250px;
-    max-width: 550px;
+    max-width: 650px;
     padding: 10px;
     justify-content: center;
 }
@@ -154,8 +154,7 @@ row.time-period-buttons {
 .row {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    align-items: baseline;
 }
 
 .control-label {
