@@ -11,7 +11,7 @@ div.controls {
     /*margin: 2px;*/
 }
 
-div.charts {
+div.charts, .list-compared-activities {
     border-style: double;
     border-width: 2px;
     border-color: lightgrey;
@@ -19,9 +19,15 @@ div.charts {
     flex-direction: row;
     justify-content: center;
     border-radius: 10px;
-    height: 280px;
-    max-width: 650px;
+    height: 250px;
+    max-width: 670px;
     padding: 10px;
+}
+
+div.left {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
 
@@ -55,7 +61,7 @@ button.time-period {
     padding: 3px;
     color: grey;
     border-radius: 5px;
-    background: WhiteSmoke;
+    /*background: WhiteSmoke;*/
     border-width: 2px;
     border-style: double;
     border-color: grey;
@@ -65,23 +71,21 @@ button.time-period {
 .list-compared-activities {
     display: flex;
     flex-direction: column;
-    overflow: auto;
-    align-self: flex-start;
-
-
-    /*border: lightgrey;*/
-    /*padding: 8px;*/
-    /*height: 290px;*/
-    /*border-radius: 5px;*/
-    /*width: 425px;*/
-    /*align-items: center;*/
-
+    overflow-y: auto;
+    /*margin-top: 19px;*/
+    border: lightgrey;
+    padding: 8px;
+    height: 90px;
+    border-radius: 5px;
+    width: 425px;
+    align-items: center;
+    overflow-y: auto;
 }
 
 div.result {
     display: flex;
     flex-direction: row;
-    background: WhiteSmoke;
+    /*background: WhiteSmoke;*/
     border-radius: 21px;
     height: 35px;
     justify-content: center;
@@ -89,7 +93,7 @@ div.result {
     padding: 20px;
 }
 
-.charts-column {
+.column {
     width: 100%;
     height: 45px;
     display: flex;
@@ -99,6 +103,7 @@ div.result {
 
 .compare-name {
     width: 140px;
+    padding-left: 20px;
 }
 
 .arrow-image {
@@ -126,10 +131,10 @@ div.result {
     height: 250px;
     max-width: 650px;
     padding: 10px;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
-.control-elements.z-datebox,  .control-elements.z-textbox {
+.control-elements.z-datebox {
     width: 150px;
     display: flex;
     flex-direction: row;
@@ -142,19 +147,19 @@ div.result {
 
 }
 
-charts-row.time-period-buttons {
+row.time-period-buttons {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+
 }
 
-
-
-.charts-row {
+.row {
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
+    justify-content: center;
 }
 
 .control-label {
@@ -172,6 +177,10 @@ div.chartImage {
     width: 350px;
 }
 
-.charts-row.datebox {
+.row.datebox {
     padding: 0px 5px 10px 5px;
+}
+
+.element-name {
+    font-weight: bold;
 }

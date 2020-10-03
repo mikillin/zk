@@ -4,27 +4,23 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.zkoss.bind.annotation.*;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
+import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.ListModelList;
-import org.zkoss.zul.Window;
-
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
 
 
-public class ChartVM {
+public class LinieChartVM {
 
 
-    public static final String AXIS_X_NAME = "'Datum'";
+    public static final String AXIS_X_NAME = "'Date'";
     public static final String AXIS_Y_NAME = "'Auswertung'";
-    public static final int CHART_WIDTH = 330;
-    public static final int CHART_HEIGHT = 250;
+    public static final int CHART_WIDTH = 450;
+    public static final int CHART_HEIGHT = 200;
     public static final String TAG_TO_INSERT_CHART = "document.getElementsByClassName('chartItem')[0]";
     public static final String TITLE_TEXT_COLOR = "'#333'";
     public static final String STUB_JSON_DATE_FORMAT = "dd.MM.yyyy";
@@ -33,11 +29,6 @@ public class ChartVM {
     public static final String STUB_JSON_DATA_FIELD = "data";
     public static final String STUB_JSON_ACTIVITY_FIELD = "activity";
     public static final String STUB_JSON_MAIN_FIELD = "fromDB";
-
-    private String activityId;
-    private String chosenQuestion;
-    private List<Activity> activities = new ListModelList<Activity>();
-
 
     @Wire("#chart1_db0")
     private Date chart1_db0;
@@ -49,48 +40,12 @@ public class ChartVM {
     private String aktivitaet;
 
     @Init
-    public void init(@ContextParam(ContextType.VIEW) Component view) {
-        this.fillActivities();
-    }
-
-
-    @Command
-    public void openModalQuestions() {
-
-        Map args = new HashMap();
-        Window win = (Window) Executions.createComponents(
-                "/treeInOutput.zul", null, args);
-        win.doModal();
-
-    }
-
-    @GlobalCommand
-    @NotifyChange("chosenQuestion")
-    public void sendActivity(@BindingParam("data") String activityId) {
-
-        this.activityId = activityId;
-        this.chosenQuestion = getActivityById(Integer.parseInt(activityId)).getName();
-        renderChart();
-    }
-
-    private Activity getActivityById(int id) {
-        for (Activity activity : this.activities)
-            if (activity.getId() == id)
-                return activity;
-        return null;
+    public void init() {
     }
 
     @Command
     public void renderChart() {
-        if (isNotAllParametersEntered())
-            return;
-
         processJS();
-    }
-
-    //todo: id shouldn't be 0
-    private boolean isNotAllParametersEntered() {
-        return this.activityId == null || (this.activityId != null && this.activityId.equals(""));
     }
 
     private JsonElement getJSON() {
@@ -183,27 +138,25 @@ public class ChartVM {
         Date beginDate = resetHoursMinutesSeconds(this.chart1_db0);
         Date endDate = resetHoursMinutesSeconds(this.chart1_db1);
 
-        Date date = null;
-        for (Activity activity : getAllActivitiesForTheSameCategoryAndName(this.getActivityById(Integer.parseInt(this.activityId))))
-        {
-            if (isInTimePeriod(beginDate, endDate, activity.getDate()))
-                data += "['" + new SimpleDateFormat("dd.MM.yyyy").format(activity.getDate()) + "', "
-                        + activity.getValue()+ "],";
+        for (JsonElement obj : main) {
+            if (checkObjectActivityName((JsonObject) obj)) {
+                JsonArray items = (JsonArray) ((JsonObject) obj).get(STUB_JSON_DATA_FIELD);
+
+                for (JsonElement item : items) {
+                    Date date = null;
+                    try {
+                        date = parseItemDate((JsonObject) item);
+                        if (isInTimePeriod(beginDate, endDate, date))
+                            data += "['" + getItemDate((JsonObject) item) + "', "
+                                    + getItemValue((JsonObject) item) + "],";
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
-
-
         data += "]);";
         return data;
-    }
-
-    private List<Activity> getAllActivitiesForTheSameCategoryAndName(Activity selectedActivity) {
-        List<Activity> result = new ArrayList<>();
-        for (Activity activity : this.activities) {
-            if (activity.getCategory().equals(selectedActivity.getCategory())
-                    && activity.getName().equals(selectedActivity.getName()))
-                result.add(activity);
-        }
-        return result;
     }
 
     private Date parseItemDate(JsonObject item) throws ParseException {
@@ -219,8 +172,7 @@ public class ChartVM {
     }
 
     private boolean isInTimePeriod(Date beginDate, Date endDate, Date date) {
-        return (beginDate == null && endDate == null) ||
-                (beginDate == null && endDate != null && endDate.after(date)) ||
+        return (beginDate == null && endDate != null && endDate.after(date)) ||
                 (endDate == null && beginDate != null && beginDate.before(date)) ||
                 (beginDate != null && beginDate.before(date) &&
                         endDate != null && endDate.after(date));
@@ -247,15 +199,10 @@ public class ChartVM {
 
     private String getOptionsJSPArt() {
         return "var options = {\n" +
-                "                    title: '" +
-                this.getActivityById(Integer.parseInt(this.activityId)).getCategory() + ": " +
-                this.getActivityById(Integer.parseInt(this.activityId)).getName() + "',\n" +
+                "                    title: '" + this.getAktivitaet() + "',\n" +
                 "                    hAxis: {title: " + this.getAxisXName() + ", titleTextStyle: {color: " + this.getTitleTextColor() + "}},\n" +
-//                "                    width:" + this.getChartWidth() + ",\n" +
-//                "                    height:" + this.getChartHeight() + "\n" +
-                "                    width: "+CHART_WIDTH+",\n" +
-                "                    height:"+CHART_HEIGHT+"\n" +
-
+                "                    width:" + this.getChartWidth() + ",\n" +
+                "                    height:" + this.getChartHeight() + "\n" +
                 "                    };\n";
     }
 
@@ -267,36 +214,6 @@ public class ChartVM {
     private String getHeadJSPart() {
         return getJavaScript("   google.charts.load('current', {'packages':['corechart']});\n", "                    google.charts.setOnLoadCallback(drawChart);\n", "\n", "                    function drawChart() {\n", "                    var data = new google.visualization.DataTable();");
     }
-
-
-    /*stub*/
-    private void fillActivities() {
-
-        this.activities.clear();
-        try {
-            this.activities.add(new Activity(11, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 3));
-            this.activities.add(new Activity(2, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("21.06.2020"), null, null, 2));
-            this.activities.add(new Activity(3, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 4));
-            this.activities.add(new Activity(4, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), null, null, 4));
-            this.activities.add(new Activity(21, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 4));
-            this.activities.add(new Activity(6, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.06.2020"), null, null, 10));
-            this.activities.add(new Activity(7, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 12));
-            this.activities.add(new Activity(8, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), null, null, 15));
-            this.activities.add(new Activity(31, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 8));
-            this.activities.add(new Activity(10, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("21.06.2020"), null, null, 8));
-            this.activities.add(new Activity(11, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 9));
-            this.activities.add(new Activity(12, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), null, null, 9));
-            this.activities.add(new Activity(41, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 10));
-            this.activities.add(new Activity(14, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.06.2020"), null, null, 8));
-            this.activities.add(new Activity(15, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 9));
-            this.activities.add(new Activity(16, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2020"), null, null, 9));
-
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     private String getTitleTextColor() {
         return TITLE_TEXT_COLOR;
@@ -317,11 +234,11 @@ public class ChartVM {
 
 
     private String getAxisYName() {
-        return ChartVM.AXIS_Y_NAME;
+        return  LinieChartVM.AXIS_Y_NAME;
     }
 
     private String getAxisXName() {
-        return ChartVM.AXIS_X_NAME;
+        return  LinieChartVM.AXIS_X_NAME;
     }
 
 
@@ -347,22 +264,5 @@ public class ChartVM {
 
     public void setAktivitaet(String aktivitaet) {
         this.aktivitaet = aktivitaet;
-    }
-
-    public String getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(String activityId) {
-        this.activityId = activityId;
-    }
-
-
-    public String getChosenQuestion() {
-        return chosenQuestion;
-    }
-
-    public void setChosenQuestion(String chosenQuestion) {
-        this.chosenQuestion = chosenQuestion;
     }
 }

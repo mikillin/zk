@@ -5,37 +5,34 @@
 
     <?script type="text/javascript" src="/scripts/charts/loader.js"?>
     <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
-<style>
-    .charts-row-common {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    }
-</style>
+
 
     <window width="100%" onOK="@command('renderChart')" viewModel="@id('vm') @init('tutorial.ChartVM')">
         <div sclass="charts" id="lineChartId">
             <div sclass="controls">
 
-                <div sclass="charts-row-common">
-                    <label value="Aktivität" sclass="control-elements"></label>
-                    <image src="/img/search.png" id="suchen" onClick="@command('openModalQuestions')"
-                           sclass="add-image-icon"/>
-                </div>
+                <label value="Aktivität" sclass="control-elements"></label>
+                <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                         onSelect="@command('renderChart')" sclass="control-elements select">
+                    <listitem label="Laufen" value="Laufen"/>
+                    <listitem label="Schlafen" value="Schlafen"/>
+                    <listitem label="Biegen" value="Biegen"/>
+                </listbox>
 
                 <label value="ab" sclass="control-elements"></label>
-                <datebox id="chart1_db0" cols="12" format="short"
+                <datebox id="chart1_db0" cols="12" format="short "
+                         onCreate="self.value = new Date()"
                          value="@bind(vm.chart1_db0)" onChange="@command('renderChart')"
-                         constraint="no future" weekOfYear="true"
+                         constraint="no empty,no future" weekOfYear="true" placeholder="from"
                          sclass="control-elements"/>
 
                 <label value="bis" sclass="control-elements"></label>
                 <datebox id="chart1_db1" cols="12" format="short "
+                         onCreate="self.value = new Date()"
                          value="@bind(vm.chart1_db1)" onChange="@command('renderChart')"
-                         constraint="no future" weekOfYear="true"
+                         constraint="no empty,no future" weekOfYear="true" placeholder="till"
                          sclass="control-elements"/>
             </div>
-
 
             <div sclass="chartImage chartItem" id="lineChart">
             </div>

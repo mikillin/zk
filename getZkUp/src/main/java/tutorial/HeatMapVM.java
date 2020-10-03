@@ -3,6 +3,7 @@ package tutorial;
 import org.zkoss.bind.annotation.*;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
@@ -10,8 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
-public class Chart8VM {
+public class HeatMapVM {
     private List<Activity> activities = new ListModelList<Activity>();
     private List<Activity> comparedActivities = new ListModelList<Activity>();
     private List<String> activitiesNames = new ListModelList<String>();
@@ -66,54 +66,59 @@ public class Chart8VM {
     @Command
     public void renderChart() {
 
-        if (isNotAllParametersEntered())
-            return;
 
-        selectedActivitiesIds.add(Integer.parseInt(this.activityId));
+            ChartsHelper ch = new ChartsHelper("heatmap");
+            Clients.evalJavaScript(ch.readChartFile());
+           /* if (isNotAllParametersEntered())
+                return;
 
-        Activity beginActivity;
-        Activity endActivity;
-        long bestComparedBeginDateTime;
-        long bestComparedEndDateTime;
+            selectedActivitiesIds.add(Integer.parseInt(this.activityId));
 
-        if (activities.size() > 0) {
-            beginActivity = activities.get(0);
-            endActivity = activities.get(0);
-            bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - beginActivity.getDate().getTime());
-            bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - endActivity.getDate().getTime());
-        } else {
-            System.err.println(">>> Error: the size of activities is wrong");
-            return;
-        }
+            Activity beginActivity;
+            Activity endActivity;
+            long bestComparedBeginDateTime;
+            long bestComparedEndDateTime;
 
-        for (Activity activity : activities) {
-            if (getActivityById(Integer.parseInt(this.activityId)).getCategory().equals(activity.getCategory())
-                    && getActivityById(Integer.parseInt(this.activityId)).getName().equals(activity.getName())) {
-                if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < bestComparedBeginDateTime) {
-                    bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
-                    beginActivity = activity;
-                }
-                if (Math.abs(chart1_db1.getTime() - activity.getDate().getTime()) < bestComparedEndDateTime) {
-                    bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - activity.getDate().getTime());
-                    endActivity = activity;
+            if (activities.size() > 0) {
+                beginActivity = activities.get(0);
+                endActivity = activities.get(0);
+                bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - beginActivity.getDate().getTime());
+                bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - endActivity.getDate().getTime());
+            } else {
+                System.err.println(">>> Error: the size of activities is wrong");
+                return;
+            }
+
+            for (Activity activity : activities) {
+                if (getActivityById(Integer.parseInt(this.activityId)).getCategory().equals(activity.getCategory())
+                        && getActivityById(Integer.parseInt(this.activityId)).getName().equals(activity.getName())) {
+                    if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < bestComparedBeginDateTime) {
+                        bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
+                        beginActivity = activity;
+                    }
+                    if (Math.abs(chart1_db1.getTime() - activity.getDate().getTime()) < bestComparedEndDateTime) {
+                        bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - activity.getDate().getTime());
+                        endActivity = activity;
+                    }
                 }
             }
-        }
 
-        //TODO: round till?
-        if (this.getActivityById(Integer.parseInt(activityId)) == null) {
-            return;
-        }
-        Activity comparedActivity = new Activity(
-                new Date().getTime(), //todo: generate id for delete
-                this.getActivityById(Integer.parseInt(activityId)).getCategory(),
-                this.getActivityById(Integer.parseInt(activityId)).getName(),
-                null,
-                beginActivity.getDate(),
-                endActivity.getDate(),
-                calculateCompareValue(beginActivity, endActivity));
-        if (!isAlreadyInCompare(comparedActivity))
-            comparedActivities.add(comparedActivity);
+            //TODO: round till?
+            if (this.getActivityById(Integer.parseInt(activityId)) == null) {
+                return;
+            }
+            Activity comparedActivity = new Activity(
+                    new Date().getTime(), //todo: generate id for delete
+                    this.getActivityById(Integer.parseInt(activityId)).getCategory(),
+                    this.getActivityById(Integer.parseInt(activityId)).getName(),
+                    null,
+                    beginActivity.getDate(),
+                    endActivity.getDate(),
+                    calculateCompareValue(beginActivity, endActivity));
+            if (!isAlreadyInCompare(comparedActivity))
+                comparedActivities.add(comparedActivity);
+
+            */
 
     }
 
@@ -132,7 +137,7 @@ public class Chart8VM {
 
     //todo: id shouldn't be 0
     private boolean isNotAllParametersEntered() {
-        return this.activityId== null || (this.activityId!= null && this.activityId.equals("")) || this.chart1_db0 == null || this.chart1_db1 == null;
+        return this.activityId == null || (this.activityId != null && this.activityId.equals(""));
     }
 
     private int calculateCompareValue(Activity beginActivity, Activity endActivity) {

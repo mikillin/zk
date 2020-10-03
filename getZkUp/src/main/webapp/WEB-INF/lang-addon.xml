@@ -7,6 +7,8 @@
 
     <javascript src="/scripts/charts/chart.js" merge="true"/>
     <javascript src="/scripts/charts/loader.js" merge="true"/>
+    <javascript src="/scripts/charts/d3.v4.min.js" merge="true"/>
+    <javascript src="/scripts/charts/d3-scale-chromatic.v1.min.js" merge="true"/>
 
 
 </language-addon>

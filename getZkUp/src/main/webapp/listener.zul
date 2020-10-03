@@ -1,0 +1,39 @@
+<zk xmlns:n="native" xmlns:w="http://www.zkoss.org/2005/zk/client">
+    <window  width="100%" height="100%" viewModel="@id('vm') @init('tutorial.TestViewModel')">
+
+        <style>
+            div {
+            width: 100px;
+            height: 50px;
+            margin-top: 15px;
+            }
+
+            .pointer {
+            background-color: green;
+            }
+
+            .info {
+            background-color: yellow;
+            }
+        </style>
+        <div>
+            <n:div class="pointer" data-hint="order #1"></n:div>
+            <n:div class="pointer" data-hint="order #2"></n:div>
+            <n:div class="info" id="info"></n:div>
+
+            <button label="Hit ME" w:onClick="open();" id="btnOpen"></button>
+
+
+        </div>
+        <script>
+            function open()
+            {
+            var data = "122323";
+            zAu.send(new zk.Event(zk.Widget.$('$btnOpen'), 'onTest', {foo: 'my data'}, {toServer:true}));
+            zAu.send(new zk.Event(null, 'onTest2', {foo: 'my data'}, {toServer:true}));
+
+            }
+        </script>
+
+    </window>
+</zk>

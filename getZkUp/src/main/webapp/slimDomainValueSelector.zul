@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <!--
+            Generische Komponente, die eine schlanke Liste zur Verfügung stellt.
+            Verwendung als include.
+            bspw. in einer bandbox
+
+                    @author Dieter Busch <dieter.busch@fh-dortmund.de>
+        -->
+    <script type="text/javascript"><![CDATA[
+        zk.afterLoad("zul.inp", function () {
+                zul.inp.InputWidget.onChangingDelay=500;
+        });
+    ]]>
+    </script>
+
+    <window id="winSlimDVSelector" border="none" width="100%" height="100%"
+            use="de.fhdo.gui.term.SlimDomainValueSelector"
+    >
+        <style dynamic="true" src="/rsc/style/ophEPA.css"/>
+
+
+
+        <bandbox id="diagnosisbb" mold="rounded" width="100%" autodrop="true"
+                 onChange="winSlimDVSelector.sucheChanged(event)"
+                 onChanging="winSlimDVSelector.sucheChanging(event)"
+                 ctrlKeys="#down"
+                 onCtrlKey="winSlimDVSelector.sucheKeyDown(event)"
+                 onOK="winSlimDVSelector.sucheOnOk()" sclass="smallPaddingBand"
+        >
+            <bandpopup width="650px" height="450px">
+                <listbox id="listboxSuche"
+                         emptyMessage="Keine verfügbare Auswahl."
+                         onSelect="winSlimDVSelector.onSelected(event)"
+                         onOK="winSlimDVSelector.onListEnter(event)"
+                         vflex="1"
+                         width="100%"
+                         mold="paging" pageSize="12"
+                         checkmark="false"
+                         multiple="false">
+                    <listhead sizable="true" id="listHeader">
+
+                        <listheader id="listheaderCode" label="Code" width="100px" align="center"/>
+                        <listheader id="lblistheader" label="Wert"/>
+                        <listheader id="listheaderOrigCode" label="Orig." tooltiptext="Orignal ICD-Code" width="60px" align="center"/>
+                        <!--                            <listheader label="Häufigkeit" width="120px" align="center"/>-->
+                    </listhead>
+                </listbox>
+            </bandpopup>
+        </bandbox>
+    </window>
+</zk>

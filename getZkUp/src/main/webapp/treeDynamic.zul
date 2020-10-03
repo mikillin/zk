@@ -1,0 +1,27 @@
+<?page docType="html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd""?>
+<zk>
+    <borderlayout height="800px">
+        <west size="25%"></west>
+        <center>
+            <window apply="org.zkoss.bind.BindComposer"
+                    viewModel="@id('vm') @init('tutorial.TreeDynamicVM')"
+                    title="Dynamic Tree" border="normal">
+                <tree checkmark="true" model="@bind(vm.treeModel)" multiple="true"  rows = "3"
+                      onSelect="@command('select')" >
+                    <treecols>
+                        <treecol label="Frage" align="center"/>
+                    </treecols>
+                    <template name="model" status="s">
+                        <treeitem>
+                            <treerow style="text-align:center;">
+                                <treecell
+                                        label="${each}">
+                                </treecell>
+                            </treerow>
+                        </treeitem>
+                    </template>
+                </tree>
+            </window>
+        </center>
+    </borderlayout>
+</zk>

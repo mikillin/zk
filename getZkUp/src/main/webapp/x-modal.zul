@@ -1,0 +1,9 @@
+<zk>
+    <div>
+        Hi <label id="label" value="@init"/>
+    </div>
+    <div>
+        <button id="button" label="Show Messagebox" />
+
+    </div>
+</zk>

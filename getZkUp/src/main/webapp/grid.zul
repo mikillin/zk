@@ -1,0 +1,45 @@
+<zk>
+
+    <label>Email</label>
+    <checkbox mold="switch" checked="true"/>
+    <label>not Email</label>
+    <grid>
+        <columns sizable="true">
+            <column label="Frage" sort="auto" width="350px"/>
+            <column label="Antworten"  sort="auto" />
+
+        </columns>
+        <rows>
+            <group label="Psychopathologischer Befund" />
+
+
+            <row>
+                <label value="Äußere Erscheinung" style="padding-left:15px"/>
+                <label value="Klein, Schlank, Einfache Kleidung" />
+            </row>
+            <row>
+                <label value="Intelligenz" style="padding-left:15px"/>
+                <label value="Unterhalb des Normbereichs" />
+
+            </row>
+            <row>
+                <label value="Orientierung" style="padding-left:15px" />
+                <label value="Zeitlich: Unauffällig, Örtlich: Unauffällig, Situativ: Gestört" />
+
+            </row>
+            <row>
+                <label value="Sinnestäuschungen" style="padding-left:15px" />
+                <label value="Sonstiges: Bemerkung von Artzt. Text ei ei ei Text- Alle Wörter in einer Zeile" />
+
+            </row>
+            <group label="Suizidcheckliste" />
+            <row>
+                <label value="„Sicherheit“ der Methode" style="padding-left:15px" />
+                <label value="Ja (Weich)" />
+
+            </row>
+
+
+        </rows>
+    </grid>
+</zk>

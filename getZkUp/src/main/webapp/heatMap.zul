@@ -1,0 +1,162 @@
+<zk>
+    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+        <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+
+        <style>
+
+            .heat-map-item {
+            width: 50px;
+            height: 50px;
+            margin: 1px;
+            border-radius: 2px;
+            border-style: none;
+
+            }
+
+            .heat-map {
+            border-style: solid;
+            border-width: 1px;
+            }
+
+            .heat-map-row {
+            display: flex;
+            flex-direction: row;
+            }
+
+            .heat-map-items-area {
+            display: flex;
+            flex-direction: column;
+            padding-top: 40px;
+
+
+            }
+
+            .category-name {
+            width: 100px;
+            }
+
+            .heat-map-date {
+            width: 50px;
+            height: 80px;
+            transform: rotate(-90deg) translate(-75px, 90px);
+            transform-origin: left top 0;
+            }
+
+            .rotate {
+            transform: rotate(-90deg) translate(-5px, -55px);
+            transform-origin: right top;
+            position: absolute;
+            }
+
+            .heat-map-row-common {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            }
+        </style>
+        <style>
+            /* Tooltip container */
+            .tooltip {
+            position: relative;
+            display: inline-block;
+            /* border-bottom: 1px dotted black;*/
+            /* If you want dots under the hoverable text */
+            }
+
+            /* Tooltip text */
+            .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+
+            /* Position the tooltip text */
+            position: absolute;
+            z-index: 999;
+            bottom: 75%;
+            left: 50%;
+            margin-left: -60px;
+
+            /* Fade in tooltip */
+            opacity: 0;
+            transition: opacity 0.3s;
+            }
+
+            /* Tooltip arrow */
+            .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+            }
+
+            /* Show the tooltip text when you mouse over the tooltip container */
+            .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            }
+            div.row-with-images {
+            align-items: center;
+            }
+        </style>
+
+
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.HeatMapVM')">
+            <div sclass="charts-column">
+                <div sclass="charts-row">
+                    <div sclass="charts-row row-with-images">
+
+                        <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/search.png"
+                               width="20px" sclass="search-icon"></image>
+
+
+                        <textbox value="@load(vm.chosenQuestion) " id="chosenQuestion" cols="5"
+                                 height="27px" onClick="@command('openModalQuestions')"
+                                 onChanging="@command('openModalQuestions')"></textbox>
+
+                        <image src="/img/info.png" id="popupImageId"
+                               sclass="add-image-icon" popup="fullSelectedQuestionPopup"/>
+                        <popup id="fullSelectedQuestionPopup" width="300px">
+                            ${vm.chosenQuestion}
+                        </popup>
+
+                        <image src="/img/add.png" id="suchen" onClick="@command('renderChart')"
+                               sclass="add-image-icon"/>
+                    </div>
+                    <div>
+                        <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
+                                 constraint=" no future" weekOfYear="true"
+                                 showTodayLink="true"
+                                 sclass="control-elements datebox"/>
+                    </div>
+                    <div>
+                        <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
+                                 constraint=" no future" weekOfYear="true" placeholder=""
+                                 showTodayLink="true"
+                                 sclass="control-elements datebox"/>
+                    </div>
+
+
+                </div>
+                <div sclass="charts-row">
+                    <div zclass="charts-heatmap">
+
+
+                    </div>
+                    <div zclass="bottom-tooltip">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </window>
+</zk>

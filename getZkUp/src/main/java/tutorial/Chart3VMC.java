@@ -4,15 +4,13 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.*;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Window;
 
 import java.util.Date;
 
 
-public class Chart8Controller extends SelectorComposer<Window> {
-
-    public static final int AMOUNT_OF_MS_IN_7_DAYS = 7 * 24 * 60 * 60 * 1000;
+public class Chart3VMC extends SelectorComposer<Window> {
 
     @Wire("#chart1_db0")
     private Datebox chart1_db0;
@@ -20,21 +18,18 @@ public class Chart8Controller extends SelectorComposer<Window> {
     @Wire("#chart1_db1")
     private Datebox chart1_db1;
 
-    @Wire("#chosenQuestion")
-    private Textbox chosenQuestion;
 
-    @Wire("#fullSelectedQuestionPopup")
-    private Popup popup;
 
 
     @Listen("onClick=#woche")
     public void woche() {
         Date resultWocheAgo = resetHoursMinutesSeconds(new Date());
 
-        chart1_db0.setValue(new Date(resultWocheAgo.getTime() - AMOUNT_OF_MS_IN_7_DAYS));
+        chart1_db0.setValue(new Date(resultWocheAgo.getTime() - 7 * 24 * 60 * 60 * 1000));
         chart1_db1.setValue(resetHoursMinutesSeconds(new Date()));
         Events.postEvent("onChange", chart1_db0, null);
         Events.postEvent("onChange", chart1_db1, null);
+
     }
 
 
@@ -66,18 +61,6 @@ public class Chart8Controller extends SelectorComposer<Window> {
 
     }
 
-    @Listen("onClick=#popupImageId")
-    public void popup() {
-        Events.postEvent("onChange", chosenQuestion, null);
-
-        if (chosenQuestion != null && chosenQuestion.getValue() != null && chosenQuestion.getValue().length() > 0)
-        {
-            ((Label) (popup.getChildren().get(0))).setValue(chosenQuestion.getValue());
-        } else {
-            ((Label) (popup.getChildren().get(0))).setValue("Keine Frage wird ausgewählt.");
-        }
-    }
-
 
     private Date resetHoursMinutesSeconds(Date date) {
         Date result = null;
@@ -91,23 +74,5 @@ public class Chart8Controller extends SelectorComposer<Window> {
     }
 
 
-    public boolean checkAllInputFields() {
 
-        System.out.printf("Hallo ! ");
-//        Clients.showNotification(msg, type, component, position, duration);
-        return true;
-    }
-
-    //todo: insert data for the activity
-    public Textbox getChosenQuestion() {
-        return chosenQuestion;
-    }
-
-    public void setChosenQuestion(Textbox chosenQuestion) {
-        this.chosenQuestion = chosenQuestion;
-    }
-
-    public void setChosenQuestion(String chosenQuestion) {
-//        this.getChosenQuestion().setValue(chosenQuestion);
-    }
 }

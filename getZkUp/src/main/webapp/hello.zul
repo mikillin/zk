@@ -1,11 +1,38 @@
-<window title="My First ZK Application" border="normal">
-    Hello World!
 
-    <div>
-        <include id="chart" src="/chart.zul" width="100%" height="100%"></include>
-    </div>
-    <div>
-        <include id="chart8" src="/chart8.zul" width="100%" height="100%"></include>
-    </div>
+    <window id="win" xmlns:n="native" xmlns:w="http://www.zkoss.org/2005/zk/client" apply="org.zkoss.bind.BindComposer"
+            viewModel="@id('vm') @init('tutorial.TestViewModel')" onCreate="render()">
+        <script>
+            function open()
+            {
+            var data = "122323";
+            zAu.send(new zk.Event(zk.Widget.$('$btnOpen'), 'onTest', {foo: 'my data'}, {toServer:true}));
 
-</window>
+            }
+
+            function open2()
+            {
+            var data = "122323";
+            zAu.send(new zk.Event(zk.Widget.$('$btnOpen'), "onFoo", {foo: 'my data'}, {toServer:true}))
+            }
+
+
+        </script>
+
+        <n:button onclick="zAu.send(new zk.Event(zk.Widget.$('$win'), 'onValidate', {'my key' : 'some key'}));">Send
+            simple
+            string
+        </n:button>
+        <n:button
+                onclick="var data = {'f1': 'some'};zAu.send(new zk.Event(zk.Widget.$('$win'), 'onValidate', {'':{'my key' : data}}));">
+            Send JSON object
+        </n:button>
+        <button label="Hit ME" w:onClick="open();" id="btnOpen"></button>
+        <button label="Hit ME 2" w:onClick="open2();" id="btnOpen2"></button>
+        <div zclass="svgParent"></div>
+
+
+        <script>
+
+
+        </script>
+    </window>

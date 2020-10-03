@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--        de.fhdo.gui.patientrecord.modules.diagnosis.DiagnosisDetailsVM-->
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <window id="winDiagnosisDetails" width="1100px" height="750px" border="normal"
+            viewModel="@id('vm') @init('de.fhdo.gui.patientrecord.modules.diagnosis.DiagnosisDetailsVM')"
+            closable="true" sizable="false">
+        <caption  iconSclass="fas fa-diagnoses"/>
+        <script type="text/javascript">
+            <![CDATA[
+            function receiveMessage(event) {
+                var widgetMainWindow = zk.Widget.$('$mainWindow');
+                var e = new zk.Event(widgetMainWindow, "onSendBack", event.data);
+                zAu.send(e);
+            }
+            window.addEventListener("message", receiveMessage, false);
+        ]]>
+        </script>
+        <style src="/rsc/style/ophEPA.css"/>
+        <borderlayout>
+            <north border="0">
+                <div>
+                    <grid style="border-bottom: 1px solid rgba(227,227,227,0.5)">
+                        <columns>
+                            <column label="" width="180px"/>
+                            <column label="" width="310px"/>
+                            <column label="" width="180px"/>
+                            <column label="" width="310px"/>
+                        </columns>
+                        <rows>
+                            <row>
+                                <label value="Diagnosedatum:"/>
+                                <hbox>
+                                    <!--  value="@{winDiagnosisDetails.phenomenon.occurrenceBeginDttm}"-->
+                                    <datebox readonly="false"
+                                             sclass="maskingInput"
+                                             width="160px" weekOfYear="true"
+                                             format="dd.MM.yyyy"
+                                             disabled="false" locale="de_DE"
+                                             constraint="no future:Das Datum darf nicht in der Zukunft liegen."
+                                             id="dbOccurrence">
+                                        <!--
+                                        <attribute name="onAfterSize">
+                                            Clients.evalJavaScript("setDateInputClassMask('" + dbOccurrence.getUuid() + "')");
+                                            Clients.evalJavaScript("maskDateAndTime('" + dbOccurrence.getUuid() + "')");
+                                        </attribute> -->
+                                    </datebox>
+                                    <separator width="5px"/>
+                                    <timebox id="tiboOccurrence" width="120px" format="HH:mm" locale="de">
+
+                                    </timebox>
+                                </hbox>
+                                <label value="Priorität:" style="padding: 0px 0px 0px 20px;"/>
+                                <combobox readonly="true" width="185px" id="cbPriority"/>
+                            </row>
+                        </rows>
+                    </grid>
+
+                    <grid>
+                        <columns>
+                            <column width="180px" align="left" label=""/>
+                            <column label=""/>
+                        </columns>
+                        <rows>
+                            <!--<row>-->
+                            <!--<label value="Dokumentationsdatum:"/>-->
+                            <!--<div>-->
+                            <!--<datebox readonly="true" value="@{winDiagnosisDetails.phenomenon.documentationDttm}"-->
+                            <!--format="dd.MM.yyyy HH:mm" width="185px"-->
+                            <!--disabled="true"-->
+                            <!--constraint="no empty, no future:Das Datum darf nicht in der Zukunft liegen"-->
+                            <!--id="dbDocumentation"/>-->
+                            <!--&lt;!&ndash;                                                                        <timebox readonly="true" value="@{winDiagnosisDetails.phenomenon.documentationDttm}"-->
+                            <!--disabled="true" constraint="no empty, no future: Bitte geben Sie ein Datum an, was nicht in der Zukunft liegt"/>&ndash;&gt;-->
+                            <!--</div>-->
+                            <!--</row>--><!--<row>-->
+
+                            <!--</row>-->
+                            <row>
+                                <label value="Diagnose:"/>
+                                <hlayout>
+
+                                    <vlayout>
+                                        <button image="/rsc/images/symbols/find.png" label="Auswählen"
+                                                onClick="@command('searchDiagnosis')"
+                                                id="buttonFind"
+                                        />
+                                        <hlayout sclass="z-valign-middle">
+                                            <hbox>
+                                                <vbox id="vboxDiagCode">
+<!--                                                    height="34px"-->
+                                                    <textbox id="diagnosisCode" sclass="maskingInput" width="100px"
+                                                             readonly="true"
+                                                             placeholder="Code" maxlength="7"
+                                                             constraint="/[\.A-Za-z0-9]*/: Nur Buchstaben, Zahlen und Punkte mit der maximalen Länge 6 sind hier möglich. "
+                                                             onCreate="self.focus()"
+                                                             onChange="@command('sucheChanged',ev=event)"
+                                                             onChanging="@command('sucheChanging',ev=event)"
+                                                             onCtrlKey="@command('sucheKeyDown',ev=event)"
+                                                             onOK="@command('sucheOnOk')"
+                                                    >
+                                                        <attribute name="onAfterSize">
+                                                            String maskCommand = "maskIcdCode('" +
+                                                            diagnosisCode.getUuid() + "')";
+                                                            Clients.evalJavaScript(maskCommand);
+                                                        </attribute>
+                                                    </textbox>
+                                                </vbox>
+                                                <textbox visible="true" id="diagnosisText" width="600px"
+                                                         readonly="false" height="32px" placeholder="Text"
+                                                         value="@bind(vm.diagnosisText)"
+                                                         onCreate="self.focus()" sclass="pflicht">
+                                                </textbox>
+                                                <div id="vboxSlimSelector" visible="false" width="706px"
+                                                       height="36px" style="border: 3px solid bisque" >
+<!--                                                    width="650px"-->
+                                                    <include id="incSlimSelector" visible="false"
+                                                             src="/gui/term/slimDomainValueSelector.zul"
+                                                               vflex="1" sclass="pflicht"/>
+                                                </div>
+                                            </hbox>
+                                        </hlayout>
+                                    </vlayout>                                    
+                                </hlayout>
+                            </row>
+                            <row>
+                                <label value="Seitenlokalisation:"/>
+                                <vbox>
+                                    <radiogroup id="rgPriority" style="margin-left: -10px"/>
+                                </vbox>
+                            </row>
+                            <row style="padding-top: 6px">
+                                <label value="Sicherheit:"/>
+                                <!--<combobox width="200px" readonly="true" id="cbSicherheit" />-->
+                                <radiogroup id="rgSicherheit" sclass="pflichtRadio"/>
+                            </row>
+                        </rows>
+                    </grid>
+                    <grid style="border-top: 1px solid rgba(227,227,227,0.5)">
+                        <columns>
+                            <column label="" width="180px"/>
+                            <column label="" width="212px"/>
+                            <column label="" width="180px"/>
+                            <column label=""/>
+                        </columns>
+                        <rows>
+                            <row>
+                                <label value="Persistenz:"/>
+                                    <vbox style="border: 1px solid lightgray; ">
+                                        <radiogroup id="rgPersistenz" onCheck="@command('toggleRgPersistence'ev=event)"/>
+                                        <button style="margin-left:15px" label="Zurücksetzen"
+                                                onClick="@command('resetPersistence')">
+                                        </button>
+                                    </vbox>
+                                    <vbox sclass="smallButton"
+                                          style="border: 1px solid lightgray; padding: 5px 5px 5px 0px;">
+                                        <radiogroup id="rgPersistenceDuration"/>
+                                        <button style="margin-left:20px" label="Zurücksetzen"
+                                                onClick="@command('resetPersistenceDuration')">
+                                        </button>
+                                    </vbox>
+                                    <radiogroup id="rgActive" sclass="pflichtRadio" onCheck="@command('toggleRgActivity',ev=event)"></radiogroup>
+                            </row>
+                        </rows>
+                    </grid>
+                    <groupbox height="98%" mold="3d" closable="false">
+                        <caption label="Weitere Angaben"/>
+                        <grid style="border-top: 1px solid rgba(227,227,227,0.5)">
+                            <columns>                           
+                                <column label="" width="180px"/>
+                                <column label="" width="100px"/>
+                                <column label="" width="120px"/>
+                                <column label="" width="100px"/> 
+                                <column label="" width="180px"/>
+                                <column label="" width="310px"/>
+                            </columns>
+                            <rows>
+                                <row id="rAdditional">    
+                                    <label value="Basisdokumentation:"/>
+                                    <checkbox id="basedoku" checked="@bind(vm.phenomenon.mbdsFlag)"/>
+                                    <label value="Risikofaktor:"/>
+                                    <checkbox id="chbRisk" />
+                                    <label value="Fall:" visible="false"/>
+                                    <combobox readonly="true" id="fallauswahl" visible="false">
+                                        <comboitem label="kein Fall"/>
+                                    </combobox>
+                                </row>
+                            </rows>
+                        </grid>
+                    </groupbox>
+                </div>
+            </north>
+            <center border="0">
+
+                <groupbox height="98%" mold="3d" closable="false">
+                    <caption label="Notiz"/>
+
+                    <include id="incNote" src="~./zul/pages/GenericList.zul" width="100%" height="100%"/>
+                    <!--                        <textbox id="note" hflex="true"
+                    value="@{winDiagnosisDetails.phenomenon.remark}"
+                    rows="11"  />-->
+                </groupbox>
+
+            </center>
+            <south height="65px" border="none">
+
+                <div>
+                    <button id="deleteDiag" onClick="@command('onDeleteClick')" label="Löschen"
+                            autodisable="self" disabled="true" visible="false"
+                            iconSclass="fas fa-trash"/>
+
+                    <button style="float:right" label="Speichern" tooltiptext="Speichern"
+                            iconSclass="fas fa-save"  onClick="@command('onOkClicked')"
+                            autodisable="self"/>
+                    <button style="float:right" label="Abbrechen" tooltiptext="Abbrechen"
+                            iconSclass="fas fa-times"
+                            onClick="@command('onCancelClicked')"
+                            autodisable="self"/>
+
+                </div>
+
+            </south>
+        </borderlayout>
+    </window>
+</zk>

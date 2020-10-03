@@ -1,0 +1,100 @@
+<zk>
+    <window width="100%" height="100%" apply="tutorial.Chart3VMC">
+        <style>
+            div.row {
+            width: 100%;
+            height: 45px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            }
+
+            div.row button, .control-elements {
+            margin: 10px;
+            }
+
+
+            .column {
+            width: 100%;
+            height: 45px;
+            display: flex;
+            flex-direction: column;
+            margin: 20px;
+            }
+
+            .control-elements.datebox {
+            width: 45px;
+            }
+
+            div.controls {
+            max-width: 500px;
+            }
+
+            .list-compared-activities{
+            overflow-y: auto;
+            }
+        </style>
+        <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart3VM')">
+            <div sclass="controls">
+
+
+                <div sclass="row">
+                    <label value="Aktivität" sclass="control-elements"></label>
+                    <listbox selectedItem="@bind(vm.aktivitaet)" mold="select"
+                             sclass="control-elements select"
+                             model="@bind(vm.activitiesNames)">
+                        <template name="children">
+                            <listitem label="${each}"/>
+                        </template>
+                    </listbox>
+
+                    <button id="suchen" label="Suchen" onClick="@command('renderChart')" width="125px"/>
+                </div>
+
+                <div sclass="row">
+                    <label value=" zu vergleichen " sclass="control-elements"></label>
+
+                    <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
+                             constraint="no empty, no future" weekOfYear="true"
+                             showTodayLink="true"
+                             sclass="control-elements"/>
+
+                    <label value=" mit: " sclass="control-elements"></label>
+                    <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
+                             constraint="no empty, no future" weekOfYear="true" placeholder=""
+                             showTodayLink="true"
+                             sclass="control-elements datebox"/>
+                </div>
+                <div>
+                    <label id="msg" value="@load(vm.compareMessage)"/>
+                </div>
+                <div sclass="row">
+                    <button id="woche" label="1 Woche" width="125px"/>
+                    <button id="monat" label="1 Monat" width="125px"/>
+                    <button id="jahr" label="1 Jahr" width="125px"/>
+                </div>
+
+                <vlayout sclass="column list-compared-activities" children="@bind(vm.comparedActivities)">
+
+                        <template name="children">
+                            <custom-attributes b="${each.name}"/>
+                            <div sclass="row">
+                                <label value="@load(each.name)"></label>
+                                <image if="${each.value != 0}"
+                                       src="@bind(each.value lt 0 ?'/img/redArrow.png':'/img/greenArrow.png')"
+                                       width="20px"></image>
+                                <label value="@load(each.value)"></label>
+                                <label value="%"></label>
+
+                                <image src="/img/cancel.png" sclass="icon report" width="20px"
+                                       onClick="@command('deleteActivity',query=b)"/>
+                            </div>
+                        </template>
+
+                </vlayout>
+            </div>
+
+
+        </div>
+    </window>
+</zk>

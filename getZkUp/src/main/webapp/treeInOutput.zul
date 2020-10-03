@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    
+
+    <window id="winTreeInOutput" width="40%" border="normal" title="" closable="true"
+            use="fh.TreeInOutput">
+        <style>
+            .noHeight .z-window-header {
+            height: 0px;
+            margin: -8px;
+            }
+
+            .modal-button {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+            font-size: 16px;
+            font-weight: normal;
+            font-style: normal;
+            color: #FFFFFF;
+            min-height: 24px;
+            border: 2px solid transparent;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            -o-border-radius: 4px;
+            -ms-border-radius: 4px;
+            border-radius: 4px;
+            padding: 8px 16px;
+            line-height: normal;
+            background-color: #0093F9;
+            -webkit-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
+            -moz-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
+            -o-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
+            -ms-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
+            cursor: pointer;
+            white-space: nowrap;
+            margin: 5px;
+            }
+        </style>
+        <div>
+            <div width="100%">
+                <tree id="mainTree" hflex="1" rows="10" style="overflow-y: auto;">
+                    <auxhead>
+                        <auxheader colspan="1"
+                                   style="border-right-style: solid; border-right-width: 1px; border-right-color: #D9D9D9;">
+                            <vlayout hflex="1">
+                                <label value="Fragen"/>
+                                <textbox id="idFragen" width="99%" placeholder="Suchen"
+                                         onChanging="winTreeInOutput.onChangeFilter(event)"/>
+                            </vlayout>
+                        </auxheader>
+                    </auxhead>
+                    <treecols>
+                        <treecol/>
+                    </treecols>
+                    <treechildren />
+                </tree>
+            </div>
+            <div style="display:flex; justify-content:flex-end " width="100%">
+                <button id="buttonOK" tooltiptext="Auswählen"
+                        onClick="winTreeInOutput.onOkClicked()"
+                        autodisable="self" label="Auswählen" sclass="modal-button"/>
+                <button id="buttonAbbrechen" tooltiptext="Abbrechen"
+                        onClick="winTreeInOutput.onCancelClicked()"
+                        autodisable="self" label="Abbrechen" sclass="modal-button"/>
+            </div>
+        </div>
+
+    </window>
+</zk>

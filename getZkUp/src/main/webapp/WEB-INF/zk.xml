@@ -16,4 +16,12 @@
 		<name>org.zkoss.web.classWebResource.cache</name>
 		<value>false</value>
 	</library-property>
+	<library-property>
+		<name>org.zkoss.zul.client.rod</name>
+		<value>false</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.web.preferred.locale</name>
+		<value>de</value>
+	</library-property>
 </zk>
