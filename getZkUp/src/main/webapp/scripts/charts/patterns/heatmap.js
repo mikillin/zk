@@ -102,124 +102,141 @@ getColor = function (min, max, value) {
 }
 
 function render() {
+    render("")
+}
 
 
-    var optimalValues = {
+var optimalValues = {};
+var src = {};
 
-        "Essen/Trinken": 10,
-        "Schlafen": 10,
-        "Laufen": 10
-    }
+function render(params) {
 
+    console.log(">>>" + params);
+    if (!params || !params.hasOwnProperty(optimalValues))
+        optimalValues = {
+            "Essen/Trinken": 10,
+            "Schlafen": 10,
+            "Laufen": 10
+        }
 
-    var src = getJSON();
-    src = preProccessing(src, optimalValues);
+    if (!params || !params.hasOwnProperty("src"))
+        src = getJSON();
+    else
+        src= params.src;
+    let overallLength;
+    if (!params || !params.hasOwnProperty("overallLength"))
+        overallLength = (100 + src[0].data.length * 50 + 100);
+else
+        overallLength = params.overallLength;
+
+    src = preProccessing(src, optimalValues); // add missed dates
 //init length of rows
     var rowLength = (100 + src[0].data.length * 50) + "px"
 
 //todo init as column
     var heatMapElement = document.getElementsByClassName("charts-heatmap")[0];
     heatMapElement.innerHTML = "";
-    let overallLength = (100 + src[0].data.length * 50 + 100);
-    heatMapElement.style.width = overallLength > 500 ? "500px" : overallLength + "px"; // name + margin + item-amount * 30px
+
+    heatMapElement.style.width = overallLength > 350 ? "350px" : overallLength + "px"; // name + margin + item-amount * 30px
 
     let overallHeight = (src.length * 50 + 80 + 20); // rows * 30 + dates +  margin
-    heatMapElement.style.height = overallHeight > 300 ? "300px" : overallHeight + "px";
+    heatMapElement.style.height = overallHeight > 250 ? "250px" : overallHeight + "px";
 
     heatMapElement.style.overflowX = "auto";
-    heatMapElement.style.paddingTop = "20px";
+    heatMapElement.style.paddingTop = "15px";
 
     var toolTipDiv = document.getElementsByClassName("bottom-tooltip")[0];
 
     toolTipDiv.style.width = heatMapElement.style.width;
     toolTipDiv.style.height = "50px";
 
-        for (var i = 0; i < src.length; i++) {
-            //      console.log(src[i].type);
-            let tmpRowDiv = document.createElement("div");
-            tmpRowDiv.classList.add("heat-map-row");
-            tmpRowDiv.classList.add("heat-map-row-common");
+    for (var i = 0; i < src.length; i++) {
+        //      console.log(src[i].type);
+        let tmpRowDiv = document.createElement("div");
+        tmpRowDiv.classList.add("heat-map-row");
+        tmpRowDiv.classList.add("heat-map-row-common");
 
-            tmpRowDiv.style.width = rowLength;
+        tmpRowDiv.style.width = rowLength;
 
-            //init div as row : done
+        let tmpDivText = document.createElement("div");
+        tmpDivText.classList.add("category-name");
+        tmpDivText.innerHTML = src[i].type;
+        tmpDivText.style.width = "100px";
+        tmpRowDiv.appendChild(tmpDivText);
+        //delete element
+        tmpDivText = document.createElement("div");
+        //tmpDivText.classList.add("delete");
+        var img = document.createElement("IMG");
+        img.src = "img/cancel.png";
+        img.style.width = "20px";
+        img.style.marignLeft = "10px";
+        img.style.marignRight = "10px";
 
-            let tmpDivText = document.createElement("div");
-            tmpDivText.classList.add("category-name");
-            tmpDivText.innerHTML = src[i].type;
-            tmpDivText.style.width = "100px";
-            tmpRowDiv.appendChild(tmpDivText);
-            //delete element
-            tmpDivText = document.createElement("div");
-            //tmpDivText.classList.add("delete");
-            var img = document.createElement("IMG");
-            img.src = "img/cancel.png";
-            img.style.width = "20px";
-            img.style.marignLeft = "10px";
-            img.style.marignRight = "10px";
-
-            img.dataset.type = src[i].type;
+        img.dataset.type = src[i].type;
 
 
-            img.addEventListener("click", function (event) {
-                //console.log("img clicked")
-                //todo:::
-                // add request to delete the item
-                //  console.log(event.target.dataset.type);
+        img.addEventListener("click", function (event) {
+            //console.log("img clicked")
+            //todo:::
+            // add request to delete the item
+            //  console.log(event.target.dataset.type);
 
-            }, false);
+        }, false);
 
-            tmpDivText.appendChild(img);
-
-
-            tmpRowDiv.appendChild(tmpDivText);
+        tmpDivText.appendChild(img);
 
 
-            for (var j = 0; j < src[i].data.length; j++) {
-                // console.log(src[i].data[j].data.date);
+        tmpRowDiv.appendChild(tmpDivText);
 
-                let tmpDiv = document.createElement("div");
-                tmpDiv.classList.add("tooltip");
 
-                let tmpSpan = document.createElement("span");
-                tmpSpan.classList.add("tooltiptext");
-                tmpSpan.innerHTML = "Wert:" + src[i].data[j].data.value + " von " + optimalValues[src[i].type];
+        for (var j = 0; j < src[i].data.length; j++) {
+            let tmpDiv = document.createElement("div");
+            tmpDiv.classList.add("tooltip");
 
-                tmpDiv.classList.add("heat-map-item");
+            let tmpSpan = document.createElement("span");
+            tmpSpan.classList.add("tooltiptext");
+            tmpSpan.innerHTML = "Wert:" + src[i].data[j].item.value + " von " + optimalValues[src[i].type];
 
-                tmpDiv.style.backgroundColor = getColor(0, optimalValues[src[i].type], src[i].data[j].data.value);
-                tmpDiv.dataset.value = src[i].data[j].data.value;
-                tmpDiv.dataset.type = src[i].type;
-                tmpDiv.dataset.id = src[i].data[j].data.id;
-                tmpDiv.dataset.date = src[i].data[j].data.date;
-                tmpDiv.appendChild(tmpSpan);
+            tmpDiv.classList.add("heat-map-item");
 
-                tmpDiv.addEventListener("click", function (event) {
-                    let optimalValue;
-                    if (optimalValues.hasOwnProperty(event.target.dataset.type)) {
-                        optimalValue = optimalValues[event.target.dataset.type]
-                    } else {
-                        optimalValue = " kein"
-                    }
-                    let bottomHint = "Aktivität:&nbsp;" + event.target.dataset.type +
+            tmpDiv.style.backgroundColor = getColor(0, optimalValues[src[i].type], src[i].data[j].item.value);
+            tmpDiv.dataset.value = src[i].data[j].item.value;
+            tmpDiv.dataset.type = src[i].type;
+            tmpDiv.dataset.id = src[i].data[j].id;
+            tmpDiv.dataset.date = src[i].data[j].item.date;
+            console.log(src[i].data[j].item.date)
+            tmpDiv.appendChild(tmpSpan);
+
+            tmpDiv.addEventListener("click", function (event) {
+                let optimalValue;
+                if (optimalValues.hasOwnProperty(event.target.dataset.type)) {
+                    optimalValue = optimalValues[event.target.dataset.type]
+                } else {
+                    optimalValue = " kein"
+                }
+
+                let bottomHint = "";
+                if (!event.target.dataset.type
+                    && !event.target.dataset.date
+                    && !event.target.dataset.value
+                ) {
+                    //clicked on the tooltip
+                } else {
+                    bottomHint = "Aktivität:&nbsp;" + event.target.dataset.type +
                         ". Datum:&nbsp;" + event.target.dataset.date +
                         ". Auswertung:&nbsp;" + event.target.dataset.value +
                         ". Ziel:&nbsp;" + optimalValue + ".";
-                    document.getElementsByClassName("bottom-tooltip")[0].innerHTML = bottomHint;
-                }, false);
 
-                tmpRowDiv.appendChild(tmpDiv);
-            }
-            let tmpDiv = document.createElement("div");
-
-            heatMapElement.appendChild(tmpRowDiv);
-
-
+                }
+                document.getElementsByClassName("bottom-tooltip")[0].innerHTML = bottomHint;
+            }, false);
+            tmpRowDiv.appendChild(tmpDiv);
         }
+        heatMapElement.appendChild(tmpRowDiv);
 
 
-//init
-//src[i].data[j].data.date
+    }
+
 
     let tmpRowDiv = document.createElement("div");
     tmpRowDiv.classList.add("heat-map-row");
@@ -237,7 +254,8 @@ function render() {
 
         tmpDiv.classList.add("heat-map-date");
         tmpDiv.style.width = "50px";
-        tmpDiv.style.height = "80px";
+        tmpDiv.style.height = "45px";
+        tmpDiv.style.fontSize = "10px";
 
 
         let tmpSpan = document.createElement("span");
@@ -249,5 +267,3 @@ function render() {
     }
     heatMapElement.appendChild(tmpRowDiv);
 }
-
-render();

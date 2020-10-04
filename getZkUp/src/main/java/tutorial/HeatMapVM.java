@@ -1,6 +1,9 @@
 package tutorial;
 
+import com.lowagie.text.html.simpleparser.ALink;
 import org.zkoss.bind.annotation.*;
+import org.zkoss.json.JSONArray;
+import org.zkoss.json.JSONObject;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.Clients;
@@ -13,7 +16,7 @@ import java.util.*;
 
 public class HeatMapVM {
     private List<Activity> activities = new ListModelList<Activity>();
-    private List<Activity> comparedActivities = new ListModelList<Activity>();
+    private List<Activity> chartActivities = new ListModelList<Activity>();
     private List<String> activitiesNames = new ListModelList<String>();
     private Set<Integer> selectedActivitiesIds = new HashSet<Integer>();
 
@@ -45,11 +48,11 @@ public class HeatMapVM {
     public void deleteActivity(@BindingParam("query") long activityId) {
 
         List<Activity> tmp = new ArrayList<Activity>();
-        tmp.addAll(comparedActivities);
-        comparedActivities.clear();
+        tmp.addAll(chartActivities);
+        chartActivities.clear();
         for (Activity comparedActivity : tmp) {
             if (comparedActivity.getId() != (activityId))
-                comparedActivities.add(comparedActivity);
+                chartActivities.add(comparedActivity);
         }
     }
 
@@ -67,63 +70,73 @@ public class HeatMapVM {
     public void renderChart() {
 
 
-            ChartsHelper ch = new ChartsHelper("heatmap");
-            Clients.evalJavaScript(ch.readChartFile());
-           /* if (isNotAllParametersEntered())
-                return;
+        // Clients.evalJavaScript(new ChartsUtil().compileChart("heatmap", "render"));
+        if (isNotAllParametersEntered())
+            return;
 
-            selectedActivitiesIds.add(Integer.parseInt(this.activityId));
 
-            Activity beginActivity;
-            Activity endActivity;
-            long bestComparedBeginDateTime;
-            long bestComparedEndDateTime;
+        selectedActivitiesIds.add(Integer.parseInt(this.activityId));
 
-            if (activities.size() > 0) {
-                beginActivity = activities.get(0);
-                endActivity = activities.get(0);
-                bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - beginActivity.getDate().getTime());
-                bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - endActivity.getDate().getTime());
-            } else {
-                System.err.println(">>> Error: the size of activities is wrong");
-                return;
-            }
-
+        chartActivities.clear();
+        for (Integer activityId : selectedActivitiesIds) {
             for (Activity activity : activities) {
-                if (getActivityById(Integer.parseInt(this.activityId)).getCategory().equals(activity.getCategory())
-                        && getActivityById(Integer.parseInt(this.activityId)).getName().equals(activity.getName())) {
-                    if (Math.abs(chart1_db0.getTime() - activity.getDate().getTime()) < bestComparedBeginDateTime) {
-                        bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
-                        beginActivity = activity;
-                    }
-                    if (Math.abs(chart1_db1.getTime() - activity.getDate().getTime()) < bestComparedEndDateTime) {
-                        bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - activity.getDate().getTime());
-                        endActivity = activity;
-                    }
+                if (getActivityById(activityId).getCategory().equals(activity.getCategory())
+                        && getActivityById(activityId).getName().equals(activity.getName()) &&
+                        (chart1_db0 == null && chart1_db1 == null
+                                || chart1_db0 == null && chart1_db1 != null && chart1_db1.after(activity.getDate())
+                                || chart1_db0 != null && chart1_db0.before(activity.getDate()) && chart1_db1 == null
+                                || chart1_db0 != null && chart1_db0.before(activity.getDate()) && chart1_db1 != null && chart1_db1.after(activity.getDate())
+                        )) {
+                    chartActivities.add(activity);
+                }
+            }
+        }
+
+
+        JSONArray src = new JSONArray();
+        JSONArray data = new JSONArray();
+
+        JSONObject jsonData;
+        JSONObject jsonItem;
+        JSONObject jsonMain;
+
+        HashSet<String> categoriesNames = new HashSet();
+        for (Integer activityId : this.selectedActivitiesIds)
+            categoriesNames.add(getActivityById(activityId).getCategory());
+
+        for (String category : categoriesNames) {
+            jsonMain = new JSONObject();
+
+            for (Activity activity : chartActivities) {
+                if (activity.getCategory().equals(category)) {
+                    jsonData = new JSONObject();
+                    jsonItem = new JSONObject();
+
+
+                    jsonItem.put("value", activity.getValue());
+                    jsonItem.put("date", new SimpleDateFormat("dd.MM.yyyy").format(activity.getDate()));
+
+                    jsonData.put("item", jsonItem);
+                    jsonData.put("id", activity.getId());
+
+                    data.add(jsonData);
+
                 }
             }
 
-            //TODO: round till?
-            if (this.getActivityById(Integer.parseInt(activityId)) == null) {
-                return;
-            }
-            Activity comparedActivity = new Activity(
-                    new Date().getTime(), //todo: generate id for delete
-                    this.getActivityById(Integer.parseInt(activityId)).getCategory(),
-                    this.getActivityById(Integer.parseInt(activityId)).getName(),
-                    null,
-                    beginActivity.getDate(),
-                    endActivity.getDate(),
-                    calculateCompareValue(beginActivity, endActivity));
-            if (!isAlreadyInCompare(comparedActivity))
-                comparedActivities.add(comparedActivity);
+            jsonMain.put("type", category);
+            jsonMain.put("data", data);
+            src.add(jsonMain);
+        }
 
-            */
+        JSONObject result = new JSONObject();
+        result.put("src", src);
+        Clients.evalJavaScript(new ChartsUtil().compileChart("heatmap", "render", result.toJSONString()));
 
     }
 
     private boolean isAlreadyInCompare(Activity activity) {
-        for (Activity activityInCompare : comparedActivities) {
+        for (Activity activityInCompare : chartActivities) {
             if (activityInCompare.getCategory().equals(activity.getCategory())
                     && activityInCompare.getPeriodFrom().equals(activity.getPeriodFrom())
                     && activityInCompare.getPeriodTo().equals(activity.getPeriodTo())
@@ -135,13 +148,20 @@ public class HeatMapVM {
         return false;
     }
 
+    private List<Activity> getActivitiesWithCatAndName(Activity selectedActivity) {
+        List<Activity> result = new ArrayList();
+        for (Activity activity : this.activities) {
+
+            if (selectedActivity.getCategory().equals(activity.getCategory())
+                    && selectedActivity.getName().equals(activity.getName()))
+                result.add(activity);
+        }
+        return result;
+    }
+
     //todo: id shouldn't be 0
     private boolean isNotAllParametersEntered() {
         return this.activityId == null || (this.activityId != null && this.activityId.equals(""));
-    }
-
-    private int calculateCompareValue(Activity beginActivity, Activity endActivity) {
-        return (int) (((new Double(endActivity.getValue() - beginActivity.getValue())) / beginActivity.getValue()) * 100);
     }
 
 
@@ -189,12 +209,12 @@ public class HeatMapVM {
         this.activities = activities;
     }
 
-    public List<Activity> getComparedActivities() {
-        return comparedActivities;
+    public List<Activity> getChartActivities() {
+        return chartActivities;
     }
 
-    public void setComparedActivities(List<Activity> comparedActivities) {
-        this.comparedActivities = comparedActivities;
+    public void setChartActivities(List<Activity> chartActivities) {
+        this.chartActivities = chartActivities;
     }
 
     public List<String> getActivitiesNames() {

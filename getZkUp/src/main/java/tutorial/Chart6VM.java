@@ -1,17 +1,12 @@
 package tutorial;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.zkoss.bind.annotation.*;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Window;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -214,8 +209,7 @@ public class Chart6VM {
 
     private void executeJS() {
 
-        ChartsHelper chartsHelper = new ChartsHelper("heatmap");
-        Clients.evalJavaScript(chartsHelper.readChartFile());
+        Clients.evalJavaScript(new ChartsUtil().compileChart("heatmap"));
 
         return;
         /*

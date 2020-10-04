@@ -5,6 +5,7 @@
     <stylesheet href="/css/charts/style.css" type="text/css"/>
 
 
+
     <javascript src="/scripts/charts/chart.js" merge="true"/>
     <javascript src="/scripts/charts/loader.js" merge="true"/>
     <javascript src="/scripts/charts/d3.v4.min.js" merge="true"/>
