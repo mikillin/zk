@@ -77,11 +77,13 @@ public class TestViewModel {
 
     @Listen("onTest=#btnOpen")
     public void onTest(Event evt) {
+
         Messagebox.show("1234");
     }
 
     @Listen("onTest")
     public void onTest2(Event evt) {
+
         Messagebox.show("onTest2");
     }
 

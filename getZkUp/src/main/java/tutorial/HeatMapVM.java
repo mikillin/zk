@@ -25,6 +25,7 @@ public class HeatMapVM {
     private Date chart1_db0;
     private Date chart1_db1;
     private String chosenQuestion;
+    private JSONArray optimalValues = new JSONArray();
 
 
     @Command
@@ -41,19 +42,15 @@ public class HeatMapVM {
     @Init
     public void init(@ContextParam(ContextType.VIEW) Component view) {
         this.fillActivities();
+        this.fillOptimalValues();
     }
 
 
     @Command
-    public void deleteActivity(@BindingParam("query") long activityId) {
+    public void deleteActivity(@BindingParam("query") Integer activityId) {
 
-        List<Activity> tmp = new ArrayList<Activity>();
-        tmp.addAll(chartActivities);
-        chartActivities.clear();
-        for (Activity comparedActivity : tmp) {
-            if (comparedActivity.getId() != (activityId))
-                chartActivities.add(comparedActivity);
-        }
+        selectedActivitiesIds.remove(activityId);
+        renderChart();
     }
 
 
@@ -74,8 +71,8 @@ public class HeatMapVM {
         if (isNotAllParametersEntered())
             return;
 
-
-        selectedActivitiesIds.add(Integer.parseInt(this.activityId));
+        if (this.activityId != null)
+            selectedActivitiesIds.add(Integer.parseInt(this.activityId));
 
         chartActivities.clear();
         for (Integer activityId : selectedActivitiesIds) {
@@ -96,41 +93,70 @@ public class HeatMapVM {
         JSONArray src = new JSONArray();
         JSONArray data = new JSONArray();
 
-        JSONObject jsonData;
-        JSONObject jsonItem;
-        JSONObject jsonMain;
+        JSONObject jsonData = new JSONObject();
+        JSONObject jsonItem = new JSONObject();
+        JSONObject jsonMain = new JSONObject();
 
-        HashSet<String> categoriesNames = new HashSet();
+        //todo: take cat + name  + all dates
+        HashSet<String> questions = new HashSet();
         for (Integer activityId : this.selectedActivitiesIds)
-            categoriesNames.add(getActivityById(activityId).getCategory());
+            questions.add(getActivityById(activityId).getName());
 
-        for (String category : categoriesNames) {
-            jsonMain = new JSONObject();
+        String category = "";
+        String question = "";
 
-            for (Activity activity : chartActivities) {
-                if (activity.getCategory().equals(category)) {
+
+        for (Activity activity : this.chartActivities) {
+
+            if (!category.equals(activity.getCategory()) || !question.equals(activity.getName())) {
+                //new set of a definite activity
+                //the set should be sorted
+
+
+                if (data.size() > 0) {
+                    jsonMain = new JSONObject();
+                    jsonMain.put("category", category);
+                    jsonMain.put("question", question);
+                    jsonMain.put("data", data);
+                    src.add(jsonMain);
+
                     jsonData = new JSONObject();
                     jsonItem = new JSONObject();
-
-
-                    jsonItem.put("value", activity.getValue());
-                    jsonItem.put("date", new SimpleDateFormat("dd.MM.yyyy").format(activity.getDate()));
-
-                    jsonData.put("item", jsonItem);
-                    jsonData.put("id", activity.getId());
-
-                    data.add(jsonData);
-
+                    data = new JSONArray();
                 }
+
+                category = activity.getCategory();
+                question = activity.getName();
+
             }
 
-            jsonMain.put("type", category);
+
+            jsonData = new JSONObject();
+            jsonItem = new JSONObject();
+            jsonItem.put("value", activity.getValue());
+            jsonItem.put("date", new SimpleDateFormat("dd.MM.yyyy").format(activity.getDate()));
+
+            jsonData.put("item", jsonItem);
+            jsonData.put("id", activity.getId());
+
+            data.add(jsonData);
+        }
+
+
+        // the last set of data
+        if (data.size() > 0) {
+            jsonMain = new JSONObject();
+            jsonMain.put("category", category);
+            jsonMain.put("question", question);
             jsonMain.put("data", data);
             src.add(jsonMain);
+
         }
+
 
         JSONObject result = new JSONObject();
         result.put("src", src);
+        result.put("optimalValues", optimalValues);
         Clients.evalJavaScript(new ChartsUtil().compileChart("heatmap", "render", result.toJSONString()));
 
     }
@@ -173,26 +199,55 @@ public class HeatMapVM {
     }
 
     /*stub*/
+    private void fillOptimalValues() {
+
+        JSONObject item = new JSONObject();
+        item.put("category", "Essen/Trinken");
+        item.put("question", "Wieviele Mahlzeiten haben Sie zu sich genommen?");
+        item.put("value", 3);
+        optimalValues.add(item);
+
+        item = new JSONObject();
+        item.put("category", "Wietere positive Aktivitäten");
+        item.put("question", "Wie haben Sie sich dabei gefühlt?");
+        item.put("value", 11);
+        optimalValues.add(item);
+
+        item = new JSONObject();
+        item.put("category", "Schlaf");
+        item.put("question", "Wielange waren Sie im Bett (in Stunden)?");
+        item.put("value", 8);
+        optimalValues.add(item);
+
+        item = new JSONObject();
+        item.put("category", "Entschpanungs- oder Atmenübungen");
+        item.put("question", "Wie haben Sie sich dabei gefühlt?");
+        item.put("value", 10);
+        optimalValues.add(item);
+
+    }
+
+
     private void fillActivities() {
 
         this.activities.clear();
         try {
-            this.activities.add(new Activity(11, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 20));
-            this.activities.add(new Activity(2, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 30));
-            this.activities.add(new Activity(3, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 40));
-            this.activities.add(new Activity(4, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 50));
-            this.activities.add(new Activity(21, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 4));
-            this.activities.add(new Activity(6, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 10));
-            this.activities.add(new Activity(7, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 15));
-            this.activities.add(new Activity(8, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 11));
-            this.activities.add(new Activity(31, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 220));
-            this.activities.add(new Activity(10, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 140));
-            this.activities.add(new Activity(11, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 15));
-            this.activities.add(new Activity(12, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 19));
-            this.activities.add(new Activity(41, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 220));
-            this.activities.add(new Activity(14, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 140));
-            this.activities.add(new Activity(15, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 15));
-            this.activities.add(new Activity(16, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 19));
+            this.activities.add(new Activity(11, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 2));
+            this.activities.add(new Activity(2, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 3));
+            this.activities.add(new Activity(3, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 4));
+            this.activities.add(new Activity(4, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 3));
+            this.activities.add(new Activity(21, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 4));
+            this.activities.add(new Activity(6, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 10));
+            this.activities.add(new Activity(7, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 15));
+            this.activities.add(new Activity(8, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 11));
+            this.activities.add(new Activity(31, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 7));
+            this.activities.add(new Activity(10, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 9));
+            this.activities.add(new Activity(11, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 8));
+            this.activities.add(new Activity(12, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 8));
+            this.activities.add(new Activity(41, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 10));
+            this.activities.add(new Activity(14, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 11));
+            this.activities.add(new Activity(15, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 7));
+            this.activities.add(new Activity(16, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 10));
 
 
         } catch (ParseException e) {

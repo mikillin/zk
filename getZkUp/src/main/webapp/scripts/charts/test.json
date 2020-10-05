@@ -1,100 +1,69 @@
 [
   {
-    "type": "Laufen",
+    "category": "Essen\/Trinken",
+    "question": "Wieviele Mahlzeiten haben Sie zu sich genommen?",
     "data": [
       {
-        "id": 1,
-        "data": {
-          "date": "01.08.2020",
-          "value": "1"
-        }
+        "item": {
+          "value": 10,
+          "date": "14.05.2020"
+        },
+        "id": 41
       },
       {
-        "id": 2,
-        "data": {
-          "date": "11.08.2019",
-          "value": "4"
-        }
+        "item": {
+          "value": 11,
+          "date": "14.06.2020"
+        },
+        "id": 14
       },
       {
-        "id": 3,
-        "data": {
-          "date": "21.08.2020",
-          "value": "7"
-        }
+        "item": {
+          "value": 7,
+          "date": "14.07.2020"
+        },
+        "id": 15
       },
       {
-        "id": 4,
-        "data": {
-          "date": "31.08.2020",
-          "value": "5"
-        }
+        "item": {
+          "value": 10,
+          "date": "14.08.2020"
+        },
+        "id": 16
       }
     ]
   },
   {
-    "type": "Schlafen",
+    "category": "Essen\/Trinken",
+    "question": "Wieviele Mahlzeiten haben Sie zu sich genommen?",
     "data": [
       {
-        "id": 1,
-        "data": {
-          "date": "03.08.2020",
-          "value": "7"
-        }
+        "item": {
+          "value": 2,
+          "date": "14.05.2020"
+        },
+        "id": 11
       },
       {
-        "id": 2,
-        "data": {
-          "date": "13.08.2020",
-          "value": "9"
-        }
+        "item": {
+          "value": 3,
+          "date": "14.06.2020"
+        },
+        "id": 2
       },
       {
-        "id": 3,
-        "data": {
-          "date": "22.08.2020",
-          "value": "8"
-        }
+        "item": {
+          "value": 4,
+          "date": "14.07.2020"
+        },
+        "id": 3
       },
       {
-        "id": 4,
-        "data": {
-          "date": "31.08.2020",
-          "value": "12"
-        }
-      }
-    ]
-  } ,
-  {
-    "type": "Essen/Trinken",
-    "data": [
-      {
-        "id": 1,
-        "data": {
-          "date": "03.08.2020",
-          "value": "3"
-        }
-      },
-      {
-        "id": 2,
-        "data": {
-          "date": "13.08.2020",
-          "value": "2"
-        }
-      },
-      {
-        "id": 3,
-        "data": {
-          "date": "22.08.2020",
-          "value": "3"
-        }
-      },
-      {
-        "id": 4,
-        "data": {
-          "date": "31.08.2020",
-          "value": "4"
-        }
+        "item": {
+          "value": 3,
+          "date": "14.08.2020"
+        },
+        "id": 4
       }
     ]
   }
