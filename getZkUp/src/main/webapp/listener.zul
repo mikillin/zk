@@ -28,7 +28,7 @@
         <script>
             function open()
             {
-            var data = "122323";
+
             zAu.send(new zk.Event(zk.Widget.$('$btnOpen'), 'onTest', {foo: 'my data'}, {toServer:true}));
             zAu.send(new zk.Event(null, 'onTest2', {foo: 'my data'}, {toServer:true}));
 

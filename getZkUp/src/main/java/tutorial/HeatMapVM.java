@@ -6,8 +6,13 @@ import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.InputEvent;
+import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import java.text.ParseException;
@@ -26,6 +31,13 @@ public class HeatMapVM {
     private Date chart1_db1;
     private String chosenQuestion;
     private JSONArray optimalValues = new JSONArray();
+
+
+    @AfterCompose
+    public void doAfterCompose(@ContextParam(ContextType.VIEW) Component view) {
+        Selectors.wireEventListeners(view, this);
+
+    }
 
 
     @Command
@@ -47,10 +59,16 @@ public class HeatMapVM {
 
 
     @Command
-    public void deleteActivity(@BindingParam("query") Integer activityId) {
+    public void deleteActivity(@BindingParam("ev") InputEvent event) {
 
-        selectedActivitiesIds.remove(activityId);
-        renderChart();
+        String deleteId = event.getValue();
+        for (Integer id : selectedActivitiesIds)
+            if (deleteId.equals(id.toString())) {
+                selectedActivitiesIds.remove(id);
+                break;
+            }
+
+        renderChart(false); // don't add any items. only to delete
     }
 
 
@@ -65,13 +83,17 @@ public class HeatMapVM {
 
     @Command
     public void renderChart() {
+        renderChart(true);
+    }
+
+    public void renderChart(boolean addNewItem) {
 
 
         // Clients.evalJavaScript(new ChartsUtil().compileChart("heatmap", "render"));
         if (isNotAllParametersEntered())
             return;
 
-        if (this.activityId != null)
+        if (this.activityId != null && addNewItem)
             selectedActivitiesIds.add(Integer.parseInt(this.activityId));
 
         chartActivities.clear();
@@ -236,18 +258,23 @@ public class HeatMapVM {
             this.activities.add(new Activity(2, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 3));
             this.activities.add(new Activity(3, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 4));
             this.activities.add(new Activity(4, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 3));
+            this.activities.add(new Activity(5, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 3));
             this.activities.add(new Activity(21, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 4));
             this.activities.add(new Activity(6, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 10));
             this.activities.add(new Activity(7, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 15));
             this.activities.add(new Activity(8, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 11));
+            this.activities.add(new Activity(9, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 11));
             this.activities.add(new Activity(31, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 7));
             this.activities.add(new Activity(10, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 9));
             this.activities.add(new Activity(11, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 8));
             this.activities.add(new Activity(12, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 8));
+            this.activities.add(new Activity(16, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 8));
             this.activities.add(new Activity(41, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 10));
             this.activities.add(new Activity(14, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 11));
             this.activities.add(new Activity(15, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 7));
             this.activities.add(new Activity(16, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 10));
+            this.activities.add(new Activity(17, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 10));
+//            this.activities.add(new Activity(17, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 15));
 
 
         } catch (ParseException e) {

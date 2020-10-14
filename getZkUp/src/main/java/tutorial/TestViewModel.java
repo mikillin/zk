@@ -1,5 +1,10 @@
 package tutorial;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
@@ -11,64 +16,56 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Messagebox;
 
+import java.util.Date;
+
 public class TestViewModel {
+    static Assessment assessment;
+    static Session sessionObj;
+    static SessionFactory sessionFactoryObj;
 
 
     @Command("render")
     public void render() {
+        System.out.println("render executed");
         //nothing
+
+//        try {
+//            sessionObj = buildSessionFactory().openSession();
+//            sessionObj.beginTransaction();
+//
+//            for (int i = 101; i <= 105; i++) {
+//                assessment = new Assessment();
+//                assessment.setId(i);
+//                assessment.setQuestion("Question " + i);
+//                assessment.setDate(new Date());
+//
+//                sessionObj.save(assessment);
+//            }
+//            System.out.println("\n.......Records Saved Successfully To The Database.......\n");
+//
+//            // Committing The Transactions To The Database
+//            sessionObj.getTransaction().commit();
+//        } catch (Exception sqlException) {
+//            if (null != sessionObj.getTransaction()) {
+//                System.out.println("\n.......Transaction Is Being Rolled Back.......");
+//                sessionObj.getTransaction().rollback();
+//            }
+//            sqlException.printStackTrace();
+//        } finally {
+//            if (sessionObj != null) {
+//                sessionObj.close();
+//            }
+//        }
     }
 
     @AfterCompose
     public void doAfterCompose(@ContextParam(ContextType.VIEW) Component view) {
         Selectors.wireEventListeners(view, this);
-
-        String script = "let render = function() {\n" +
-                "    let sourceJSON = getJSON();\n" +
-                "    const svg1 = document.createElementNS(\"http://www.w3.org/2000/svg\", \"svg\");\n" +
-                "    let title = document.createElementNS(\"http://www.w3.org/2000/svg\", \"title\");\n" +
-                "    let text = document.createElementNS(\"http://www.w3.org/2000/svg\", \"text\");\n" +
-                "    let g = document.createElementNS(\"http://www.w3.org/2000/svg\", \"g\");\n" +
-                "    svg1.setAttribute(\"width\", \"1300\");\n" +
-                "    svg1.setAttribute(\"height\", \"1300\");\n" +
-                "\n" +
-                "    rect1 = document.createElementNS(\"http://www.w3.org/2000/svg\", \"rect\");\n" +
-                "    rect1.setAttribute(\"x\", 200);\n" +
-                "    rect1.setAttribute(\"y\", 200);\n" +
-                "    rect1.setAttribute(\"width\", \"20\");\n" +
-                "    rect1.setAttribute(\"height\", \"40\");\n" +
-                "    rect1.setAttribute(\"stroke-width\", \"1\");\n" +
-                "    let title = document.createElementNS(\"http://www.w3.org/2000/svg\", \"title\");\n" +
-                "    title.innerHTML = \"Inner HTML\";\n" +
-                "    rect1.appendChild(title);\n" +
-                "\n" +
-                "    rect1.setAttribute(\"fill\", \"red\");\n" +
-                "    rect1.setAttribute(\"stroke\", \"orange\");\n" +
-                "\n" +
-                "    g.appendChild(rect1);\n" +
-                "    svg1.appendChild(g);\n" +
-                "\n" +
-                "\n" +
-                "    let svgParent = document.getElementsByClassname(\"svgClass\")[0];\n" +
-                "    svgParent.appendChild(svg1);\n" +
-                "\n" +
-                "\n" +
-                "    d3.selectAll('rect')\n" +
-                "        .on('click', function(d, i) {\n" +
-                "            d3.select(this)\n" +
-                "                .style('fill', 'orange');\n" +
-                "\n" +
-                "            open();\n" +
-                "\n" +
-                "        })\n" +
-                "}\n" +
-                "render();";
-
-        script = "list = document.getElementsByClassName(\"pointer\");\n" +
+        String script = "list = document.getElementsByClassName(\"pointer\");\n" +
                 "    for (var i = 0; i < list.length; i++) {\n" +
                 "        list[i].addEventListener(\"click\", function(e) {\n" +
                 "           document.getElementById(\"info\").innerHTML  = this.dataset.hint;\n" +
-                " open();"+
+                " open();" +
                 "        });\n" +
                 "    }";
         Clients.evalJavaScript(script);
@@ -79,12 +76,57 @@ public class TestViewModel {
     public void onTest(Event evt) {
 
         Messagebox.show("1234");
+
+
+        try {
+            sessionObj = buildSessionFactory().openSession();
+            sessionObj.beginTransaction();
+
+            for (int i = 101; i <= 105; i++) {
+                assessment = new Assessment();
+                assessment.setId(i);
+                assessment.setQuestion("Question " + i);
+                assessment.setDate(new Date());
+
+                sessionObj.save(assessment);
+            }
+            System.out.println("\n.......Records Saved Successfully To The Database.......\n");
+
+            // Committing The Transactions To The Database
+            sessionObj.getTransaction().commit();
+        } catch (Exception sqlException) {
+            if (null != sessionObj.getTransaction()) {
+                System.out.println("\n.......Transaction Is Being Rolled Back.......");
+                sessionObj.getTransaction().rollback();
+            }
+            sqlException.printStackTrace();
+        } finally {
+            if (sessionObj != null) {
+                sessionObj.close();
+            }
+        }
+
+
     }
 
     @Listen("onTest")
     public void onTest2(Event evt) {
 
         Messagebox.show("onTest2");
+    }
+
+
+    private static SessionFactory buildSessionFactory() {
+        // Creating Configuration Instance & Passing Hibernate Configuration File
+        Configuration configObj = new Configuration();
+        configObj.configure("hibernate.cfg.xml");
+
+        // Since Hibernate Version 4.x, ServiceRegistry Is Being Used
+        ServiceRegistry serviceRegistryObj = new StandardServiceRegistryBuilder().applySettings(configObj.getProperties()).build();
+
+        // Creating Hibernate SessionFactory Instance
+        sessionFactoryObj = configObj.buildSessionFactory(serviceRegistryObj);
+        return sessionFactoryObj;
     }
 
 

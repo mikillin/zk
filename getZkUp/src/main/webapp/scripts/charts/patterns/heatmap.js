@@ -3,7 +3,7 @@ function preProccessing(src, optimalValues) {
     let chartDates = [];
     let chartNames = [];
 
-    for (i = 0; i < src.length; i++) {
+     for (i = 0; i < src.length; i++) {
         if (optimalValues.hasOwnProperty(src[i].activity)) { // if there is a goal
             if (!chartDates.includes(src[i].date)) // find all possible dates
                 chartDates.push(src[i].date);
@@ -152,10 +152,16 @@ function render(params) {
 
     heatMapElement.style.width = overallLength > 350 ? "350px" : overallLength + "px"; // name + margin + item-amount * 30px
 
+
     let overallHeight = (src.length * 50 + 80 + 20); // rows * 30 + dates +  margin
     heatMapElement.style.height = overallHeight > 250 ? "250px" : overallHeight + "px";
 
+    heatMapElement.style.width = "350px";
+    heatMapElement.style.height = "250px";
+
+
     heatMapElement.style.overflowX = "auto";
+    heatMapElement.style.overflowY = "auto";
     heatMapElement.style.paddingTop = "15px";
 
     var toolTipDiv = document.getElementsByClassName("bottom-tooltip")[0];
@@ -184,15 +190,18 @@ function render(params) {
         img.style.width = "20px";
         img.style.marignLeft = "10px";
         img.style.marignRight = "10px";
-
-        img.dataset.category = src[i].category;
+console.log(src[i].data[0].id);
+        img.dataset.id = src[i].data[0].id;
 
 
         img.addEventListener("click", function (event) {
             //console.log("img clicked")
             //todo:::
             // add request to delete the item
-            //  console.log(event.target.dataset.category); // need id and redraw
+            // console.log(event.target.dataset.id); // need id and redraw
+            console.log("js file : event.target.dataset.id:" + event.target.dataset.id);
+            deleteActivity(event.target.dataset.id);
+            startWinning();
             //invoke function zscript from there a command
 
         }, false);
@@ -225,6 +234,7 @@ function render(params) {
             tmpDiv.dataset.category = src[i].category;
             tmpDiv.dataset.question = src[i].question;
             tmpDiv.dataset.id = src[i].data[j].id;
+       //     console.log(">>>" + tmpDiv.dataset.id);
             tmpDiv.dataset.date = src[i].data[j].item.date;
             tmpDiv.dataset.optimalValue = optimalValue;
 
