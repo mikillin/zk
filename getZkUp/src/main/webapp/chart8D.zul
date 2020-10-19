@@ -51,14 +51,14 @@
             flex-direction: column;
             overflow: auto;
             align-self: flex-start;
-            height: 260px;
-            width: 370px;
+            height: 175px;
+            width: 530px;
             justify-content: flex-start;
             }
 
 
             .compare-name {
-            width: 200px;
+            width: 370px;
             }
 
             .row {
@@ -125,19 +125,16 @@
             background: whitesmoke;
             border-radius: 30px;
             height: 60px;
-            width:340px;
+            width:505px;
             margin: 5px;
-
             }
 
             div.full-item-name-block {
             display: flex;
             flex-direction: column;
             margin: 10px;
-            width: 200px;
+            width: 380px;
             padding-left: 10px;
-
-
             }
 
             .compare-field {
@@ -162,8 +159,8 @@
 
 
         <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
-            <div sclass="column" >
-                <div sclass="row "  style="justify-content: center">
+            <div sclass="column">
+                <div sclass="row " style="justify-content: center">
 
                     <div>
                         <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
@@ -194,18 +191,20 @@
                     <template name="children">
 
 
-<!--                        <div sclass="result-item">-->
-                        <div sclass="">
+                        <div sclass="result-item">
+
                             <custom-attributes b="${each.id}"/>
                             <div sclass="full-item-name-block compare-field">
                                 <div sclass="compare-category ">
                                     <label value="@load(each.category)" sclass="compare-category"></label>
 
                                     <label value="@load(each.periodFrom) @converter('tutorial.DateConverter')"
-                                           sclass="compare-category" visible="@load(not empty each.periodFrom)"></label>
+                                           sclass="compare-category"
+                                           visible="@load(not empty each.periodFrom)"></label>
                                     <label value="-" visible="@load(not empty each.periodFrom)"></label>
                                     <label value="@load(each.periodTo) @converter('tutorial.DateConverter')"
-                                           sclass="compare-category" visible="@load(not empty each.periodTo)"></label>
+                                           sclass="compare-category"
+                                           visible="@load(not empty each.periodTo)"></label>
                                 </div>
                                 <div sclass="compare-name ">
                                     <label value="@load(each.name)" sclass="compare-name" maxlength="80">
@@ -223,8 +222,9 @@
                             </div>
                             <div sclass="delete-image-icon compare-field">
                                 <image src="/img/cancel.png" sclass="icon" width="20px"
-                                       onClick="@command('deleteActivity',query=b)"/>
+                                       onClick="@command('deleteActivity',activityId=b)"/>
                             </div>
+
                         </div>
                     </template>
                 </div>

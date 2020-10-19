@@ -2,6 +2,7 @@ package fh;
 
 //import de.fhdo.helper.IUpdateModal;
 
+import db.service.TreeDynamicService;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.ext.AfterCompose;
@@ -130,41 +131,71 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
 
 
         /*stub*/
-        TreeElement category, question;
-        ArrayList<TreeElement> entryList =  new ArrayList<>();
+        TreeElement category = null, question;
+        ArrayList<TreeElement> entryList = new ArrayList<>();
         ArrayList<TreeElement> subEntries;
 
 
-        subEntries= new ArrayList<>();
-
-
-        category = new TreeElement(1, "Essen/Trinken", true);
-        question = new TreeElement(11, "Wieviele Mahlzeiten haben Sie zu sich genommen?");
-        subEntries.add(question);
-        category.setSubEntries(subEntries);
-        entryList.add(category);
-
-
         subEntries = new ArrayList<>();
-        category = new TreeElement(2, "Wietere positive Aktivitäten", true);
-        question = new TreeElement(21, "Wie haben Sie sich dabei gefühlt?");
-        subEntries.add(question);
-        category.setSubEntries(subEntries);
-        entryList.add(category);
 
-        subEntries = new ArrayList<>();
-        category = new TreeElement(3, "Schlaf", true);
-        question = new TreeElement(31, "Wielange waren Sie im Bett (in Stunden)?");
-        subEntries.add(question);
-        category.setSubEntries(subEntries);
-        entryList.add(category);
 
+//        category = new TreeElement(1, "Essen/Trinken", true);
+//        question = new TreeElement(11, "Wieviele Mahlzeiten haben Sie zu sich genommen?");
+//        subEntries.add(question);
+//        category.setSubEntries(subEntries);
+//        entryList.add(category);
+//
+//
+//        subEntries = new ArrayList<>();
+//        category = new TreeElement(2, "Wietere positive Aktivitäten", true);
+//        question = new TreeElement(21, "Wie haben Sie sich dabei gefühlt?");
+//        subEntries.add(question);
+//        category.setSubEntries(subEntries);
+//        entryList.add(category);
+//
+//        subEntries = new ArrayList<>();
+//        category = new TreeElement(3, "Schlaf", true);
+//        question = new TreeElement(31, "Wielange waren Sie im Bett (in Stunden)?");
+//        subEntries.add(question);
+//        category.setSubEntries(subEntries);
+//        entryList.add(category);
+//
+//        subEntries = new ArrayList<>();
+//        category = new TreeElement(4, "Entschpanungs- oder Atmenübungen", true);
+//        question = new TreeElement(41, "Wie haben Sie sich dabei gefühlt?");
+//        subEntries.add(question);
+//        category.setSubEntries(subEntries);
+//        entryList.add(category);
+
+
+        entryList.clear();
+        List<Object[]> assessmentEntities = new TreeDynamicService().getCategoriesAndQuestions();
+
+        int catId = -1;
+        int questionId = -1;
         subEntries = new ArrayList<>();
-        category = new TreeElement(4, "Entschpanungs- oder Atmenübungen", true);
-        question = new TreeElement(41, "Wie haben Sie sich dabei gefühlt?");
-        subEntries.add(question);
-        category.setSubEntries(subEntries);
-        entryList.add(category);
+
+        for (Object[] assessmentEntityObject : assessmentEntities) {
+            if (catId != (int) assessmentEntityObject[0]) {
+                // add old
+                if (subEntries.size() > 0) {
+                    if (category == null)
+                        category = new TreeElement(((Integer) assessmentEntityObject[0]).longValue(), (String) assessmentEntityObject[2], true);
+                    category.setSubEntries(subEntries);
+                    entryList.add(category);
+                }
+                category = new TreeElement(((Integer) assessmentEntityObject[0]).longValue(), (String) assessmentEntityObject[2], true);
+                subEntries = new ArrayList<>();
+            }
+
+            question = new TreeElement(((Integer) assessmentEntityObject[1]).longValue(), (String) assessmentEntityObject[3]);
+            subEntries.add(question);
+        }
+
+        if (subEntries.size() > 0) { //last category
+            category.setSubEntries(subEntries);
+            entryList.add(category);
+        }
 
 
         setEntryList(entryList);
@@ -186,7 +217,6 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
         this.detach();
 
         BindUtils.postGlobalCommand(null, null, "sendActivity", data);
-
         setVisible(false);
     }
 

@@ -1,0 +1,84 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+    <window title="" width="100%" border="normal"
+            viewModel="@id('vm') @init('tutorial.Chart5VM')">
+
+        <style>
+            img.icon {
+            max-width: 20px;
+            max-height: 40px;
+            }
+
+            div.charts {
+            border-style: double;
+            border-width: 2px;
+            border-color: lightgrey;
+            display: flex;
+            flex-direction: column;
+            width: 450px;
+            padding: 10px;
+            }
+
+            div.charts-row{
+            display: flex;
+            flex-direction: row;
+            height: 45px;
+            }
+
+            div.charts-row .question{
+            width: 450px;
+            }
+
+            div.charts-row .value{
+            width: 35px;
+            color: red;
+            }
+
+            div.charts-row .icon{
+            width: 35px;
+            }
+
+            div.charts-data-container {
+            overflow-y: auto;
+            padding: 10px;
+            }
+
+            div.chart-name {
+            color: grey;
+            font-size: 15px;
+            margin: 0px 0 20px 0;
+            display: flex;
+            flex-direction: row;
+            }
+        </style>
+        <div sclass="charts">
+            <div sclass="chart-name">
+                <label>Warnhinweis: </label> <label value="@load(vm.surveyName)"/><label>. von: </label><label value=" @load(vm.surveyDate)"/>
+
+            </div>
+            <div sclass="charts-data-container">
+                <div children="@init(vm.assessmentEntities)">
+
+                    <template name="children">
+
+                        <div sclass="charts-row">
+                            <custom-attributes b="${each.date}"/>
+                            <div sclass="question">
+                                <label value="${each.question}"/>
+                            </div>
+                            <div sclass="value">
+                                <label value="${each.value}"/>
+                            </div>
+                            <div sclass="icon">
+                                <image src="/img/document.png" sclass="icon report"
+                                       onClick="@command('showSurvey',date=b)"/>
+                            </div>
+                        </div>
+
+                    </template>
+
+                </div>
+            </div>
+        </div>
+    </window>
+</zk>

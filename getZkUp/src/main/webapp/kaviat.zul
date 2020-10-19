@@ -1,0 +1,18 @@
+<zk>
+    <window width="100%" height="100%">
+        <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+        <style>
+            .line {
+            stroke: #000000;
+            stroke-width: 0.5;
+            }
+        </style>
+
+        <div sclass="charts kaviat" id="lineChartId" viewModel="@id('vm') @init('tutorial.ChartKaviatVM')">
+            <div sclass="column">
+                <div zclass="kaviat-chart">
+                </div>
+            </div>
+        </div>
+    </window>
+</zk>

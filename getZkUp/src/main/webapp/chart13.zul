@@ -1,0 +1,49 @@
+<zk>
+    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+        <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+        <?script type="text/javascript" src="/scripts/charts/loader.js"?>
+
+        <style>
+
+
+        </style>
+
+
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart13VM')">
+            <div sclass="row">
+                <div sclass="column controls-block">
+
+                    <div sclass="row">
+                        <div>
+                            <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
+                                     constraint="no empty, no future" weekOfYear="true"
+                                     showTodayLink="true"
+                                     sclass="control-elements datebox"/>
+                        </div>
+                        <div>
+                            <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
+                                     constraint="no empty, no future" weekOfYear="true" placeholder=""
+                                     showTodayLink="true"
+                                     sclass="control-elements datebox"/>
+                        </div>
+
+                    </div>
+
+                    <div sclass="row row-with-images">
+
+                        <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/search.png"
+                               width="20px" zclass="search-icon"></image>
+                        <image src="/img/add.png" id="suchen" onClick="@command('renderChart')"
+                               sclass="add-image-icon"/>
+                    </div>
+
+
+                </div>
+
+                <div sclass="chart13">
+
+                </div>
+            </div>
+        </div>
+    </window>
+</zk>

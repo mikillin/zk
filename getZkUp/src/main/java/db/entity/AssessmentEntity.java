@@ -12,45 +12,54 @@ public class AssessmentEntity {
 
     @Id
     @Column(name = "id")
-    private long id;
-    @Column(name = "category")
-    private int category;
+    private int id;
+    @Column(name = "category_id")
+    private int categoryId;
+    @Column(name = "question_id")
+    private int questionId;
     @Column(name = "question")
     private String question;
     @Column(name = "date")
     private Date date;
     @Column(name = "value")
     private int value;
-    @Column(name = "categoryName")
+    @Column(name = "category_name")
     private String categoryName;
+    @Column(name = "min_value")
+    private String minValue;
+    @Column(name = "max_value")
+    private String maxValue;
+    @Column(name = "survey_name")
+    private String surveyName;
 
 
     public AssessmentEntity() {
     }
 
-    public AssessmentEntity(long id, int category, String question, Date date, int value, String categoryName) {
+    public AssessmentEntity(int id, int category, String question, Date date, int value, String categoryName, String surveyName) {
         this.id = id;
-        this.category = category;
+        this.categoryId = category;
         this.question = question;
         this.date = date;
         this.value = value;
         this.categoryName = categoryName;
+        this.surveyName = surveyName;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public int getCategory() {
-        return category;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(int category) {
-        this.category = category;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getQuestion() {
@@ -83,5 +92,37 @@ public class AssessmentEntity {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
+    }
+
+    public String getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(String minValue) {
+        this.minValue = minValue;
+    }
+
+    public String getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(String maxValue) {
+        this.maxValue = maxValue;
+    }
+
+    public String getSurveyName() {
+        return surveyName;
+    }
+
+    public void setSurveyName(String surveyName) {
+        this.surveyName = surveyName;
     }
 }

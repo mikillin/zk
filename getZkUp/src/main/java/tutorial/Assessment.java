@@ -7,21 +7,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
-@Entity
-@Table(name = "ASSESSMENT")
 public class Assessment {
 
-    @Id
-    @Column(name = "id")
     private int id;
+    private int patientId;
 
-    @Column(name = "category_name")
     private String username;
-    @Column(name = "question")
     private String question;
-    @Column(name = "date")
+
     private Date date;
-    @Column(name = "value")
+
     private String value;
 
 
@@ -63,5 +58,13 @@ public class Assessment {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public int getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
     }
 }

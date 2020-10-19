@@ -12,6 +12,7 @@ public class ChartsUtil {
 
     /**
      * Reads the js file of chart
+     *
      * @param fileName name of the file without extension
      * @return String to execute by Clients.evalJavaScript(script);
      */
@@ -28,7 +29,7 @@ public class ChartsUtil {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("::File not found: " + SCRIPT_PATH+fileName + ".js: " + e);
+            System.out.println("::File not found: " + SCRIPT_PATH + fileName + ".js: " + e);
             return "console.log('Error occurred: ' + " + e + ")";
         }
         return sb.toString();
@@ -36,7 +37,8 @@ public class ChartsUtil {
 
     /**
      * Adds to the end of file. Invokes the method
-     * @param fileName name of the file without extension
+     *
+     * @param fileName   name of the file without extension
      * @param methodName name of the method to execute
      * @return String to execute by Clients.evalJavaScript(script);
      */
@@ -51,9 +53,10 @@ public class ChartsUtil {
 
     /**
      * Adds to the end of file. Invokes the method with params
-     * @param fileName name of the file without extension
+     *
+     * @param fileName   name of the file without extension
      * @param methodName name of the method to execute
-     * @param params params for the execution method
+     * @param params     params for the execution method
      * @return String to execute by Clients.evalJavaScript(script);
      */
     public String compileChart(String fileName, String methodName, String params) {
