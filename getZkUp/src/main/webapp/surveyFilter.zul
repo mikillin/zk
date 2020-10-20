@@ -1,0 +1,113 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+    <window title="" border="none" viewModel="@id('vm') @init('fhdo.SurveyFilterVM')">
+        <style>
+
+            div.survey-filter-search {
+            padding: 20px;
+            }
+
+            input.survey-filter-search {
+            padding: 10px;
+            border-radius: 15px;
+            height: 28px;
+            width: 170px;
+            font-size: 15px;
+            }
+
+            div.survey-filter-container {
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%
+            }
+
+            div.survey-filter-mainrow {
+            width: 180px;
+            margin-top: 10px;
+            border-style: dotted;
+            border-width: 2px;
+            border-color: lightgrey;
+            cursor: pointer;
+            overflow-y: none;
+            }
+
+            div.survey-filter-row {
+            height: 45px;
+            display: flex;
+            flex-direction: row;
+            padding: 15px 5px 10px 5px;
+            }
+
+            div.survey-filter-left {
+            display: flex;
+            justify-content: flex-start;
+            width: 90px;
+            }
+
+            div.survey-filter-prep {
+            display: flex;
+            justify-content: flex-end;
+            }
+
+            div.survey-filter-right {
+            display: flex;
+            justify-content: flex-end;
+            width: 80px;
+            }
+            div.survey-filter-block .z-label, div.survey-filter-date .z-label {
+            font-size: 12px;
+            }
+
+            div.survey-filter-block{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%
+            }
+
+            img.survey-filter-icon{
+            width: 20px;
+            max-height: 40px;
+            cursor:help;
+
+            }
+        </style>
+        <div sclass="survey-filter-block">
+            <div sclass="survey-filter-search">
+                <textbox type="text" sclass="survey-filter-search" value="@save(vm.keyword)"
+                         placeholder="Suchen nach.."
+                         onChanging="@command('search')" onChange="@command('search')"></textbox>
+            </div>
+
+            <div class="container">
+                <div class="column"  children="@init(vm.surveysList)">
+                    <template name="children">
+                        <div sclass="survey-filter-mainrow">
+                            <div sclass="survey-filter-row">
+                                <div sclass="survey-filter-left">
+                                    <label value="${each.surveyName}"/>
+                                </div>
+                                <div sclass="survey-filter-prep">
+                                    <label value=" von "/>
+                                </div>
+                                <div sclass="survey-filter-right survey-filter-date">
+                                    <label value="${c:formatDate(each.date, 'dd/MM/yyyy')}"/>
+                                </div>
+                            </div>
+                            <div sclass="survey-filter-row">
+                                <div sclass="survey-filter-left">Status:
+                                    <label value="${each.status}"/>
+                                </div>
+                                <div sclass="survey-filter-right">
+                                    <custom-attributes b="${each.surveyId}"/>
+                                    <image src="/img/report.png" sclass="survey-filter-icon survey-filter-report"
+                                           onClick="@command('showSurvey',surveyId=b)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </window>
+</zk>

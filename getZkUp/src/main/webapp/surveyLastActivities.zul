@@ -1,0 +1,96 @@
+<zk>
+    <window title="" width="100%" border="none" viewModel="@id('vm') @init('fhdo.SurveyLastActivitiesVM')">
+
+        <style>
+            div.activity-messages-block {
+            display: flex;
+            flex-direction: row;
+            padding: 0 10px 0 10px;
+            height: 100%;
+            width: 100%;
+            overflow-x: auto;
+            }
+
+            div.activity-messages-block-name{
+            width: 150px;
+            }
+
+            div.activity-messages-block-items{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            }
+
+            div.activity-message-item {
+            width:180px;
+            height: 55px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px 0 5px;
+            border-style: dotted;
+            border-width: 2px;
+            border-color: lightgrey;
+            border-radius: 10px;
+            }
+
+            div.activity-message-text span{
+            font-size : 12px;
+            }
+
+            div.activity-messages-row-area {
+            display: flex;
+            flex-direction: row;
+            }
+
+            div.activity-messages-column-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            }
+
+            img.survey-icon{
+            max-width: 20px;
+            max-height: 40px;
+            margin: 17px 5px;
+            }
+
+            img.report {
+            cursor: help;
+            }
+        </style>
+        <div sclass="activity-messages-row-area">
+            <div sclass="activity-messages-block-name">
+                <label value="Letzte Aktivitäten" width="300px"/>
+            </div>
+            <div sclass="activity-messages-block">
+                <div class="activity-messages-block-items" children="@init(vm.activityMessages)">
+                    <template name="children">
+                        <div sclass="activity-message-item">
+                            <div sclass="activity-messages-row-area">
+                                <div sclass="activity-messages-column-area">
+                                    <div sclass="activity-message-text activity-message-survey-name">
+                                        <label value="${each.surveyName}"/><label value=" #"/><label value="${each.id}"/>
+                                    </div>
+                                    <div sclass="activity-message-text activity-message-description">
+                                        <label value="${each.description}"/>
+                                    </div>
+                                    <div sclass="activity-message-text activity-message-date">
+                                        <label value="${each.date}"/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <custom-attributes b="${each.surveyId}"/>
+                                    <image src="/img/report.png" sclass="survey-icon report"
+                                           onClick="@command('showSurvey',surveyId=b)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </window>
+</zk>

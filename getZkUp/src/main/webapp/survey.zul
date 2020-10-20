@@ -1,52 +1,28 @@
-<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
-    <window id= "winModal" title="" mode="modal" closable="true" onClose="@command('onCancelClicked')"
+    <window id="winModal" title="" mode="modal" closable="true"
             width="500px" height="350px" border="normal"
-            apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('tutorial.SurveyVM')">
+            viewModel="@id('vm') @init('fhdo.SurveyVM')">
 
         <style>
-            img.icon {
-            max-width: 20px;
-            max-height: 40px;
-            }
-
-
-            .modal-button {
-            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-            font-size: 16px;
-            font-weight: normal;
-            font-style: normal;
-            color: #FFFFFF;
-            min-height: 24px;
-            border: 2px solid transparent;
-            -webkit-border-radius: 4px;
-            -moz-border-radius: 4px;
-            -o-border-radius: 4px;
-            -ms-border-radius: 4px;
-            border-radius: 4px;
-            padding: 8px 16px;
-            line-height: normal;
-            background-color: #0093F9;
-            -webkit-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-            -moz-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-            -o-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-            -ms-box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-            box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-            cursor: pointer;
-            white-space: nowrap;
-            margin: 5px;
-            }
-
             div.charts-data-container.modal {
             overflow-y: auto;
             padding: 10px;
-            height: 245px;
+            height: 220px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: lightgrey;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            margin-top: 10px;
             }
 
             div.charts-row.modal{
             display: flex;
             flex-direction: row;
             height: 45px;
+            background-color: whitesmoke;
+            margin: 10px 0;
+            padding: 5px;
             }
 
             div.charts-row .question.modal{
@@ -55,21 +31,24 @@
 
             div.charts-row .value.modal{
             width: 35px;
-          color: black;
+            color: black;
             }
         </style>
+        <div>
+            <label value="@bind(vm.surveyName)"></label>
+            <label value=" #"></label>
+            <label value="@bind(vm.surveyId)"></label>
+        </div>
         <div sclass="charts-data-container modal">
             <div children="@init(vm.surveyAssessments)">
                 <template name="children">
                     <div sclass="charts-row modal">
-                        <custom-attributes b="${each.questionId}"/>
                         <div sclass="question modal">
                             <label value="${each.question}"/>
                         </div>
                         <div sclass="value modal">
                             <label value="${each.value}"/>
                         </div>
-
                     </div>
                 </template>
             </div>

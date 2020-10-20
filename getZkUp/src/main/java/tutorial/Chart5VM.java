@@ -1,6 +1,7 @@
 package tutorial;
 
 import db.entity.AssessmentEntity;
+import db.service.AssessmentService;
 import db.service.WarningService;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -49,7 +50,7 @@ public class Chart5VM {
     }
 
     private void fillAssessmentEntities() {
-        assessmentEntities.addAll(WarningService.getAllWarnings());
+        assessmentEntities.addAll(AssessmentService.getAllWarnings());
     }
 
     public List<AssessmentEntity> getAssessmentEntities() {

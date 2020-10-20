@@ -1,5 +1,5 @@
 <zk>
-	<vlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('tutorial.DateboxViewModel')">
+	<vlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('fhdo.DateboxViewModel')">
 		<hlayout>
 			date <datebox id="date1" value="@bind(vm.dateBox)" ></datebox>
 		</hlayout>

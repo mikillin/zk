@@ -2,7 +2,7 @@ package fh;
 
 //import de.fhdo.helper.IUpdateModal;
 
-import db.service.TreeDynamicService;
+import db.service.TreeSearchService;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.ext.AfterCompose;
@@ -14,11 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
+public class TreeInOutput extends Window implements AfterCompose
+//        , IDoubleClick
+//        , IUpdateModal
+{
 
 
     public static final int MINIMUM_ENTERED_SYMBOLS_FOR_SEARCHING = 2;
-    Textbox idFragen, tbIdFilter;
+
     Tree mainTree;
     TreeNode root;
     private ArrayList<TreeElement> entryList;
@@ -27,20 +30,17 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
     private TreeRenderer treeRenderer;
 //    private IUpdateModal updateModal;
 
-    //erzeugt einen Baum und alle zugehoerigen Elemente anhand der beigefuegten Liste
     private void createTree(List<TreeElement> dataList) {
         root = new DefaultTreeNode(null, createTreeNodeList(dataList));
         treeModel = new DefaultTreeModel(root);
-//        mainTree.setMultiple(true); // doesn't work
         mainTree.setModel(treeModel);
 
         if (treeRenderer == null) {
-            treeRenderer = new TreeRenderer(this);
+            treeRenderer = new TreeRenderer(null);
             mainTree.setItemRenderer(treeRenderer);
         }
     }
 
-    //erzeugt rekursiv eine Liste mit Baumknoten und deren Kindern usw.
     private List<TreeNode> createTreeNodeList(List<TreeElement> dataList) {
         List<TreeNode> list = new ArrayList<>();
 
@@ -54,7 +54,6 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
         return list;
     }
 
-    //aendert die Filter bei Eingabe durch den User und startet validierung
     public void onChangeFilter(InputEvent event) {
         if (filter == null) {
             filter = new TreeFilter();
@@ -67,7 +66,6 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
         }
     }
 
-    //prueft ob ein Element den Filterkriterien standhaelt
     private boolean checkFilter(TreeElement entry) {
 
         if (filter.getText() != null && filter.getText().length() >= MINIMUM_ENTERED_SYMBOLS_FOR_SEARCHING) {
@@ -76,7 +74,6 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
         return true;
     }
 
-    //wendet den Filter auf den Tree an und renderd das vorhandene Model neu
     private void filterTree() {
         reset();
         for (TreeElement entry : entryList) {
@@ -87,23 +84,23 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
     }
 
     private void filterTreeRecursive(TreeElement parent, TreeElement child) {
-//        if (!child.isVisited()) {
-//            child.setVisible(false);
-//            child.setVisited(true);
-//        }
+        if (!child.isVisited()) {
+            child.setVisible(false);
+            child.setVisited(true);
+        }
         if (checkFilter(child)) {
             child.setVisible(true);
         } else {
             child.setVisible(false);
         }
-//        if (child.getSubEntries() != null && child.getSubEntries().size() > 0) {
-//            for (TreeElement grandChild : child.getSubEntries()) {
-//                filterTreeRecursive(child, grandChild);
-//            }
-//        }
-//        if (parent != null && child.isVisible()) {
-//            parent.setVisible(true);
-//        }
+        if (child.getSubEntries() != null && child.getSubEntries().size() > 0) {
+            for (TreeElement grandChild : child.getSubEntries()) {
+                filterTreeRecursive(child, grandChild);
+            }
+        }
+        if (parent != null && child.isVisible()) {
+            parent.setVisible(true);
+        }
 
     }
 
@@ -169,26 +166,28 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
 
 
         entryList.clear();
-        List<Object[]> assessmentEntities = new TreeDynamicService().getCategoriesAndQuestions();
+        List<Object[]> assessmentEntities = new TreeSearchService().getCategoriesAndQuestions();
 
         int catId = -1;
         int questionId = -1;
+        long questionFullId = -1; // catId * 100 + questionId;
         subEntries = new ArrayList<>();
 
         for (Object[] assessmentEntityObject : assessmentEntities) {
+            questionFullId = ((Integer) assessmentEntityObject[0]).longValue() * 100 +((Integer) assessmentEntityObject[0]).longValue();
             if (catId != (int) assessmentEntityObject[0]) {
                 // add old
                 if (subEntries.size() > 0) {
                     if (category == null)
-                        category = new TreeElement(((Integer) assessmentEntityObject[0]).longValue(), (String) assessmentEntityObject[2], true);
+                        category = new TreeElement(((Integer) assessmentEntityObject[0]).longValue() * 100, (String) assessmentEntityObject[2], true);
                     category.setSubEntries(subEntries);
                     entryList.add(category);
                 }
-                category = new TreeElement(((Integer) assessmentEntityObject[0]).longValue(), (String) assessmentEntityObject[2], true);
+                category = new TreeElement(((Integer) assessmentEntityObject[0]).longValue() * 100, (String) assessmentEntityObject[2], true);
                 subEntries = new ArrayList<>();
             }
 
-            question = new TreeElement(((Integer) assessmentEntityObject[1]).longValue(), (String) assessmentEntityObject[3]);
+            question = new TreeElement(questionFullId, (String) assessmentEntityObject[3]);
             subEntries.add(question);
         }
 
@@ -220,16 +219,7 @@ public class TreeInOutput extends Window implements AfterCompose, IDoubleClick {
         setVisible(false);
     }
 
-    @Override
-    public void onDoubleClick(Object value) {
-//        if (!(this.getParent() instanceof Include)) {
-////            updateModal.update(value, true);
-//            this.detach();
-//            setVisible(false);
-//        } else {
-//            Messagebox.show("Bitte wählen Sie den Eintrag mit Hilfe einer Checkbox aus!");
-//        }
-    }
+
 
     private void reset() {
         for (TreeElement entry : entryList) {

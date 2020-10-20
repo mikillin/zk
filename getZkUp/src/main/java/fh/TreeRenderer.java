@@ -29,14 +29,6 @@ public class TreeRenderer implements TreeitemRenderer {
             row.appendChild(cell);
             row.setStyle("height: 30px;");
             treeitem.appendChild(row);
-
-//            if (treeitem.getEventListeners(Events.ON_DOUBLE_CLICK) == null || !treeitem.getEventListeners(Events.ON_DOUBLE_CLICK).iterator().hasNext()) {
-//                treeitem.addEventListener(Events.ON_DOUBLE_CLICK, event -> {
-//                    if (doubleClickEvent != null) {
-//                        doubleClickEvent.onDoubleClick(((Treeitem) event.getTarget()).getValue());
-//                    }
-//                });
-//            }
         }
     }
 }

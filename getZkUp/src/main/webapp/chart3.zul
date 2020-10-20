@@ -1,5 +1,5 @@
 <zk>
-    <window width="100%" height="100%" apply="tutorial.Chart3VMC">
+    <window width="100%" height="100%" apply="fhdo.Chart3VMC">
         <style>
             div.row {
             width: 100%;
@@ -34,7 +34,7 @@
             overflow-y: auto;
             }
         </style>
-        <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart3VM')">
+        <div sclass="charts" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart3VM')">
             <div sclass="controls">
 
 

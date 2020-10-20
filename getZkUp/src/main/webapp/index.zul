@@ -1,5 +1,5 @@
 <zk xmlns:n="native" xmlns:w="http://www.w3.org/1999/xhtml">
-    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+    <window width="100%" height="100%" apply="fhdo.Chart8Controller">
 
         <style>
             div {

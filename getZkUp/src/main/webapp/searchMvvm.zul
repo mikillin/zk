@@ -4,11 +4,11 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
 
-    <window title="Search" width="100%" border="normal" onOK="@command('search')"
-            viewModel="@id('vm') @init('tutorial.SearchViewModel')"
+    <window title="" width="100%" border="normal"
+            viewModel="@id('vm') @init('fhdo.SearchViewModel')"
 
     >
-        <!--        apply = "tutorial.EmployeeDialogController"-->
+        <!--        apply = "fhdo.EmployeeDialogController"-->
         <style>
             div.filter {
             width: 280px;
@@ -235,7 +235,7 @@
             }
             .nord {
             padding-bottom: 15px;
-            height: 50px;}
+            height: 75px;}
 
             .full-height{
             height; 100%;}
@@ -246,45 +246,13 @@
                     <west size="75%" border="none">
                         <div sclass="column full-height">
                             <div sclass="nord">
-                                <div sclass="aktivitaet-block">
-                                    <div sclass="aktivitaeten-head">
-                                        <div>
-                                            <label value="Letzte Aktivitäten"/>
-                                        </div>
-                                        <div sclass="aktivitaet-radiogroup">
-                                            <listbox selectedItem="@bind(vm.aktivitaetZeitraum)" mold="select"
-                                                     onSelect="@command('renderActivityMessages')"
-                                                     sclass="control-elements select">
-                                                <listitem label="Heute" value="t"/>
-                                                <listitem label="1 Woche" value="w"/>
-                                                <listitem label="1 Monat" value="m"/>
-                                            </listbox>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="aktivitaeten" children="@init(vm.activeActivityMessages)">
-                                        <template name="children">
-                                            <div sclass="aktivitaet-item">
-                                                <div sclass="description">
-                                                    <label value="${each.description}"/>
-                                                </div>
-                                                <div sclass="date">
-                                                    <label value="${each.date}"/>
-                                                </div>
-
-                                            </div>
-                                        </template>
-                                    </div>
-
-
-                                </div>
+                                <include id="lastActivities" src="/lastActivities.zul" width="100%" height="100%"></include>
                             </div>
                             <div sclass="south">
                                 <div zclass="charts-block">
                                     <include id="chart" src="/chart.zul" width="100%" height="100%"></include>
 
-                                    <include id="chart8" src="/chart8.zul" width="100%" height="100%"></include>
+                                    <include id="chart8" src="/chart8D.zul" width="500px" height="350px"></include>
 
                                 </div>
 
@@ -294,50 +262,7 @@
                     </west>
 
                     <east size="350px">
-                        <div sclass="filter-block">
-                            <div sclass="search">
-
-                                <textbox type="text" sclass="search" value="@save(vm.keyword)"
-                                         placeholder="Suchen nach.."
-                                         onChanging="@command('search')"></textbox>
-                            </div>
-
-
-                            <div class="container">
-                                <div class="column" id="main1" children="@init(vm.items)">
-
-                                    <template name="children">
-
-                                        <div sclass="mainrow" onClick="alert(b)">
-                                            <custom-attributes b="${each.id}"/>
-                                            <div sclass="row">
-                                                <div sclass="left">
-                                                    <label value="${each.name}"/>
-                                                </div>
-                                                <div sclass="prep">
-                                                    von
-                                                </div>
-                                                <div sclass="right date">
-                                                    <label value="${each.date}"/>
-                                                </div>
-                                            </div>
-                                            <div sclass="row">
-                                                <!--                    <div sclass="@bind(item.quantity lt 3 ?'red left':'left')">Status: fertig</div>-->
-                                                <div sclass="left">Status:
-                                                    <label value="${each.status}"/>
-                                                </div>
-                                                <div sclass="right">
-                                                    <image src="/img/document.png" sclass="icon report"
-                                                           onClick="@command('doSomeAction',query=b)"/>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
+                        <include id="surveyFilterBlock" src="/surveyFilter.zul" width="100%" height="100%"></include>
                     </east>
                 </borderlayout>
             </north>

@@ -4,7 +4,7 @@
         <west size="25%"></west>
         <center>
             <window apply="org.zkoss.bind.BindComposer"
-                    viewModel="@id('vm') @init('tutorial.TreeDynamicVM')"
+                    viewModel="@id('vm') @init('fhdo.TreeDynamicVM')"
                     title="Dynamic Tree" border="normal">
                 <tree checkmark="true" model="@bind(vm.treeModel)" multiple="true"  rows = "3"
                       onSelect="@command('select')" >

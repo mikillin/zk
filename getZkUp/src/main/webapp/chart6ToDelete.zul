@@ -1,5 +1,5 @@
 <zk>
-    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+    <window width="100%" height="100%" apply="fhdo.Chart8Controller">
         <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
         <?script type="text/javascript" src="/scripts/charts/loader.js"?>
 
@@ -160,7 +160,7 @@
         </style>
 
 
-        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart8VM')">
             <div sclass="row">
                 <div sclass="column controls-block">
 
@@ -213,10 +213,10 @@
                                 <div sclass="compare-category ">
                                     <label value="@load(each.category)" sclass="compare-category"></label>
 
-                                    <label value="@load(each.periodFrom) @converter('tutorial.DateConverter')"
+                                    <label value="@load(each.periodFrom) @converter('fhdo.DateConverter')"
                                            sclass="compare-category" visible="@load(not empty each.periodFrom)"></label>
                                     <label value="-" visible="@load(not empty each.periodFrom)"></label>
-                                    <label value="@load(each.periodTo) @converter('tutorial.DateConverter')"
+                                    <label value="@load(each.periodTo) @converter('fhdo.DateConverter')"
                                            sclass="compare-category" visible="@load(not empty each.periodTo)"></label>
                                 </div>
                                 <div sclass="compare-name ">

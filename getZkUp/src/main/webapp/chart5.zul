@@ -1,7 +1,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
     <window title="" width="100%" border="normal"
-            viewModel="@id('vm') @init('tutorial.Chart5VM')">
+            viewModel="@id('vm') @init('fhdo.Chart5VM')">
 
         <style>
             img.icon {

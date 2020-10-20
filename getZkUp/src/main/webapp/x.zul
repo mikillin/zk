@@ -1,6 +1,6 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
-   <window apply="tutorial.X" >
+   <window apply="fhdo.X" >
 
         <div>
             Input:
@@ -17,7 +17,7 @@
                  value="@bind(vm.chart1_db1) "
                  sclass="control-elements"/>
 
-        <div viewModel="@id('vm')@init('tutorial.Xmodel')">
+        <div viewModel="@id('vm')@init('fhdo.Xmodel')">
             <label id="msg2" value="@load(vm.message)"/>
             <textbox onChanging="@command('showTyping',v=event.value)"/>
         </div>

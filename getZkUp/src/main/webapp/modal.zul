@@ -1,5 +1,5 @@
 <window id="modalDialog" title="Coffee Order" border="normal" width="460px"
-        apply="tutorial.EmployeeDialogController"
+        apply="fhdo.EmployeeDialogController"
         position="center,center" closable="true"
         action="show: slideDown;hide: slideUp">
     <vlayout>

@@ -1,6 +1,6 @@
 <zk>
 	<div align="center" style="padding-top:10px;padding-left:10px;"
-		apply="org.zkoss.tutorial.SearchComposer">
+		apply="org.zkoss.fhdo.SearchComposer">
 		<hbox align="end">
 			<textbox id="keywordBox" />
 			<button id="searchButton" label="Search" />

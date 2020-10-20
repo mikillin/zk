@@ -1,6 +1,6 @@
 
     <window id="win" xmlns:n="native" xmlns:w="http://www.zkoss.org/2005/zk/client" apply="org.zkoss.bind.BindComposer"
-            viewModel="@id('vm') @init('tutorial.TestViewModel')" onCreate="render()">
+            viewModel="@id('vm') @init('fhdo.TestViewModel')" onCreate="render()">
         <script>
             function open()
             {

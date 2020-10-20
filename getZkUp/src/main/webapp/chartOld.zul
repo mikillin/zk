@@ -7,7 +7,7 @@
     <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
 
 
-    <window width="100%" onOK="@command('renderChart')" viewModel="@id('vm') @init('tutorial.ChartVM')">
+    <window width="100%" onOK="@command('renderChart')" viewModel="@id('vm') @init('fhdo.ChartVM')">
         <div sclass="charts" id="lineChartId">
             <div sclass="controls">
 

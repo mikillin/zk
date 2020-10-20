@@ -8,7 +8,7 @@
             }
         </style>
 
-        <div sclass="charts kaviat" id="lineChartId" viewModel="@id('vm') @init('tutorial.ChartKaviatVM')">
+        <div sclass="charts kaviat" id="lineChartId" viewModel="@id('vm') @init('fhdo.ChartKaviatVM')">
             <div sclass="column">
                 <div zclass="kaviat-chart">
                 </div>

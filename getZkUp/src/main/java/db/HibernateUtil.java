@@ -1,7 +1,6 @@
 package db;
 
-import db.entity.AssessmentEntity;
-import db.service.TreeDynamicService;
+import db.service.TreeSearchService;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -40,7 +39,7 @@ public class HibernateUtil {
 //        AssessmentEntity assessment = new AssessmentService().getAssessmentByQuestionId(1);
 //        List<AssessmentEntity> listAssessments = new AssessmentService().getAssessmentByDatesAndQuestionId(new Date(1990), new Date(), 1);
 
-        List<Object[]> listAssessments = new TreeDynamicService().getCategoriesAndQuestions();
+        List<Object[]> listAssessments = new TreeSearchService().getCategoriesAndQuestions();
         System.out.println("after select");
 
 

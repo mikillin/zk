@@ -1,5 +1,5 @@
 <zk>
-    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+    <window width="100%" height="100%" apply="fhdo.Chart8Controller">
         <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
 
         <style>
@@ -158,7 +158,7 @@
         </style>
 
 
-        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart8VM')">
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart8VM')">
             <div sclass="column">
                 <div sclass="row " style="justify-content: center">
 
@@ -179,9 +179,9 @@
 
                     <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/search.png"
                            width="20px" sclass="search-icon"></image>
-                    <button id="woche" label="1 Woche" sclass="time-period"/>
-                    <button id="monat" label="1 Monat" sclass="time-period"/>
-                    <button id="jahr" label="1 Jahr" sclass="time-period"/>
+                    <button id="woche" label="Seit 1 Woche" sclass="time-period"/>
+                    <button id="monat" label="Seit 1 Monat" sclass="time-period"/>
+                    <button id="jahr" label="Seit 1 Jahr" sclass="time-period"/>
                     <image src="/img/add.png" id="suchen" onClick="@command('renderChart')"
                            sclass="add-image-icon"/>
                 </div>
@@ -198,11 +198,11 @@
                                 <div sclass="compare-category ">
                                     <label value="@load(each.category)" sclass="compare-category"></label>
 
-                                    <label value="@load(each.periodFrom) @converter('tutorial.DateConverter')"
+                                    <label value="@load(each.periodFrom) @converter('fhdo.DateConverter')"
                                            sclass="compare-category"
                                            visible="@load(not empty each.periodFrom)"></label>
                                     <label value="-" visible="@load(not empty each.periodFrom)"></label>
-                                    <label value="@load(each.periodTo) @converter('tutorial.DateConverter')"
+                                    <label value="@load(each.periodTo) @converter('fhdo.DateConverter')"
                                            sclass="compare-category"
                                            visible="@load(not empty each.periodTo)"></label>
                                 </div>

@@ -1,5 +1,5 @@
 <zk>
-    <window width="100%" height="100%" apply="tutorial.Chart8Controller">
+    <window width="100%" height="100%" apply="fhdo.Chart8Controller">
         <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
         <?script type="text/javascript" src="/scripts/charts/loader.js"?>
 
@@ -9,7 +9,7 @@
         </style>
 
 
-        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('tutorial.Chart13VM')">
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart13VM')">
             <div sclass="row">
                 <div sclass="column controls-block">
 

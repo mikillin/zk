@@ -31,12 +31,16 @@ public class AssessmentEntity {
     private String maxValue;
     @Column(name = "survey_name")
     private String surveyName;
+    @Column(name = "survey_id")
+    private int surveyId;
+    @Column(name = "status")
+    private String status;
 
 
     public AssessmentEntity() {
     }
 
-    public AssessmentEntity(int id, int category, String question, Date date, int value, String categoryName, String surveyName) {
+    public AssessmentEntity(int id, int category, String question, Date date, int value, String categoryName, String surveyName, int surveyId, String status) {
         this.id = id;
         this.categoryId = category;
         this.question = question;
@@ -44,6 +48,8 @@ public class AssessmentEntity {
         this.value = value;
         this.categoryName = categoryName;
         this.surveyName = surveyName;
+        this.surveyId = surveyId;
+        this.status = status;
     }
 
     public int getId() {
@@ -124,5 +130,21 @@ public class AssessmentEntity {
 
     public void setSurveyName(String surveyName) {
         this.surveyName = surveyName;
+    }
+
+    public int getSurveyId() {
+        return surveyId;
+    }
+
+    public void setSurveyId(int surveyId) {
+        this.surveyId = surveyId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
