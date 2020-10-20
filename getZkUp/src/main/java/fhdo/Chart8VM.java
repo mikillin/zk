@@ -10,20 +10,16 @@ import org.zkoss.zul.Window;
 
 import java.util.*;
 
-
+//todo: ist es interessant zu haben viele Auswertungen mit gleichen Kategorie und Frage, aber für verschiedene Daten?
+//todo: patientId and permissions
 public class Chart8VM {
     private List<Activity> activities = new ListModelList<Activity>();
     private List<Activity> comparedActivities = new ListModelList<Activity>();
     private Set<Integer> selectedActivitiesIds = new HashSet<Integer>();
 
-
     private String activityId;
     private Date chart1_db0;
     private Date chart1_db1;
-
-
-    //todo: >>>>>>> patientId - fom session, anyway Map should be
-
 
     @Command
     public void openModalQuestions() {
@@ -44,6 +40,7 @@ public class Chart8VM {
 
     @GlobalCommand
     public void sendActivity(@BindingParam("data") String activityId) {
+
         this.activityId = activityId;
         renderChart();
     }
@@ -51,7 +48,7 @@ public class Chart8VM {
 
     @GlobalCommand
     public void fireRenderChart() {
-              renderChart();
+        renderChart();
     }
 
 
@@ -67,6 +64,25 @@ public class Chart8VM {
         }
     }
 
+    @Command
+    public void setActivity(@BindingParam("activityId") long activityId) {
+
+        //  this.activityId = activityId;
+        for (Activity activity : comparedActivities) {
+            if (activityId == activity.getId()) {
+                for (Activity activityFromAll : activities) {
+                    if (activityFromAll.getCategory().equals(activity.getCategory())
+                            && activityFromAll.getName().equals(activity.getName())) {
+                        this.activityId = String.valueOf(activityFromAll.getId());
+                        return;
+                    }
+                }
+            }
+        }
+
+        System.err.println(">> activityId: " + activityId + " was not found");
+    }
+
 
     @Command
     public void renderChart() {
@@ -74,7 +90,16 @@ public class Chart8VM {
         if (isNotAllParametersEntered())
             return;
 
-        selectedActivitiesIds.add(Integer.parseInt(this.activityId));
+        if (this.getActivityById(Integer.parseInt(activityId)) == null) {
+            return;
+        }
+
+        //vielleicht wäre es besser nichts im Modalfenster zu zeigen, aber wann wird die Psychologin die verschiedene
+        // Zeiträume zu sehen wollen?
+        //deleteFromComparedActivities(this.getActivityById(Integer.parseInt(activityId)));
+
+        if (!selectedActivitiesIds.contains(Integer.parseInt(this.activityId)))
+            selectedActivitiesIds.add(Integer.parseInt(this.activityId));
 
         Activity beginActivity;
         Activity endActivity;
@@ -105,9 +130,7 @@ public class Chart8VM {
             }
         }
 
-        if (this.getActivityById(Integer.parseInt(activityId)) == null) {
-            return;
-        }
+
         Activity comparedActivity = new Activity(
                 new Date().getTime(), //todo: need to generate id for delete
                 this.getActivityById(Integer.parseInt(activityId)).getCategory(),
@@ -115,10 +138,28 @@ public class Chart8VM {
                 null,
                 beginActivity.getDate(),
                 endActivity.getDate(),
-                calculateCompareValue(beginActivity, endActivity));
+                calculateCompareValue(beginActivity, endActivity),
+                beginActivity.getValue(),
+                endActivity.getValue()
+        );
 
-        if (!isAlreadyInCompare(comparedActivity))
+
+        boolean add = true;
+        for (Activity tmpActivity : comparedActivities) {
+            if (comparedActivity.getCategory().equals(tmpActivity.getCategory())
+                    && comparedActivity.getName().equals(tmpActivity.getName())) {
+                tmpActivity.setPeriodFrom(comparedActivity.getPeriodFrom());
+                tmpActivity.setPeriodTo(comparedActivity.getPeriodTo());
+                tmpActivity.setValue(comparedActivity.getValue());
+                tmpActivity.setValueFrom(comparedActivity.getValueFrom());
+                tmpActivity.setValueTo(comparedActivity.getValueTo());
+                add = false;
+            }
+        }
+        if (add)
             comparedActivities.add(comparedActivity);
+
+        //how to refresh the list?
 
     }
 
@@ -129,6 +170,19 @@ public class Chart8VM {
                     && activity.getCategory().equals(tmpActivity.getCategory()))
                 return true;
         return false;
+    }
+
+    private List<Activity> deleteFromComparedActivities(Activity activity) {
+        List<Activity> tmpComparedActivities = new ArrayList<Activity>();
+        tmpComparedActivities.addAll(comparedActivities);
+        comparedActivities.clear();
+        for (Activity comparedActivity : tmpComparedActivities) {
+            if (comparedActivity.getName().equals(activity.getName())
+                    && comparedActivity.getCategory().equals(activity.getCategory()))
+                continue;
+            comparedActivities.add(comparedActivity);
+        }
+        return comparedActivities;
     }
 
     private List<Activity> deleteFromCompareList(Activity activity) {
@@ -168,8 +222,8 @@ public class Chart8VM {
         List<AssessmentEntity> assessmentEntities = new AssessmentService().getAllAssessments();
 
         for (AssessmentEntity assessmentEntity : assessmentEntities) {
-            this.activities.add(new Activity(assessmentEntity.getCategoryId()*100+assessmentEntity.getQuestionId(), assessmentEntity.getCategoryName(),
-                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue()));
+            this.activities.add(new Activity(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId(), assessmentEntity.getCategoryName(),
+                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue(), -1, -1));
         }
 
 //        try {
@@ -245,7 +299,6 @@ public class Chart8VM {
     public void setActivityId(String activityId) {
         this.activityId = activityId;
     }
-
 
 
 }

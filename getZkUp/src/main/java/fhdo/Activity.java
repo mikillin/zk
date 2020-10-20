@@ -11,11 +11,13 @@ public class Activity {
     private Date periodFrom;
     private Date periodTo;
     private int value;
+    private int valueFrom;
+    private int valueTo;
 
     public Activity() {
     }
 
-    public Activity(long id, String category, String name, Date date, Date periodFrom, Date periodTo, int value) {
+    public Activity(long id, String category, String name, Date date, Date periodFrom, Date periodTo, int value, int valueFrom, int valueTo) {
         this.id = id;
         this.category = category;
         this.name = name;
@@ -23,6 +25,8 @@ public class Activity {
         this.periodFrom = periodFrom;
         this.periodTo = periodTo;
         this.value = value;
+        this.valueFrom = valueFrom;
+        this.valueTo = valueTo;
     }
 
     public long getId() {
@@ -79,5 +83,21 @@ public class Activity {
 
     public void setPeriodTo(Date periodTo) {
         this.periodTo = periodTo;
+    }
+
+    public int getValueFrom() {
+        return valueFrom;
+    }
+
+    public void setValueFrom(int valueFrom) {
+        this.valueFrom = valueFrom;
+    }
+
+    public int getValueTo() {
+        return valueTo;
+    }
+
+    public void setValueTo(int valueTo) {
+        this.valueTo = valueTo;
     }
 }

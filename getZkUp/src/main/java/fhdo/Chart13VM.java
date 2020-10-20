@@ -134,7 +134,7 @@ public class Chart13VM {
         List<AssessmentEntity> assessmentEntities = new AssessmentService().getAssessmentByDatesAndQuestionId(chart1_db0, chart1_db1, Integer.parseInt(activityId));
         for (AssessmentEntity assessmentEntity : assessmentEntities) {
             this.activities.add(new Activity(assessmentEntity.getId(), assessmentEntity.getCategoryName(),
-                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue()));
+                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue(), -1, -1));
         }
     }
 

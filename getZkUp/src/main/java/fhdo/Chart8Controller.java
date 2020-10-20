@@ -63,9 +63,9 @@ public class Chart8Controller extends SelectorComposer<Window> {
         resultYearAgo.setYear(resultYearAgo.getYear() - 1);
         chart1_db1.setValue(resetHoursMinutesSeconds(new Date()));
         chart1_db0.setValue(resultYearAgo);
-//        Events.postEvent("onChange", chart1_db0, null);
-//        Events.postEvent("onChange", chart1_db1, null);
-//        BindUtils.postGlobalCommand(null, null, "fireRenderChart", null);
+        Events.postEvent("onChange", chart1_db0, null);
+        Events.postEvent("onChange", chart1_db1, null);
+        BindUtils.postGlobalCommand(null, null, "fireRenderChart", null);
 
 
     }

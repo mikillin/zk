@@ -1,6 +1,6 @@
 <zk>
     <window width="100%" height="100%" apply="fhdo.Chart8Controller">
-        <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+
 
         <style>
             div.row-half{
@@ -133,8 +133,9 @@
             display: flex;
             flex-direction: column;
             margin: 10px;
-            width: 380px;
+            width: 365px;
             padding-left: 10px;
+            cursor: pointer;
             }
 
             .compare-field {
@@ -142,6 +143,7 @@
 
             button.time-period {
             margin: 0 9px 9px 5px;
+            width: 110px;
             }
 
             .row-with-images {
@@ -155,6 +157,23 @@
             .compare-value.compare-field span {
             font-size: 14px;
             }
+
+            .arrow-image {
+            width: 40px;
+            }
+
+            .compare-value {
+            width: 50px;
+            }.compare-value.compare-field span {
+            font-size: 14px;
+            }
+
+            .add-image-icon, .delete-image-icon {
+            width: 20px;
+            cursor: pointer;
+            margin: 0 2px 0 2px;
+            }
+
         </style>
 
 
@@ -165,13 +184,13 @@
                     <div>
                         <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
                                  constraint="no empty, no future" weekOfYear="true"
-                                 showTodayLink="true"
+                                 showTodayLink="true" onChange="@command('renderChart')"
                                  sclass="control-elements datebox"/>
                     </div>
                     <div>
                         <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
                                  constraint="no empty, no future" weekOfYear="true" placeholder=""
-                                 showTodayLink="true"
+                                 showTodayLink="true" onChange="@command('renderChart')"
                                  sclass="control-elements datebox"/>
                     </div>
                 </div>
@@ -182,8 +201,6 @@
                     <button id="woche" label="Seit 1 Woche" sclass="time-period"/>
                     <button id="monat" label="Seit 1 Monat" sclass="time-period"/>
                     <button id="jahr" label="Seit 1 Jahr" sclass="time-period"/>
-                    <image src="/img/add.png" id="suchen" onClick="@command('renderChart')"
-                           sclass="add-image-icon"/>
                 </div>
 
 
@@ -191,11 +208,11 @@
                     <template name="children">
 
 
-                        <div sclass="result-item">
-
+                        <div sclass="result-item" >
                             <custom-attributes b="${each.id}"/>
-                            <div sclass="full-item-name-block compare-field">
-                                <div sclass="compare-category ">
+
+                            <div sclass="full-item-name-block compare-field"  onClick="@command('setActivity',activityId=b)">
+                                <div sclass="compare-category">
                                     <label value="@load(each.category)" sclass="compare-category"></label>
 
                                     <label value="@load(each.periodFrom) @converter('fhdo.DateConverter')"
@@ -220,11 +237,15 @@
                                 <label value="@load(each.value)"></label>
                                 <label value="%"></label>
                             </div>
+                            <div sclass="compare-value compare-field">
+                                <label value="@load(each.valueFrom)"></label>
+                                <label value="->"></label>
+                                <label value="@load(each.valueTo)"></label>
+                            </div>
                             <div sclass="delete-image-icon compare-field">
                                 <image src="/img/cancel.png" sclass="icon" width="20px"
                                        onClick="@command('deleteActivity',activityId=b)"/>
                             </div>
-
                         </div>
                     </template>
                 </div>
