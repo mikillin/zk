@@ -96,7 +96,7 @@ public class Chart8VM {
 
         //vielleicht wäre es besser nichts im Modalfenster zu zeigen, aber wann wird die Psychologin die verschiedene
         // Zeiträume zu sehen wollen?
-        //deleteFromComparedActivities(this.getActivityById(Integer.parseInt(activityId)));
+        deleteFromComparedActivities(this.getActivityById(Integer.parseInt(activityId)));
 
         if (!selectedActivitiesIds.contains(Integer.parseInt(this.activityId)))
             selectedActivitiesIds.add(Integer.parseInt(this.activityId));
@@ -144,22 +144,8 @@ public class Chart8VM {
         );
 
 
-        boolean add = true;
-        for (Activity tmpActivity : comparedActivities) {
-            if (comparedActivity.getCategory().equals(tmpActivity.getCategory())
-                    && comparedActivity.getName().equals(tmpActivity.getName())) {
-                tmpActivity.setPeriodFrom(comparedActivity.getPeriodFrom());
-                tmpActivity.setPeriodTo(comparedActivity.getPeriodTo());
-                tmpActivity.setValue(comparedActivity.getValue());
-                tmpActivity.setValueFrom(comparedActivity.getValueFrom());
-                tmpActivity.setValueTo(comparedActivity.getValueTo());
-                add = false;
-            }
-        }
-        if (add)
+        if (!isAlreadyInCompare(comparedActivity))
             comparedActivities.add(comparedActivity);
-
-        //how to refresh the list?
 
     }
 
@@ -185,25 +171,29 @@ public class Chart8VM {
         return comparedActivities;
     }
 
-    private List<Activity> deleteFromCompareList(Activity activity) {
-        List<Activity> result = new ArrayList<>();
-        for (Activity activityInCompare : comparedActivities) {
-            if (activityInCompare.getCategory().equals(activity.getCategory())
-                    && activityInCompare.getName().equals(activity.getName()))
-                continue;
-            else
-                result.add(activityInCompare);
-        }
-
-        return result;
-    }
 
     private boolean isNotAllParametersEntered() {
         return this.activityId == null || (this.activityId != null && this.activityId.equals("")) || this.chart1_db0 == null || this.chart1_db1 == null;
     }
 
     private int calculateCompareValue(Activity beginActivity, Activity endActivity) {
-        return (int) (((new Double(endActivity.getValue() - beginActivity.getValue())) / beginActivity.getValue()) * 100);
+
+        int sum = 0;
+        int amount = 0;
+        for (Activity activity : activities) {
+            if (activity.getName().equals(beginActivity.getName())
+                    && activity.getCategory().equals(beginActivity.getCategory())
+                    && activity.getDate().getTime() >= beginActivity.getDate().getTime()
+                    && activity.getDate().getTime() <= endActivity.getDate().getTime()) {
+                sum += activity.getValue();
+                amount++;
+            }
+        }
+
+        if (amount != 0)
+            return sum / amount;
+        else
+            return -1;
     }
 
 
@@ -225,29 +215,6 @@ public class Chart8VM {
             this.activities.add(new Activity(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId(), assessmentEntity.getCategoryName(),
                     assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue(), -1, -1));
         }
-
-//        try {
-//            this.activities.add(new Activity(11, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 20));
-//            this.activities.add(new Activity(2, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 30));
-//            this.activities.add(new Activity(3, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 40));
-//            this.activities.add(new Activity(4, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 50));
-//            this.activities.add(new Activity(21, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 4));
-//            this.activities.add(new Activity(6, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 10));
-//            this.activities.add(new Activity(7, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 15));
-//            this.activities.add(new Activity(8, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 11));
-//            this.activities.add(new Activity(31, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 220));
-//            this.activities.add(new Activity(10, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 140));
-//            this.activities.add(new Activity(11, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 15));
-//            this.activities.add(new Activity(12, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 19));
-//            this.activities.add(new Activity(41, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 220));
-//            this.activities.add(new Activity(14, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("21.09.2020"), null, null, 140));
-//            this.activities.add(new Activity(15, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("20.07.2020"), null, null, 15));
-//            this.activities.add(new Activity(16, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("02.09.2019"), null, null, 19));
-//
-//
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
     }
 
 

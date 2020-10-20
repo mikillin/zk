@@ -15,6 +15,7 @@ import java.util.Date;
 public class Chart8Controller extends SelectorComposer<Window> {
 
     public static final int AMOUNT_OF_MS_IN_7_DAYS = 7 * 24 * 60 * 60 * 1000;
+    public static final int AMOUNT_OF_MS_IN_1_DAY = 1 * 24 * 60 * 60 * 1000;
 
     @Wire("#chart1_db0")
     private Datebox chart1_db0;
@@ -32,8 +33,6 @@ public class Chart8Controller extends SelectorComposer<Window> {
         Events.postEvent("onChange", chart1_db0, null);
         Events.postEvent("onChange", chart1_db1, null);
         BindUtils.postGlobalCommand(null, null, "fireRenderChart", null);
-
-
     }
 
 
@@ -56,13 +55,11 @@ public class Chart8Controller extends SelectorComposer<Window> {
 
     }
 
-    @Listen("onClick=#jahr")
-    @NotifyChange("*")
+    @Listen("onClick=#tag")
     public void jahr() {
-        Date resultYearAgo = resetHoursMinutesSeconds(new Date());
-        resultYearAgo.setYear(resultYearAgo.getYear() - 1);
+        Date resultDayAgo = resetHoursMinutesSeconds(new Date());
+        chart1_db0.setValue(new Date(resultDayAgo.getTime() - AMOUNT_OF_MS_IN_1_DAY));
         chart1_db1.setValue(resetHoursMinutesSeconds(new Date()));
-        chart1_db0.setValue(resultYearAgo);
         Events.postEvent("onChange", chart1_db0, null);
         Events.postEvent("onChange", chart1_db1, null);
         BindUtils.postGlobalCommand(null, null, "fireRenderChart", null);

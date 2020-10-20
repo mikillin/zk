@@ -1,9 +1,9 @@
 <zk>
     <window width="100%" height="100%" apply="fhdo.Chart8Controller">
-        <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+
 
         <style>
-            div.row-half{
+            div.charts-8-row-half{
 
             display: flex;
             flex-direction: row;
@@ -13,67 +13,76 @@
             height: 22px;
             padding: 0 8px 0 8px;
             }
-            .charts-row.datebox {
+            .charts-8-row.charts-8-datebox {
             padding: 0px 5px 10px 5px;
             }
 
-            .charts-row.result {
+            .charts-8-row.charts-8-result {
             padding: 3px 5px 3px 5px
             }
 
-            div.time-period-buttons{
+            div.charts-8-time-period-buttons{
             padding: 3px 5px 3px 5px
             }
 
-            .charts.narrow {
+            .charts-8.charts-8-narrow {
             width: 450px;
             height: 300px;
             }
 
-            .row-no-paddings {
+            .charts-8-row-no-paddings {
             display: flex;
             flex-direction: row;
             align-items: center;
             padding: 0;
             }
 
-            div.south{
+            div.charts-8-south{
             margin-top: 20px;
             }
 
 
-            div.controls-block {
+            div.charts-8-controls-block {
             width: 155px
 
             }
-            .list-compared-activities {
+            .charts-8-list-compared-activities {
             display: flex;
             flex-direction: column;
             overflow: auto;
             align-self: flex-start;
-            height: 260px;
-            width: 370px;
+            height: 175px;
+            width: 530px;
             justify-content: flex-start;
             }
 
 
-            .compare-name {
-            width: 200px;
+            .charts-8-compare-name {
+            width: 310px;
             }
 
-            .charts-row {
+            .charts-8-compare-values-2-periods{
+            width: 70px;
+            align-self: center;
+            text-align: center;
+            }
+            .charts-8-compare-values-2-periods span.z-label {
+            font-size: 12px;
+            }
+
+            .charts-8-row {
             display: flex;
             flex-direction: row;
             align-items: baseline;
             }
 
-            .charts.narrow {
+            .charts-8.charts-8-narrow {
             width: 550px;
             height: 290px;
             }
 
 
-            div.charts {
+            div.charts-8 {
             border-style: double;
             border-width: 2px;
             border-color: lightgrey;
@@ -82,22 +91,26 @@
             width: 650px;
             padding: 10px;
             }
-
-            .control-elements.select.z-select {
+            .charts-8-control-elements
+            {
+            margin: 5px;
+            }
+            .charts-8-control-elements.select.z-select, {
             width: 80px;
             height: 35px;
             }
 
-            div.items, div.item {
+            div.charts-8-items, div.charts-8-item {
             align-self: center;
             font-size: 8px;
             text-align: left;
             }
 
-            span.compare-category.z-label {
+            span.charts-8-compare-category.z-label {
             font-size: 8px;
             }
-            span.compare-name.z-label, span.compare-value.z-label {
+            span.charts-8-compare-name.z-label, span.charts-8-compare-value.z-label,
+            span.charts-8-compare-values-2-periods.z-label {
             font-size: 12px;
             }
 
@@ -106,11 +119,11 @@
             padding-left: 0px;
             }
 
-            div.charts-row.result {
+            div.charts-8-row.result {
             height: 55px;
             }
 
-            div.charts-column.result {
+            div.charts-8-column.charts-8-result {
             height: 55px;
             display: flex;
             flex-direction: column;
@@ -118,137 +131,131 @@
 
             }
 
-            div.result-item{
+            div.charts-8-result-item{
             display: flex;
             flex-direction: row;
             align-items: baseline;
             background: whitesmoke;
             border-radius: 30px;
             height: 60px;
-            width:340px;
+            width:505px;
             margin: 5px;
-
             }
 
-            div.full-item-name-block {
+            div.charts-8-full-item-name-block {
             display: flex;
             flex-direction: column;
             margin: 10px;
-            width: 200px;
+            width: 370px;
             padding-left: 10px;
-
-
+            <!--            cursor: pointer;-->
             }
 
-            .compare-field {
+            .charts-8-compare-field {
             align-self: center;}
 
-            button.time-period {
-            margin: 0 9px 9px 5px;
+            button.charts-8-time-period {
+            margin: 8px 9px 9px 5px;
+            width: 110px;
+            font-size: 12px;
             }
 
-            .row-with-images {
-            align-items: inherit;
+            .charts-8-row-with-icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             }
 
-            .search-icon {
+            .charts-8-search-icon {
             margin: 0 2px 0 2px;
             }
 
-            .compare-value.compare-field span {
+            .charts-8-compare-value.charts-8-compare-field span {
             font-size: 14px;
             }
 
-            .red {
-            color: red;
+            .charts-8-arrow-image {
+            width: 40px;
             }
 
-            .green {
-            color: green;
+            .charts-8-compare-value {
+            width: 50px;
             }
+
+
+            .charts-8-add-image-icon, .charts-8-delete-image-icon {
+            width: 20px;
+            cursor: pointer;
+            margin: 0 2px 0 2px;
+            }
+
         </style>
 
 
-        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart8VM')">
-            <div sclass="charts-row">
-                <div sclass="charts-column controls-block">
-
-                    <div sclass="charts-row row-with-images">
-
-                        <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/search.png"
-                               width="20px" sclass="search-icon"></image>
-
-
-                        <textbox value="@load(vm.chosenQuestion) " id="chosenQuestion" cols="5"
-                                 height="27px" onClick="@command('openModalQuestions')"
-                                 onChanging="@command('openModalQuestions')"></textbox>
-
-                        <image src="/img/info.png" id="popupImageId"
-                               sclass="add-image-icon" popup="fullSelectedQuestionPopup"/>
-                        <popup id="fullSelectedQuestionPopup" width="300px">
-                            ${vm.chosenQuestion}
-                        </popup>
-
-                        <image src="/img/add.png" id="suchen" onClick="@command('renderChart')"
-                               sclass="add-image-icon"/>
-                    </div>
+        <div sclass="charts-8 charts-8-narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart8VM')">
+            <div sclass="charts-8-column">
+                <div sclass="charts-8-row  charts-8-row-with-icons" style="justify-content: center">
+                    <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/add.png"
+                           width="20px" sclass="charts-8-search-icon"></image>
                     <div>
                         <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
-                                 constraint="no future" weekOfYear="true"
-                                 showTodayLink="true"
-                                 sclass="control-elements datebox"/>
+                                 constraint="no empty, no future" weekOfYear="true"
+                                 showTodayLink="true" onChange="@command('renderChart')"
+                                 sclass="charts-8-control-elements charts-8-datebox"/>
                     </div>
                     <div>
                         <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
-                                 constraint="no future" weekOfYear="true" placeholder=""
-                                 showTodayLink="true"
-                                 sclass="control-elements datebox"/>
+                                 constraint="no empty, no future" weekOfYear="true" placeholder=""
+                                 showTodayLink="true" onChange="@command('renderChart')"
+                                 sclass="charts-8-control-elements charts-8-datebox"/>
                     </div>
+                </div>
+                <div sclass="charts-8-row" style="justify-content: center">
 
-                    <button id="woche" label="1 Woche" sclass="time-period"/>
-                    <button id="monat" label="1 Monat" sclass="time-period"/>
-                    <button id="jahr" label="1 Jahr" sclass="time-period"/>
+                    <button id="tag" label="Letzer Tag" sclass="charts-8-time-period"/>
+                    <button id="woche" label="Letze Woche" sclass="charts-8-time-period"/>
+                    <button id="monat" label="Letzer Monat" sclass="charts-8-time-period"/>
 
                 </div>
 
 
-                <div sclass="list-compared-activities" children="@bind(vm.comparedActivities)">
+                <div sclass="charts-8-list-compared-activities" children="@bind(vm.comparedActivities)">
                     <template name="children">
 
 
-                        <div sclass="result-item">
+                        <div sclass="charts-8-result-item">
                             <custom-attributes b="${each.id}"/>
-                            <div sclass="full-item-name-block compare-field">
-                                <div sclass="compare-category ">
-                                    <label value="@load(each.category)" sclass="compare-category"></label>
+
+                            <div sclass="charts-8-full-item-name-block charts-8-compare-field"
+                            >
+                                <div sclass="charts-8-compare-category">
+                                    <label value="@load(each.category)" sclass="charts-8-compare-category"></label>
 
                                     <label value="@load(each.periodFrom) @converter('fhdo.DateConverter')"
-                                           sclass="compare-category" visible="@load(not empty each.periodFrom)"></label>
+                                           sclass="charts-8-compare-category"
+                                           visible="@load(not empty each.periodFrom)"></label>
                                     <label value="-" visible="@load(not empty each.periodFrom)"></label>
                                     <label value="@load(each.periodTo) @converter('fhdo.DateConverter')"
-                                           sclass="compare-category" visible="@load(not empty each.periodTo)"></label>
+                                           sclass="charts-8-compare-category"
+                                           visible="@load(not empty each.periodTo)"></label>
                                 </div>
-                                <div sclass="compare-name ">
-                                    <label value="@load(each.name)" sclass="compare-name" maxlength="80">
+                                <div sclass="charts-8-compare-name ">
+                                    <label value="@load(each.name)" sclass="charts-8-compare-name" maxlength="80">
                                     </label>
                                 </div>
                             </div>
-                            <div sclass="arrow-image compare-field">
-                                <image if="${each.value != 0}"
-                                       src="@bind(each.value lt 0 ?'/img/redArrow.png':'/img/greenArrow.png')"
-                                       width="20px"></image>
+
+                            <div sclass="charts-8-compare-values-2-periods">
+
+                                <label value="Durchnitt:"></label>
+                                <label value="@load(each.value)"></label>
+
                             </div>
-                            <div sclass="compare-value compare-field">
-                                <label value="@load(each.value)" sclass="@bind(each.value lt 0 ?'red':each.value gt 0 ? 'green': '')"></label>
-                                <label value="%" sclass="@bind(each.value lt 0 ?'red':each.value gt 0 ? 'green': '')"></label>
-                            </div>
-                            <div sclass="delete-image-icon compare-field">
-                                <image src="/img/cancel.png" sclass="icon" width="20px"
-                                       onClick="@command('deleteActivity',query=b)"/>
+                            <div sclass="charts-8-delete-image-icon charts-8-compare-field">
+                                <image src="/img/cancel.png" sclass="charts-8-icon" width="20px"
+                                       onClick="@command('deleteActivity',activityId=b)"/>
                             </div>
                         </div>
-
-
                     </template>
                 </div>
             </div>
