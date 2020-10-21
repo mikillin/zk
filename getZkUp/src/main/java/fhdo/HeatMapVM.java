@@ -1,5 +1,7 @@
 package fhdo;
 
+import db.entity.AssessmentEntity;
+import db.service.AssessmentService;
 import org.zkoss.bind.annotation.*;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -19,7 +21,7 @@ public class HeatMapVM {
     private List<Activity> activities = new ListModelList<Activity>();
     private List<Activity> chartActivities = new ListModelList<Activity>();
     private List<String> activitiesNames = new ListModelList<String>();
-    private Set<Integer> selectedActivitiesIds = new HashSet<Integer>();
+    private Set<Integer> selectedActivitiesIds = new LinkedHashSet<Integer>();
 
 
     private String activityId;
@@ -49,8 +51,7 @@ public class HeatMapVM {
 
     @Init
     public void init(@ContextParam(ContextType.VIEW) Component view) {
-        this.fillActivities();
-        this.fillOptimalValues();
+
     }
 
 
@@ -64,7 +65,7 @@ public class HeatMapVM {
                 break;
             }
 
-        renderChart(false); // don't add any items. only to delete
+        renderChart(false); // don't add any items. only delete
     }
 
 
@@ -73,13 +74,18 @@ public class HeatMapVM {
     public void sendActivity(@BindingParam("data") String activityId) {
 
         this.activityId = activityId;
-        this.chosenQuestion = getActivityById(Integer.parseInt(activityId)).getName();
+        renderChart(true);
     }
 
 
     @Command
     public void renderChart() {
         renderChart(true);
+    }
+
+    @Command
+    public void renderChartWithDates() {
+        renderChart(false);
     }
 
     public void renderChart(boolean addNewItem) {
@@ -89,94 +95,87 @@ public class HeatMapVM {
         if (isNotAllParametersEntered())
             return;
 
-        if (this.activityId != null && addNewItem)
-            selectedActivitiesIds.add(Integer.parseInt(this.activityId));
-
-        chartActivities.clear();
-        for (Integer activityId : selectedActivitiesIds) {
-            for (Activity activity : activities) {
-                if (getActivityById(activityId).getCategory().equals(activity.getCategory())
-                        && getActivityById(activityId).getName().equals(activity.getName()) &&
-                        (chart1_db0 == null && chart1_db1 == null
-                                || chart1_db0 == null && chart1_db1 != null && chart1_db1.after(activity.getDate())
-                                || chart1_db0 != null && chart1_db0.before(activity.getDate()) && chart1_db1 == null
-                                || chart1_db0 != null && chart1_db0.before(activity.getDate()) && chart1_db1 != null && chart1_db1.after(activity.getDate())
-                        )) {
-                    chartActivities.add(activity);
-                }
+        if (addNewItem) //not delete
+        {
+            if (selectedActivitiesIds.contains(Integer.parseInt(this.activityId))) {
+                selectedActivitiesIds.remove(Integer.parseInt(this.activityId));
             }
+            selectedActivitiesIds.add(Integer.parseInt(this.activityId));
         }
+        //invert
+        ArrayList list = new ArrayList();
+        for (Integer id : selectedActivitiesIds) {
+            list.add(0, id);
+        }
+        selectedActivitiesIds.clear();
+        selectedActivitiesIds.addAll(list);
 
+        String whereClause = "";
+        if (selectedActivitiesIds.size() > 0)
+            whereClause += " AND ";
+        if (selectedActivitiesIds.size() > 1)
+            whereClause += "  (";
+        for (Integer activityId : selectedActivitiesIds) {
+            whereClause += "(categoryId = " + activityId / 100 + " and questionId = " + activityId % 100 + ") or ";
+        }
+        if (whereClause.length() > 3)
+            whereClause = whereClause.substring(0, whereClause.length() - 3); //delete last "or"
+        if (selectedActivitiesIds.size() > 1)
+            whereClause += ")";
+        whereClause += " ORDER BY AE.categoryId, AE.questionId, AE.date";
 
-        JSONArray src = new JSONArray();
-        JSONArray data = new JSONArray();
+        List<AssessmentEntity> assessmentEntities = new AssessmentService().getAssessmentByDatesAndWhereClause(this.chart1_db0, this.chart1_db1, whereClause);
+
 
         JSONObject jsonData = new JSONObject();
-        JSONObject jsonItem = new JSONObject();
-        JSONObject jsonMain = new JSONObject();
+        JSONObject names = new JSONObject();
+        JSONObject goals = new JSONObject();
+        JSONArray data = new JSONArray();
 
-        //todo: take cat + name  + all dates
-        HashSet<String> questions = new HashSet();
-        for (Integer activityId : this.selectedActivitiesIds)
-            questions.add(getActivityById(activityId).getName());
-
-        String category = "";
-        String question = "";
-
-
-        for (Activity activity : this.chartActivities) {
-
-            if (!category.equals(activity.getCategory()) || !question.equals(activity.getName())) {
-                //new set of a definite activity
-                //the set should be sorted
-
-
-                if (data.size() > 0) {
-                    jsonMain = new JSONObject();
-                    jsonMain.put("category", category);
-                    jsonMain.put("question", question);
-                    jsonMain.put("data", data);
-                    src.add(jsonMain);
-
+        Set<String> dates = new LinkedHashSet();
+        for (Integer id : selectedActivitiesIds)
+            for (AssessmentEntity assessmentEntity : assessmentEntities) {
+                if ((assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId()) == id.intValue()) {
                     jsonData = new JSONObject();
-                    jsonItem = new JSONObject();
-                    data = new JSONArray();
+                    jsonData.put("id", assessmentEntity.getId());
+                    jsonData.put("categoryId", assessmentEntity.getCategoryId());
+                    jsonData.put("questionId", assessmentEntity.getQuestionId());
+                    jsonData.put("date", new SimpleDateFormat("dd.MM.yyyy").format(assessmentEntity.getDate()));
+                    jsonData.put("value", assessmentEntity.getValue());
+                    dates.add(new SimpleDateFormat("yyyy.MM.dd").format(assessmentEntity.getDate()));
+                    if (!names.containsKey(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId()))
+                        names.put(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId(),
+                                assessmentEntity.getCategoryName() + ":" + assessmentEntity.getQuestion());
+                    if (!goals.containsKey(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId())) {
+                        goals.put(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId(),
+                                assessmentEntity.getGoal());
+                    }
+                    data.add(jsonData);
                 }
-
-                category = activity.getCategory();
-                question = activity.getName();
-
             }
 
-
-            jsonData = new JSONObject();
-            jsonItem = new JSONObject();
-            jsonItem.put("value", activity.getValue());
-            jsonItem.put("date", new SimpleDateFormat("dd.MM.yyyy").format(activity.getDate()));
-
-            jsonData.put("item", jsonItem);
-            jsonData.put("id", activity.getId());
-
-            data.add(jsonData);
+        //todo: refactor
+        List<String> al = new ArrayList();
+        al.addAll(dates);
+        Collections.sort(al);
+        dates.clear();
+        for(String str: al) {
+            try {
+                dates.add(new SimpleDateFormat("dd.MM.yyyy").format(new SimpleDateFormat("yyyy.MM.dd").parse(str)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-
-
-        // the last set of data
-        if (data.size() > 0) {
-            jsonMain = new JSONObject();
-            jsonMain.put("category", category);
-            jsonMain.put("question", question);
-            jsonMain.put("data", data);
-            src.add(jsonMain);
-
-        }
-
 
         JSONObject result = new JSONObject();
-        result.put("src", src);
-        result.put("optimalValues", optimalValues);
+        JSONArray datesJSON = new JSONArray();
+        for(String str: dates)
+            datesJSON.add(str);
+        result.put("src", data);
+        result.put("names", names);
+        result.put("goals", goals);
+        result.put("dates", datesJSON);
         Clients.evalJavaScript(new ChartsUtil().compileChart("heatmap", "render", result.toJSONString()));
-
     }
 
     private boolean isAlreadyInCompare(Activity activity) {
@@ -205,7 +204,7 @@ public class HeatMapVM {
 
     //todo: id shouldn't be 0
     private boolean isNotAllParametersEntered() {
-        return this.activityId == null || (this.activityId != null && this.activityId.equals(""));
+        return this.activityId == null || (this.activityId != null && this.activityId.equals("")) || this.chart1_db0 == null || this.chart1_db1 == null;
     }
 
 
@@ -247,35 +246,15 @@ public class HeatMapVM {
 
 
     private void fillActivities() {
-
         this.activities.clear();
-        try {
-            this.activities.add(new Activity(11, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 2,-1, -1));
-            this.activities.add(new Activity(2, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 3,-1, -1));
-            this.activities.add(new Activity(3, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 4,-1, -1));
-            this.activities.add(new Activity(4, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 3,-1, -1));
-            this.activities.add(new Activity(5, "Essen/Trinken", "Wieviele Mahlzeiten haben Sie zu sich genommen?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 3,-1, -1));
-            this.activities.add(new Activity(21, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 4,-1, -1));
-            this.activities.add(new Activity(6, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 10,-1, -1));
-            this.activities.add(new Activity(7, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 15,-1, -1));
-            this.activities.add(new Activity(8, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 11,-1, -1));
-            this.activities.add(new Activity(9, "Wietere positive Aktivitäten", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 11,-1, -1));
-            this.activities.add(new Activity(31, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 7,-1, -1));
-            this.activities.add(new Activity(10, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 9,-1, -1));
-            this.activities.add(new Activity(11, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 8,-1, -1));
-            this.activities.add(new Activity(12, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 8,-1, -1));
-            this.activities.add(new Activity(16, "Schlaf", "Wielange waren Sie im Bett (in Stunden)?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 8,-1, -1));
-            this.activities.add(new Activity(41, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.05.2020"), null, null, 10,-1, -1));
-            this.activities.add(new Activity(14, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.06.2020"), null, null, 11,-1, -1));
-            this.activities.add(new Activity(15, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.07.2020"), null, null, 7,-1, -1));
-            this.activities.add(new Activity(16, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 10,-1, -1));
-            this.activities.add(new Activity(17, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.09.2020"), null, null, 10,-1, -1));
-//            this.activities.add(new Activity(17, "Entschpanungs- oder Atmenübungen", "Wie haben Sie sich dabei gefühlt?", new SimpleDateFormat("dd.MM.yyyy").parse("14.08.2020"), null, null, 15,-1, -1));
 
+        List<AssessmentEntity> assessmentEntities = new AssessmentService().getAssessmentByDatesAndCategoryIdQuestionId(chart1_db0, chart1_db1, Integer.parseInt(activityId) / 100, Integer.parseInt(activityId) % 100);
+        for (AssessmentEntity assessmentEntity : assessmentEntities) {
 
-        } catch (ParseException e) {
-            e.printStackTrace();
+            this.activities.add(new Activity(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId(), assessmentEntity.getCategoryName(),
+                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), chart1_db0, chart1_db1, assessmentEntity.getValue(), -1, -1, assessmentEntity.getGoal()));
         }
+
     }
 
 

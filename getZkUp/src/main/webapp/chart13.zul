@@ -1,47 +1,98 @@
-<zk>
+<zk xmlns:n="native">
     <window width="100%" height="100%" apply="fhdo.Chart8Controller">
         <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
         <?script type="text/javascript" src="/scripts/charts/loader.js"?>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 
         <style>
+            .charts-13-control-elements
+            {
+            margin: 5px;
+            }
+            .charts-13-control-elements.select.z-select, {
+            width: 80px;
+            height: 35px;
+            }
+
+            .charts-13-row.charts-13-datebox {
+            padding: 0px 5px 10px 5px;
+            }
+            div.charts-13-row-with-icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            }
+
+            .charts-13-row {
+            display: flex;
+            flex-direction: row;
+            align-items: baseline;
+            }
+
+            div.charts-13-column {
+            height: 55px;
+            display: flex;
+            flex-direction: column;
+            padding : 10px 0 10px 0;
+
+            }
+
+            .charts-13.charts-13-narrow {
+            width: 550px;
+            height: 290px;
+            }
+
+
+            div.charts-13-controls-block {
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            }
+
+            .charts-13-row .charts-13-datebox {
+            padding: 0px 5px 10px 5px;
+            width:160px;
+            }
+
+            div.charts-13 {
+            border-style: double;
+            border-width: 2px;
+            border-color: lightgrey;
+            display: flex;
+            flex-direction: row;
+            width: 650px;
+            padding: 10px;
+            }
 
 
         </style>
+        <div sclass="charts-13 charts-13-narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart13VM')">
+            <div sclass="charts-13-column charts-13-controls-block">
 
-
-        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart13VM')">
-            <div sclass="row">
-                <div sclass="column controls-block">
-
-                    <div sclass="row">
-                        <div>
-                            <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
-                                     constraint="no empty, no future" weekOfYear="true"
-                                     showTodayLink="true"
-                                     sclass="control-elements datebox"/>
-                        </div>
-                        <div>
-                            <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
-                                     constraint="no empty, no future" weekOfYear="true" placeholder=""
-                                     showTodayLink="true"
-                                     sclass="control-elements datebox"/>
-                        </div>
-
+                <div sclass="charts-13-row ">
+                    <div sclass="">
+                        <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/add.png"
+                               width="20px" zclass="charts-13-search-icon"></image>
                     </div>
-
-                    <div sclass="row row-with-images">
-
-                        <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/search.png"
-                               width="20px" zclass="search-icon"></image>
-                        <image src="/img/add.png" id="suchen" onClick="@command('renderChart')"
-                               sclass="add-image-icon"/>
+                    <div>
+                        <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
+                                 constraint="no empty, no future" weekOfYear="true"
+                                 showTodayLink="true"
+                                 sclass="charts-13-control-elements charts-13-datebox"/>
                     </div>
-
-
+                    <div>
+                        <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
+                                 constraint="no empty, no future" weekOfYear="true" placeholder=""
+                                 showTodayLink="true"
+                                 sclass="charts-13-control-elements charts-13-datebox"/>
+                    </div>
                 </div>
 
-                <div sclass="chart13">
 
+                <div sclass="chart13">
                 </div>
             </div>
         </div>

@@ -10,14 +10,15 @@ public class Activity {
     private Date date;
     private Date periodFrom;
     private Date periodTo;
-    private int value;
+    private Integer value;
     private int valueFrom;
     private int valueTo;
+    private Integer goal;
 
     public Activity() {
     }
 
-    public Activity(long id, String category, String name, Date date, Date periodFrom, Date periodTo, int value, int valueFrom, int valueTo) {
+    public Activity(long id, String category, String name, Date date, Date periodFrom, Date periodTo, Integer value, int valueFrom, int valueTo, Integer goal) {
         this.id = id;
         this.category = category;
         this.name = name;
@@ -27,6 +28,7 @@ public class Activity {
         this.value = value;
         this.valueFrom = valueFrom;
         this.valueTo = valueTo;
+        this.goal = goal;
     }
 
     public long getId() {
@@ -53,11 +55,11 @@ public class Activity {
         this.date = date;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
@@ -99,5 +101,13 @@ public class Activity {
 
     public void setValueTo(int valueTo) {
         this.valueTo = valueTo;
+    }
+
+    public Integer getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Integer goal) {
+        this.goal = goal;
     }
 }

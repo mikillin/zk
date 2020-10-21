@@ -176,6 +176,7 @@ public class TreeInOutput extends Window implements AfterCompose
         for (Object[] assessmentEntityObject : assessmentEntities) {
             questionFullId = ((Integer) assessmentEntityObject[0]).longValue() * 100 +((Integer) assessmentEntityObject[0]).longValue();
             if (catId != (int) assessmentEntityObject[0]) {
+                catId = (int) assessmentEntityObject[0];
                 // add old
                 if (subEntries.size() > 0) {
                     if (category == null)

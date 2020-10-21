@@ -200,13 +200,13 @@
                     <div>
                         <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
                                  constraint="no empty, no future" weekOfYear="true"
-                                 showTodayLink="true" onChange="@command('renderChart')"
+                                 showTodayLink="true"
                                  sclass="charts-8-control-elements charts-8-datebox"/>
                     </div>
                     <div>
                         <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
                                  constraint="no empty, no future" weekOfYear="true" placeholder=""
-                                 showTodayLink="true" onChange="@command('renderChart')"
+                                 showTodayLink="true"
                                  sclass="charts-8-control-elements charts-8-datebox"/>
                     </div>
                 </div>

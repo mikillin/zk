@@ -11,6 +11,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -25,7 +26,8 @@ public class Chart13VM {
     private Date chart1_db1;
 
 
-    //todo: >>>>>>> patientId - fom session, anyway Map should be
+    //refactor. das ist zu unakzeptabel
+    private Integer sum = 0;
 
 
     @Command
@@ -35,88 +37,91 @@ public class Chart13VM {
         Window win = (Window) Executions.createComponents(
                 "/treeInOutput.zul", null, args);
         win.doModal();
-
     }
 
 
     @Init
     public void init(@ContextParam(ContextType.VIEW) Component view) {
 
-        //this.fillActivities();
     }
 
 
-    @Command
-    public void changeActivity(@BindingParam("activityId") long activityId) {
+    @GlobalCommand
+    public void sendActivity(@BindingParam("data") String activityId) {
 
-        List<Activity> tmp = new ArrayList<Activity>();
-        tmp.addAll(comparedActivities);
-        comparedActivities.clear();
-        for (Activity comparedActivity : tmp) {
-            if (comparedActivity.getId() != (activityId))
-                comparedActivities.add(comparedActivity);
-        }
+        this.activityId = activityId;
+        renderChart();
     }
-
 
     @Command
     public void renderChart() {
-
-        JSONObject map = new JSONObject();
         if (isNotAllParametersEntered())
             return;
+        this.fillActivities();
 
-        selectedActivitiesIds.add(Integer.parseInt(this.activityId));
+        JSONObject map = new JSONObject();
+//        this.activityId;
 
 
+        // dieselbe Frage von verschiedene Fragebogen. Ist die Auswertung gleiche in diesem Fall?
+        String title = "";
+        Integer goal = -1;
+        Integer average = -1;
 
-        //stub
+        if (activities.size() > 0) {
+            title = activities.get(0).getCategory() + ": " + activities.get(0).getName();
+            goal = activities.get(0).getGoal();
+            average = sum / activities.size();
+        }
 
         //form js fields and
         JSONObject optionFromClass = new JSONObject();
         JSONObject legend = new JSONObject();
         legend.put("position", "bottom");
-        optionFromClass.put("title", "Company Performance");
+        optionFromClass.put("title", title); //todo: change the titel to activity name
         optionFromClass.put("curveType", "function");
         optionFromClass.put("legend", legend);
+        optionFromClass.put("width", 530); //
+        optionFromClass.put("height", 200);//
 
         map.put("option", optionFromClass);
         map.put("element", "document.getElementsByClassName('chart13')[0]");
 
         JSONArray data = new JSONArray();
         JSONArray titles = new JSONArray();
-        titles.push("Year");
-        titles.push("Sales");
-        titles.push("Expenses");
-        titles.push("Add");
-       
-        data.push(titles);
-
-        JSONArray dataRow = new JSONArray();
-        dataRow.push("2003");
-        dataRow.push(1000);
-        dataRow.push(400);
-        dataRow.push(500);
-        data.push(dataRow);
+        titles.add("Date");
+        if (goal != -1)
+            titles.add("Ziel");
+        titles.add("Durschnitt");
+        titles.add("Auswertung");
 
 
-         dataRow = new JSONArray();
-        dataRow.push("2005");
-        dataRow.push(1100);
-        dataRow.push(600);
-        dataRow.push(500);
-        data.push(dataRow);
+        data.add(titles);
 
-        dataRow = new JSONArray();
-        dataRow.push("2005");
-        dataRow.push(1700);
-        dataRow.push(500);
-        dataRow.push(500);
-        data.push(dataRow);
+        JSONArray dataRow;
 
+        for (Activity activity : activities) {
+            dataRow = new JSONArray();
+            dataRow.add(new SimpleDateFormat("dd-MM-YYYY").format(activity.getDate()));
+            if (goal != -1)
+                dataRow.add(goal);
+            dataRow.add(average);
+            dataRow.add(activity.getValue());
+            data.add(dataRow);
+        }
 
-        map.put("dataFromClass", data);
+        if (activities.size()==0)
+        {
+            dataRow = new JSONArray();
+            dataRow.add("");
+            if (goal != -1)
+                dataRow.add(0);
+            dataRow.add(0);
+            dataRow.add(0);
+            data.add(dataRow);
+        }
 
+        map.put("data", data);
 
         String resultJS = new ChartsUtil().compileChart("line", "drawChart", map.toJSONString());
         Clients.evalJavaScript(resultJS);
@@ -129,12 +134,14 @@ public class Chart13VM {
 
 
     private void fillActivities() {
-
+//todo: here use also surveyId.. as for definite survey will  assessments  stable.
         this.activities.clear();
-        List<AssessmentEntity> assessmentEntities = new AssessmentService().getAssessmentByDatesAndQuestionId(chart1_db0, chart1_db1, Integer.parseInt(activityId));
+        this.sum = new Integer(0);
+        List<AssessmentEntity> assessmentEntities = new AssessmentService().getAssessmentByDatesAndCategoryIdQuestionId(chart1_db0, chart1_db1, Integer.parseInt(activityId) / 100, Integer.parseInt(activityId) % 100);
         for (AssessmentEntity assessmentEntity : assessmentEntities) {
+            this.sum += assessmentEntity.getValue();
             this.activities.add(new Activity(assessmentEntity.getId(), assessmentEntity.getCategoryName(),
-                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue(), -1, -1));
+                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), chart1_db0, chart1_db1, assessmentEntity.getValue(), -1, -1, assessmentEntity.getGoal()));
         }
     }
 
@@ -155,13 +162,20 @@ public class Chart13VM {
         this.comparedActivities = comparedActivities;
     }
 
-
     public Set<Integer> getSelectedActivitiesIds() {
         return selectedActivitiesIds;
     }
 
     public void setSelectedActivitiesIds(Set<Integer> selectedActivitiesIds) {
         this.selectedActivitiesIds = selectedActivitiesIds;
+    }
+
+    public String getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(String activityId) {
+        this.activityId = activityId;
     }
 
     public Date getChart1_db0() {
@@ -179,13 +193,4 @@ public class Chart13VM {
     public void setChart1_db1(Date chart1_db1) {
         this.chart1_db1 = chart1_db1;
     }
-
-    public String getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(String activityId) {
-        this.activityId = activityId;
-    }
-
 }

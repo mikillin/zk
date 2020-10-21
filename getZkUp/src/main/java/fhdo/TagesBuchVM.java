@@ -9,17 +9,13 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
 import java.util.*;
-
-//todo: ist es interessant zu haben viele Auswertungen mit gleichen Kategorie und Frage, aber für verschiedene Daten?
-//todo: patientId and permissions
-public class Chart8VM {
+public class TagesBuchVM {
     private List<Activity> activities = new ListModelList<Activity>();
     private List<Activity> comparedActivities = new ListModelList<Activity>();
     private Set<Integer> selectedActivitiesIds = new HashSet<Integer>();
 
     private String activityId;
     private Date chart1_db0;
-    private Date chart1_db1;
 
     @Command
     public void openModalQuestions() {
@@ -28,7 +24,6 @@ public class Chart8VM {
         Window win = (Window) Executions.createComponents(
                 "/treeInOutput.zul", null, args);
         win.doModal();
-
     }
 
 
@@ -37,19 +32,6 @@ public class Chart8VM {
         this.fillActivities();
     }
 
-
-    @GlobalCommand
-    public void sendActivity(@BindingParam("data") String activityId) {
-
-        this.activityId = activityId;
-        renderChart();
-    }
-
-
-    @GlobalCommand
-    public void fireRenderChart() {
-        renderChart();
-    }
 
 
     @Command
@@ -63,26 +45,6 @@ public class Chart8VM {
                 comparedActivities.add(comparedActivity);
         }
     }
-
-    @Command
-    public void setActivity(@BindingParam("activityId") long activityId) {
-
-        //  this.activityId = activityId;
-        for (Activity activity : comparedActivities) {
-            if (activityId == activity.getId()) {
-                for (Activity activityFromAll : activities) {
-                    if (activityFromAll.getCategory().equals(activity.getCategory())
-                            && activityFromAll.getName().equals(activity.getName())) {
-                        this.activityId = String.valueOf(activityFromAll.getId());
-                        return;
-                    }
-                }
-            }
-        }
-
-        System.err.println(">> activityId: " + activityId + " was not found");
-    }
-
 
     @Command
     public void renderChart() {
@@ -110,7 +72,6 @@ public class Chart8VM {
             beginActivity = activities.get(0);
             endActivity = activities.get(0);
             bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - beginActivity.getDate().getTime());
-            bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - endActivity.getDate().getTime());
         } else {
             System.err.println(">>> Error: the size of activities is wrong");
             return;
@@ -123,10 +84,7 @@ public class Chart8VM {
                     bestComparedBeginDateTime = Math.abs(chart1_db0.getTime() - activity.getDate().getTime());
                     beginActivity = activity;
                 }
-                if (Math.abs(chart1_db1.getTime() - activity.getDate().getTime()) < bestComparedEndDateTime) {
-                    bestComparedEndDateTime = Math.abs(chart1_db1.getTime() - activity.getDate().getTime());
-                    endActivity = activity;
-                }
+
             }
         }
 
@@ -174,7 +132,7 @@ public class Chart8VM {
 
 
     private boolean isNotAllParametersEntered() {
-        return this.activityId == null || (this.activityId != null && this.activityId.equals("")) || this.chart1_db0 == null || this.chart1_db1 == null;
+        return this.activityId == null || (this.activityId != null && this.activityId.equals("")) || this.chart1_db0 == null ;
     }
 
     private int calculateCompareValue(Activity beginActivity, Activity endActivity) {
@@ -213,9 +171,8 @@ public class Chart8VM {
         List<AssessmentEntity> assessmentEntities = new AssessmentService().getAllAssessments();
 
         for (AssessmentEntity assessmentEntity : assessmentEntities) {
-            if (assessmentEntity.getValue() != null)
-                this.activities.add(new Activity(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId(), assessmentEntity.getCategoryName(),
-                        assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue(), -1, -1, null));
+            this.activities.add(new Activity(assessmentEntity.getCategoryId() * 100 + assessmentEntity.getQuestionId(), assessmentEntity.getCategoryName(),
+                    assessmentEntity.getQuestion(), assessmentEntity.getDate(), null, null, assessmentEntity.getValue(), -1, -1, null));
         }
     }
 
@@ -253,13 +210,6 @@ public class Chart8VM {
         this.chart1_db0 = chart1_db0;
     }
 
-    public Date getChart1_db1() {
-        return chart1_db1;
-    }
-
-    public void setChart1_db1(Date chart1_db1) {
-        this.chart1_db1 = chart1_db1;
-    }
 
     public String getActivityId() {
         return activityId;

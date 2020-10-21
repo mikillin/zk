@@ -21,17 +21,18 @@ let map = { "data": dataFromClass,
 /*-----*/
 
 function drawChart(map) {
-    var data = google.visualization.arrayToDataTable(map.data);
 
-    var options = map.option;
+    // window.addEventListener('load', function () {
 
-    var chart = new google.visualization.LineChart(eval(map.element));
+        var data = google.visualization.arrayToDataTable(map.data);
 
-    chart.draw(data, options);
+        var options = map.option;
+
+        var chart = new google.visualization.LineChart(eval(map.element));
+
+        chart.draw(data, options);
+    // })
 }
 
 google.charts.load('current', { 'packages': ['corechart'] });
 // google.charts.setOnLoadCallback(function(){ drawChart(map) })
-
-
-// add here divs..

@@ -22,7 +22,7 @@ public class AssessmentEntity {
     @Column(name = "date")
     private Date date;
     @Column(name = "value")
-    private int value;
+    private Integer value;
     @Column(name = "category_name")
     private String categoryName;
     @Column(name = "min_value")
@@ -35,12 +35,15 @@ public class AssessmentEntity {
     private int surveyId;
     @Column(name = "status")
     private String status;
+    @Column(name = "goal")
+    private Integer goal;
 
 
     public AssessmentEntity() {
     }
 
-    public AssessmentEntity(int id, int category, String question, Date date, int value, String categoryName, String surveyName, int surveyId, String status) {
+    public AssessmentEntity(int id, int category, String question, Date date, Integer value, String categoryName,
+                            String surveyName, int surveyId, String status, Integer goal) {
         this.id = id;
         this.categoryId = category;
         this.question = question;
@@ -50,6 +53,7 @@ public class AssessmentEntity {
         this.surveyName = surveyName;
         this.surveyId = surveyId;
         this.status = status;
+        this.goal = goal;
     }
 
     public int getId() {
@@ -84,11 +88,11 @@ public class AssessmentEntity {
         this.date = date;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
@@ -146,5 +150,13 @@ public class AssessmentEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Integer goal) {
+        this.goal = goal;
     }
 }
