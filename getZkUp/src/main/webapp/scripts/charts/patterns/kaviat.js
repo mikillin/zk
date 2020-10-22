@@ -1,26 +1,22 @@
-let map =  {
-    "chartHeight": 460,
-    "chartWidth": 460,
-    "data": [
-        { "axe": 0, "value": 2 },
-        { "axe": 1, "value": 4 },
-        { "axe": 2, "value": 3 },
-        { "axe": 3, "value": 3 },
-        { "axe": 4, "value": 3 }
-    ],
+let map = {
+    "chartData": {
+        "chartHeight": 460,
+        "chartWidth": 460,
+        "centerOffset": 30
+    },
     "axisData": [
-        { "axe": 0, "info": { "min": 1, "max": 10, "step": 2 } },
-        { "axe": 1, "info": { "min": 2, "max": 4, "step": 1 } },
-        { "axe": 2, "info": { "min": 2, "max": 10, "step": 1 } },
-        { "axe": 3, "info": { "min": 2, "max": 10, "step": 1 } },
-        { "axe": 4, "info": { "min": 2, "max": 10, "step": 1 } },
-    ],
-    "axesNames": ["Axes1", "Axes2", "Axes3", "Axes4", "Axes5"]
+        { "axe": 0, "name": "Axes1", "value": 5, "displayValue": { "1": "Ja", "2": "Nein" }, "info": { "min": 1, "max": 10, "step": 1 } },
+        { "axe": 1, "name": "Axes2", "value": 2, "info": { "min": 1, "max": 6, "step": 1 } },
+        { "axe": 2, "name": "Axes3", "value": 3, "info": { "min": 1, "max": 7, "step": 1 } },
+        { "axe": 3, "name": "Axes4", "value": 4, "info": { "min": 1, "max": 8, "step": 1 } },
+        { "axe": 4, "name": "Axes5", "value": 5, "info": { "min": 1, "max": 9, "step": 1 } }
+    ]
 }
+
 
 function renderRadarChart(map) {
 
-    var lineFunction = d3.line()
+    let lineFunction = d3.line()
         .x(function(d) {
             return d.x;
         })
@@ -30,124 +26,189 @@ function renderRadarChart(map) {
         .curve(d3.curveLinear);
 
     //depends on the version of d3 library
-    // var lineFunction = d3.svg.line()
+    // let lineFunction = d3.svg.line()
     //     .x(function(d) { return d.x; })
     //     .y(function(d) { return d.y; })
     //     .interpolate('linear');
 
+    let svgContainer = d3.select("body").append("svg")
+        .attr("width", map.chartData.chartWidth)
+        .attr("height", map.chartData.chartHeight)
+        .attr("background-color", "blue");
 
 
-    var height = map.chartHeight;
-    var width = map.chartWidth;
-
-    var dataAreaCoordinates = [];
-
-    var svgContainer = d3.select("body").append("svg")
-        .attr("width", map.chartWidth)
-        .attr("height", map.chartHeight)
-        .attr("background-color", "blue");;
-
-    function drawSteps(countAxis, axe, min, max, step) {
-
-        let stepsAmount = (max - min) / step;
-
-        var axisLength = (map.chartHeight / 2) - 40;
-        var centerX = map.chartWidth / 2;
-        var centerY = map.chartHeight / 2;
-
-        var offset = 30;
-        var stepLenght = (axisLength - offset) / stepsAmount;
-
-        //axes drawing
-        for (var i = 0; i < countAxis; ++i) {
-            var degree = 360.0 / countAxis * i;
-
-            for (var j = 0; j <= stepsAmount; j++) {
-                var axeX = centerX + (stepLenght * j + offset) * Math.sin(toRadians(degree));
-                var axeY = centerY + (stepLenght * j + offset) * Math.cos(toRadians(degree));
-
-                svgContainer.append("circle")
-                    .attr("cx", axeX)
-                    .attr("cy", axeY)
-                    .attr("r", 5);
-
-                svgContainer.append("text")
-                    .text(min + step * j)
-                    .attr("y", axeY + 10)
-                    .attr("x", axeX + 10)
-                    .attr("font-size", 12)
-                    .attr("font-family", "sans-serif")
-                    .attr("fill", "black");
-
-                dataAreaCoordinates.push({ "axe": i, "data": { "value": j, "coordinate": { "x": axeX, "y": axeY } } });
-            }
-        }
-    }
+    svgContainer.on("click", function(event) {
 
 
+        console.log(">> x= " + event.clientX + ", y= " + event.clientY);
+    });
 
-    var countAxis = map.data.length;
-    var axisLength = (height / 2) - 40;
-    var centerX = width / 2;
-    var centerY = height / 2;
-    var outerCoordinates = [];
-    for (var i = 0; i < countAxis; ++i) {
-        var degree = 360.0 / countAxis * i;
-        var axeX = centerX + axisLength * Math.sin(toRadians(degree));
-        var axeY = centerY + axisLength * Math.cos(toRadians(degree));
 
+    let drawAreaInformation = initDrawAreaInformation(map.chartData, map.axisData);
+
+    let axisLength = (map.chartData.chartHeight / 2) - 40;
+    let centerX = map.chartData.chartWidth / 2;
+    let centerY = map.chartData.chartHeight / 2;
+
+    let outerCoordinates = [];
+    for (let i = 0; i < map.axisData.length; ++i) {
+        //calculate data for axes
+        let degree = 360.0 / map.axisData.length * i;
+        let axeX = centerX + axisLength * Math.sin(toRadians(degree));
+        let axeY = centerY + axisLength * Math.cos(toRadians(degree));
+
+        //draw axes
         drawLine(centerX, centerY, axeX, axeY, svgContainer);
 
+        //add names
+        let percent = Math.round((map.axisData[i].value - map.axisData[i].info.min) * 100 / (map.axisData[i].info.max - map.axisData[i].info.min));
         svgContainer.append("text")
             .attr("x", axeX)
             .attr("y", axeY)
             .attr("text-anchor", "middle")
             .style("font-size", "16px")
             .style("text-decoration", "underline")
-            .text(map.axesNames[i]);
-
+            .text(map.axisData[i].name + " (" + percent + "%)");
 
         outerCoordinates.push({ "x": axeX, "y": axeY });
-
-        for (let d = 0; d < map.axisData.length; d++)
-            if (map.axisData[d].axe == i) {
-                drawSteps(map.axesNames.length, i, map.axisData[d].info.min, map.axisData[d].info.max, map.axisData[d].info.step)
-                break;
-            }
     }
-
-
+    //form  outer border coordinates
     outerCoordinates.push({
         "x": centerX + axisLength * Math.sin(toRadians(0)),
         "y": centerY + axisLength * Math.cos(toRadians(0))
     });
 
-
-    var lineGraph = svgContainer.append("path")
+    //todo: insert angles for rotating the name text 
+    //draw outer border
+    let outerBorder = svgContainer.append("path")
         .attr("d", lineFunction(outerCoordinates))
         .attr("stroke", "blue")
         .attr("stroke-width", 2)
         .attr("fill", "none");
 
-    var assessment = [];
-    for (i = 0; i < map.data.length; i++) {
-        for (j = 0; j < dataAreaCoordinates.length; j++) {
-            if (dataAreaCoordinates[j].axe == map.data[i].axe && dataAreaCoordinates[j].data.value == map.data[i].value) {
-                assessment.push(dataAreaCoordinates[j].data.coordinate);
-                break;
+    //calculate assessments coordinates
+    //add nearest coordinate
+    let assessment = [];
+    for (i = 0; i < map.axisData.length; i++) {
+        let nearestStepCoordinate;
+        let smallestDifference = null;
+
+        for (j = 0; j < drawAreaInformation.length; j++) {
+            if (smallestDifference == null && drawAreaInformation[j].axe == map.axisData[i].axe) {
+                smallestDifference = Math.abs(drawAreaInformation[j].data.value - map.axisData[i].value);
+                nearestStepCoordinate = drawAreaInformation[j].data.coordinate;
             }
+            if (drawAreaInformation[j].axe == map.axisData[i].axe)
+                if (Math.abs(drawAreaInformation[j].data.value - map.axisData[i].value) < smallestDifference) {
+
+                    smallestDifference = Math.abs(drawAreaInformation[j].data.value - map.axisData[i].value);
+                    nearestStepCoordinate = drawAreaInformation[j].data.coordinate;
+                    console.log("map.axisData[i].name: " + map.axisData[i].name + ", map.axisData[i].value " + map.axisData[i].value +
+                        "drawAreaInformation[j].data.coordinate x: " + drawAreaInformation[j].data.coordinate.x + ", y: " + drawAreaInformation[j].data.coordinate.y);
+                }
         }
+
+        assessment.push(nearestStepCoordinate);
     }
     if (assessment.length > 0)
         assessment.push(assessment[0]); //to close the area
 
-    var lineGraph = svgContainer.append("path")
+    //draw assesment area
+    svgContainer.append("path")
         .attr("d", lineFunction(assessment))
         .attr("stroke", "blue")
         .attr("stroke-width", 2)
         .attr("fill", "blue")
         .attr("opacity", 0.5)
         .attr("id", "bevalueung");
+
+    drawSteps(svgContainer, drawAreaInformation, map.chartData, map.axisData);
+
+}
+
+
+function drawSteps(svgContainer, drawAreaInformation, chartData, axisData) {
+
+
+    let axisLength = (chartData.chartHeight / 2) - 40;
+    let centerX = chartData.chartWidth / 2;
+    let centerY = chartData.chartHeight / 2;
+    let offset = chartData.centerOffset;
+
+    //axes drawing
+    for (let i = 0; i < axisData.length; ++i) {
+        let degree = 360.0 / axisData.length * i;
+
+        let stepsAmount = (axisData[i].info.max - axisData[i].info.min) / axisData[i].info.step;
+        let stepLenght = (axisLength - offset) / stepsAmount;
+
+        for (let j = 0; j <= stepsAmount; j++) {
+            let axeX = centerX + (stepLenght * j + offset) * Math.sin(toRadians(degree));
+            let axeY = centerY + (stepLenght * j + offset) * Math.cos(toRadians(degree));
+
+            svgContainer.append("circle")
+                .attr("cx", axeX)
+                .attr("cy", axeY)
+                .attr("r", 5);
+            let pointText;
+            pointText = axisData[i].info.min + axisData[i].info.step * j;
+
+
+            let smallestDifference = null;  
+            for (jk = 0; jk < drawAreaInformation.length; jk++) {
+                if (smallestDifference == null && drawAreaInformation[jk].axe == axisData[i].axe) {
+                    smallestDifference = Math.abs(drawAreaInformation[jk].data.value - axisData[i].value);
+                    nearestStepCoordinate = drawAreaInformation[jk].data.coordinate;
+                }
+                if (drawAreaInformation[jk].axe == axisData[i].axe)
+                    if (Math.abs(drawAreaInformation[jk].data.value - axisData[i].value) < smallestDifference) {
+
+                        smallestDifference = Math.abs(drawAreaInformation[jk].data.value - axisData[i].value);
+                        nearestStepCoordinate = drawAreaInformation[jk].data.coordinate;
+                        console.log("axisData[i].name: " + axisData[i].name + ", axisData[i].value " + axisData[i].value +
+                            "drawAreaInformation[j].data.coordinate x: " + drawAreaInformation[jk].data.coordinate.x +
+                             ", y: " + drawAreaInformation[jk].data.coordinate.y);
+                    }
+            }
+
+            svgContainer.append("text")
+                .text(pointText)
+                .attr("y", axeY + 10)
+                .attr("x", axeX + 10)
+                .attr("font-size", 12)
+                .attr("font-family", "sans-serif")
+                .attr("fill", "black");
+        }
+    }
+}
+
+
+function initDrawAreaInformation(chartData, axisData) {
+
+    let axisLength = (chartData.chartHeight / 2) - 40;
+    let centerX = chartData.chartWidth / 2;
+    let centerY = chartData.chartHeight / 2;
+    let offset = chartData.centerOffset;
+
+    let drawAreaInformation = [];
+
+    for (let i = 0; i < axisData.length; ++i) {
+        let degree = 360.0 / axisData.length * i;
+
+        let stepsAmount = (axisData[i].info.max - axisData[i].info.min) / axisData[i].info.step;
+        let stepLenght = (axisLength - offset) / stepsAmount;
+
+        for (let j = 0; j <= stepsAmount; j++) {
+            let axeX = centerX + (stepLenght * j + offset) * Math.sin(toRadians(degree));
+            let axeY = centerY + (stepLenght * j + offset) * Math.cos(toRadians(degree));
+
+            let stepValue = j * axisData[i].info.step + 1; //there is no 0 point for usability with Handys
+
+            drawAreaInformation.push({ "axe": i, "data": { "value": stepValue, "coordinate": { "x": axeX, "y": axeY } } });
+        }
+    }
+    return drawAreaInformation;
+
 
 }
 
