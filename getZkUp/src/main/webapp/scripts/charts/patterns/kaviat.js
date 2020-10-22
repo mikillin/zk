@@ -1,50 +1,51 @@
-let map = {};
-var chartHeight = 460;
-var chartWidth = 460;
-
-map = {
-    "chartHeight": chartHeight,
-    "chartWidth": chartWidth,
-    "data": [{"axe": 0, "value": 2}, {"axe": 1, "value": 5}, {"axe": 2, "value": 3}],
-    "axesNames": ["Axes1", "Axes2", "Axes3"]
+let map =  {
+    "chartHeight": 460,
+    "chartWidth": 460,
+    "data": [
+        { "axe": 0, "value": 2 },
+        { "axe": 1, "value": 4 },
+        { "axe": 2, "value": 3 },
+        { "axe": 3, "value": 3 },
+        { "axe": 4, "value": 3 }
+    ],
+    "axisData": [
+        { "axe": 0, "info": { "min": 1, "max": 10, "step": 2 } },
+        { "axe": 1, "info": { "min": 2, "max": 4, "step": 1 } },
+        { "axe": 2, "info": { "min": 2, "max": 10, "step": 1 } },
+        { "axe": 3, "info": { "min": 2, "max": 10, "step": 1 } },
+        { "axe": 4, "info": { "min": 2, "max": 10, "step": 1 } },
+    ],
+    "axesNames": ["Axes1", "Axes2", "Axes3", "Axes4", "Axes5"]
 }
 
 function renderRadarChart(map) {
 
     var lineFunction = d3.line()
-        .x(function (d) {
+        .x(function(d) {
             return d.x;
         })
-        .y(function (d) {
+        .y(function(d) {
             return d.y;
         })
         .curve(d3.curveLinear);
 
+    //depends on the version of d3 library
     // var lineFunction = d3.svg.line()
     //     .x(function(d) { return d.x; })
     //     .y(function(d) { return d.y; })
     //     .interpolate('linear');
 
 
-    // TODO: refactor
+
     var height = map.chartHeight;
     var width = map.chartWidth;
 
+    var dataAreaCoordinates = [];
 
-    //todo: from server
-    var max = 2;
-    var min = 10;
-    var step = 1;
-
-    var lineData = [];
-
-
-    //The SVG Container
     var svgContainer = d3.select("body").append("svg")
         .attr("width", map.chartWidth)
         .attr("height", map.chartHeight)
-        .attr("background-color", "blue");
-    ;
+        .attr("background-color", "blue");;
 
     function drawSteps(countAxis, axe, min, max, step) {
 
@@ -78,19 +79,18 @@ function renderRadarChart(map) {
                     .attr("font-family", "sans-serif")
                     .attr("fill", "black");
 
-                lineData.push({"achse": i, "data": {"wert": j, "koordination": {"x": axeX, "y": axeY}}});
+                dataAreaCoordinates.push({ "axe": i, "data": { "value": j, "coordinate": { "x": axeX, "y": axeY } } });
             }
         }
     }
 
 
-    //change to test
-    var countAxis = 3;
 
+    var countAxis = map.data.length;
     var axisLength = (height / 2) - 40;
     var centerX = width / 2;
     var centerY = height / 2;
-    var lineData2 = [];
+    var outerCoordinates = [];
     for (var i = 0; i < countAxis; ++i) {
         var degree = 360.0 / countAxis * i;
         var axeX = centerX + axisLength * Math.sin(toRadians(degree));
@@ -107,30 +107,33 @@ function renderRadarChart(map) {
             .text(map.axesNames[i]);
 
 
-        lineData2.push({"x": axeX, "y": axeY});
+        outerCoordinates.push({ "x": axeX, "y": axeY });
 
-        //TODO: put correct data
-        drawSteps(map.axesNames.length, i, 5, 10, 1)
+        for (let d = 0; d < map.axisData.length; d++)
+            if (map.axisData[d].axe == i) {
+                drawSteps(map.axesNames.length, i, map.axisData[d].info.min, map.axisData[d].info.max, map.axisData[d].info.step)
+                break;
+            }
     }
 
 
-    lineData2.push({
+    outerCoordinates.push({
         "x": centerX + axisLength * Math.sin(toRadians(0)),
         "y": centerY + axisLength * Math.cos(toRadians(0))
-    }); //to refactor
+    });
 
-    //The line SVG Path we draw
+
     var lineGraph = svgContainer.append("path")
-        .attr("d", lineFunction(lineData2))
+        .attr("d", lineFunction(outerCoordinates))
         .attr("stroke", "blue")
         .attr("stroke-width", 2)
         .attr("fill", "none");
 
     var assessment = [];
     for (i = 0; i < map.data.length; i++) {
-        for (j = 0; j < lineData.length; j++) {
-            if (lineData[j].achse == map.data[i].axe && lineData[j].data.wert == map.data[i].value) {
-                assessment.push(lineData[j].data.koordination);
+        for (j = 0; j < dataAreaCoordinates.length; j++) {
+            if (dataAreaCoordinates[j].axe == map.data[i].axe && dataAreaCoordinates[j].data.value == map.data[i].value) {
+                assessment.push(dataAreaCoordinates[j].data.coordinate);
                 break;
             }
         }
@@ -142,9 +145,9 @@ function renderRadarChart(map) {
         .attr("d", lineFunction(assessment))
         .attr("stroke", "blue")
         .attr("stroke-width", 2)
-        .attr("fill", "green")
+        .attr("fill", "blue")
         .attr("opacity", 0.5)
-        .attr("id", "bewertung");
+        .attr("id", "bevalueung");
 
 }
 

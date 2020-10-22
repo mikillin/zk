@@ -68,6 +68,12 @@ public class HeatMapVM {
         renderChart(false); // don't add any items. only delete
     }
 
+    @Command
+    public void showKaviatChart(@BindingParam("ev") InputEvent event) {
+
+        System.out.printf("show kaviat chart");
+    }
+
 
     @GlobalCommand
     @NotifyChange("chosenQuestion")
@@ -159,7 +165,7 @@ public class HeatMapVM {
         al.addAll(dates);
         Collections.sort(al);
         dates.clear();
-        for(String str: al) {
+        for (String str : al) {
             try {
                 dates.add(new SimpleDateFormat("dd.MM.yyyy").format(new SimpleDateFormat("yyyy.MM.dd").parse(str)));
             } catch (ParseException e) {
@@ -169,12 +175,17 @@ public class HeatMapVM {
 
         JSONObject result = new JSONObject();
         JSONArray datesJSON = new JSONArray();
-        for(String str: dates)
+        for (String str : dates)
             datesJSON.add(str);
         result.put("src", data);
         result.put("names", names);
         result.put("goals", goals);
         result.put("dates", datesJSON);
+
+        if (dates.size() == 0) {
+            selectedActivitiesIds.clear();
+        }
+
         Clients.evalJavaScript(new ChartsUtil().compileChart("heatmap", "render", result.toJSONString()));
     }
 

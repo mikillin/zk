@@ -83,7 +83,7 @@ function preProccessing(src, optimalValues) {
 var colors = ["#FF7007", "#FFFB07", "#BBFF07", "#108901", "#f5f5f5"];
 
 getColor = function (min, max, value) {
-    console.log("min: " + min + ", max: " + max + ", value: " + value);
+    // console.log("min: " + min + ", max: " + max + ", value: " + value);
     if (value == -1) // keine Auswertung
         return colors[4];
     else if (value <= max + (max - min) * 0.25 && value >= max - (max - min) * 0.25) {
@@ -127,7 +127,7 @@ function render(params) {
     toolTipDiv.style.width = heatMapElement.style.width;
     toolTipDiv.style.height = "50px";
 
-// begin form "dates"
+    // begin form "dates"
     let tmpRowDiv = document.createElement("div");
     tmpRowDiv.classList.add("heat-map-row");
     tmpRowDiv.classList.add("heat-map-row-common");
@@ -146,6 +146,7 @@ function render(params) {
             tmpDiv.style.width = "50px";
             tmpDiv.style.height = "45px";
             tmpDiv.style.fontSize = "10px";
+            tmpDiv.style.cursor = "pointer";
 
 
             let tmpSpan = document.createElement("span");
@@ -153,6 +154,13 @@ function render(params) {
                 tmpSpan.innerHTML = params.dates[j];
 
             tmpDiv.appendChild(tmpSpan);
+
+            tmpDiv.addEventListener("click", function (event) {
+                //  console.log("showKaviatChart date "+ event.target.innerText) ;
+                showKaviatChart(event.target.innerText);
+            }, false);
+
+
             tmpRowDiv.appendChild(tmpDiv);
 
         }
@@ -162,124 +170,137 @@ function render(params) {
 
     let rowId = "";
     tmpRowDiv = document.createElement("div");
-    // for (var d = 0; d < params.dates.length; d++) {
-        for (var i = 0; i < params.src.length; i++) {
 
-            if (rowId != params.src[i].categoryId * 100 + params.src[i].questionId) { //new row
-                rowId = params.src[i].categoryId * 100 + params.src[i].questionId;
-                tmpRowDiv = document.createElement("div");
-                tmpRowDiv.classList.add("heat-map-row");
-                tmpRowDiv.classList.add("heat-map-row-common");
+    for (var i = 0, d = 0; i < params.src.length; i++, d++) {
+        //console.log("go d: " + d + ", params.dates.length: " + params.dates.length);
+        // add empty fields
+        if (d == params.dates.length) {
+            // console.log("init d: " + d)
+            d = 0;
+        }
 
-                tmpRowDiv.style.width = heatMapElement.style.width;
+        //new row
+        if (rowId != params.src[i].categoryId * 100 + params.src[i].questionId) { //new row
 
-                let tmpDivText = document.createElement("div");
-                tmpDivText.classList.add("category-name");
-                tmpDivText.innerHTML = params.names[params.src[i].categoryId * 100 + params.src[i].questionId];
-                tmpDivText.style.width = "100px";
-                tmpRowDiv.appendChild(tmpDivText);
-                //delete element
-                tmpDivText = document.createElement("div");
-                //tmpDivText.classList.add("delete");
-                var img = document.createElement("IMG");
-                img.src = "img/cancel.png";
-                img.style.width = "20px";
-                img.style.marignLeft = "10px";
-                img.style.marignRight = "10px";
+            //need to check if there should be empty divs for missed dates
 
-                img.dataset.id = params.src[i].categoryId * 100 + params.src[i].questionId;
+            //add empty fields
+            while (params.dates[d] != params.src[i].date && d < params.dates.length) {
+                //console.log("-----------------------------------------------")
+                //console.log(params.names[params.src[i].categoryId * 100 + params.src[i].questionId] + "add empty fields: d: " + d + ", params.dates[d]: " + params.dates[d] + ", params.src[i].date" + params.src[i].date);
+                // add divs with no value
+                // elements of row
+                //console.log("params.dates[d]:  " + params.dates[d] + ", params.src[i].date:" + params.src[i].date)
+                let tmpDiv = document.createElement("div");
+                tmpDiv.classList.add("tooltip");
+
+                let tmpSpan = document.createElement("span");
+                tmpSpan.classList.add("tooltiptext");
+
+                tmpSpan.innerHTML = "Keine Auswertung";
+                tmpDiv.style.cursor = "pointer";
+                tmpDiv.classList.add("heat-map-item");
+
+                tmpDiv.style.backgroundColor = getColor(0, params.goals[params.src[i].categoryId * 100 + params.src[i].questionId],
+                    -1);
 
 
-                img.addEventListener("click", function (event) {
-                    //console.log("img clicked")
-                    //todo:::
-                    // add request to delete the item
-                    // console.log(event.target.dataset.id); // need id and redraw
-                    console.log("js file : event.target.dataset.id:" + event.target.dataset.id);
-                    deleteActivity(event.target.dataset.id);
-                    document.getElementsByClassName("bottom-tooltip")[0].innerHTML = "";
-                    // startWinning();
-                    //invoke function zscript from there a command
+                tmpDiv.dataset.value = "Keine Auswertung.";
+                tmpDiv.dataset.name = params.names[params.src[i].categoryId * 100 + params.src[i].questionId];
+                tmpDiv.dataset.id = params.src[i].id;
+                tmpDiv.dataset.date = params.dates[d];
+                if (params.goals.hasOwnProperty(params.src[i].categoryId * 100 + params.src[i].questionId))
+                    tmpDiv.dataset.optimalValue = params.goals[params.src[i].categoryId * 100 + params.src[i].questionId];
+                else
+                    tmpDiv.dataset.optimalValue = -1;
 
+                tmpDiv.appendChild(tmpSpan);
+                tmpDiv.addEventListener("click", function (event) {
+                    let bottomHint = "";
+                    if (!event.target.dataset.category &&
+                        !event.target.dataset.date &&
+                        !event.target.dataset.value
+                    ) {
+                        // stub: clicked on the tooltip
+                    } else {
+                        bottomHint = event.target.dataset.name +
+                            ". Datum:&nbsp;" + event.target.dataset.date +
+                            ". Auswertung:&nbsp;Keine. ";
+                        if (event.target.dataset.optimalValue != -1)
+                            bottomHint += "Ziel:&nbsp;" + event.target.dataset.optimalValue + ".";
+
+                    }
+                    document.getElementsByClassName("bottom-tooltip")[0].innerHTML = bottomHint;
                 }, false);
 
-                tmpDivText.appendChild(img);
-                tmpRowDiv.appendChild(tmpDivText);
+
+                tmpRowDiv.appendChild(tmpDiv);
+                d++;
             }
 
-//             while (params.dates[d] != params.src[i].date && d < params.dates.length) {
-//                 //add divs with no value
-// //elements of row
-//                 let tmpDiv = document.createElement("div");
-//                 tmpDiv.classList.add("tooltip");
-//
-//                 let tmpSpan = document.createElement("span");
-//                 tmpSpan.classList.add("tooltiptext");
-//
-//                 tmpSpan.innerHTML = "Keine Auswertung";
-//                 tmpDiv.classList.add("heat-map-item");
-//
-//                 tmpDiv.style.backgroundColor = getColor(0, params.goals[params.src[i].categoryId * 100 + params.src[i].questionId],
-//                     -1);
-//                 tmpDiv.dataset.value = "Keine Auswertung.";
-//                 tmpDiv.dataset.name = params.names[params.src[i].categoryId * 100 + params.src[i].questionId];
-//                 tmpDiv.dataset.id = params.src[i].id;
-//                 tmpDiv.dataset.date = params.dates[d];
-//                 if (params.goals.hasOwnProperty(params.src[i].categoryId * 100 + params.src[i].questionId))
-//                     tmpDiv.dataset.optimalValue = params.goals[params.src[i].categoryId * 100 + params.src[i].questionId];
-//                 else
-//                     tmpDiv.dataset.optimalValue = -1;
-//
-//                 tmpDiv.appendChild(tmpSpan);
-//                 tmpDiv.addEventListener("click", function (event) {
-//                     let bottomHint = "";
-//                     if (!event.target.dataset.category
-//                         && !event.target.dataset.date
-//                         && !event.target.dataset.value
-//                     ) {
-//                         //stub: clicked on the tooltip
-//                     } else {
-//                         bottomHint = event.target.dataset.name +
-//                             ". Datum:&nbsp;" + event.target.dataset.date +
-//                             ". Auswertung:&nbsp;" + event.target.dataset.value + ". ";
-//                         if (event.target.dataset.optimalValue != -1)
-//                             bottomHint += "Ziel:&nbsp;" + event.target.dataset.optimalValue + ".";
-//
-//                     }
-//                     document.getElementsByClassName("bottom-tooltip")[0].innerHTML = bottomHint;
-//                 }, false);
-//
-//
-//                 tmpRowDiv.appendChild(tmpDiv);
-//
-//
-//                 d++;
-//
-//             }
-//             if (d >= params.dates.length)
-//                 break;
+            //end of adding empty divs
 
 
-            //elements of row
+            d = 0; // dates from the beginnig
+            rowId = params.src[i].categoryId * 100 + params.src[i].questionId;
+            tmpRowDiv = document.createElement("div");
+            tmpRowDiv.classList.add("heat-map-row");
+            tmpRowDiv.classList.add("heat-map-row-common");
+
+            tmpRowDiv.style.width = heatMapElement.style.width;
+
+            let tmpDivText = document.createElement("div");
+            tmpDivText.classList.add("category-name");
+            tmpDivText.innerHTML = params.names[params.src[i].categoryId * 100 + params.src[i].questionId];
+            tmpDivText.style.width = "100px";
+            tmpRowDiv.appendChild(tmpDivText);
+            //delete element
+            tmpDivText = document.createElement("div");
+            var img = document.createElement("IMG");
+            img.src = "img/cancel.png";
+            img.style.width = "20px";
+            img.style.marignLeft = "10px";
+            img.style.marignRight = "10px";
+            img.style.cursor = "pointer";
+
+            img.dataset.id = params.src[i].categoryId * 100 + params.src[i].questionId;
+
+
+            img.addEventListener("click", function (event) {
+                deleteActivity(event.target.dataset.id);
+                document.getElementsByClassName("bottom-tooltip")[0].innerHTML = "";
+            }, false);
+
+            tmpDivText.appendChild(img);
+            tmpRowDiv.appendChild(tmpDivText);
+        }
+
+
+        //add empty fields
+        while (params.dates[d] != params.src[i].date && d < params.dates.length) {
+            //console.log("-----------------------------------------------")
+            //console.log(params.names[params.src[i].categoryId * 100 + params.src[i].questionId] + "add empty fields: d: " + d + ", params.dates[d]: " + params.dates[d] + ", params.src[i].date" + params.src[i].date);
+            // add divs with no value
+            // elements of row
+            //console.log("params.dates[d]:  " + params.dates[d] + ", params.src[i].date:" + params.src[i].date)
             let tmpDiv = document.createElement("div");
             tmpDiv.classList.add("tooltip");
 
             let tmpSpan = document.createElement("span");
             tmpSpan.classList.add("tooltiptext");
 
-            let str = "Wert:" + params.src[i].value;
-            if (params.goals.hasOwnProperty(params.src[i].categoryId * 100 + params.src[i].questionId))
-                str += " von " + params.goals[params.src[i].categoryId * 100 + params.src[i].questionId];
-
-            tmpSpan.innerHTML = str;
+            tmpSpan.innerHTML = "Keine Auswertung";
+            tmpDiv.style.cursor = "pointer";
             tmpDiv.classList.add("heat-map-item");
 
             tmpDiv.style.backgroundColor = getColor(0, params.goals[params.src[i].categoryId * 100 + params.src[i].questionId],
-                params.src[i].value);
-            tmpDiv.dataset.value = params.src[i].value;
+                -1);
+
+
+            tmpDiv.dataset.value = "Keine Auswertung.";
             tmpDiv.dataset.name = params.names[params.src[i].categoryId * 100 + params.src[i].questionId];
             tmpDiv.dataset.id = params.src[i].id;
-            tmpDiv.dataset.date = params.src[i].date;
+            tmpDiv.dataset.date = params.dates[d];
             if (params.goals.hasOwnProperty(params.src[i].categoryId * 100 + params.src[i].questionId))
                 tmpDiv.dataset.optimalValue = params.goals[params.src[i].categoryId * 100 + params.src[i].questionId];
             else
@@ -288,15 +309,15 @@ function render(params) {
             tmpDiv.appendChild(tmpSpan);
             tmpDiv.addEventListener("click", function (event) {
                 let bottomHint = "";
-                if (!event.target.dataset.category
-                    && !event.target.dataset.date
-                    && !event.target.dataset.value
+                if (!event.target.dataset.category &&
+                    !event.target.dataset.date &&
+                    !event.target.dataset.value
                 ) {
-                    //stub: clicked on the tooltip
+                    // stub: clicked on the tooltip
                 } else {
                     bottomHint = event.target.dataset.name +
                         ". Datum:&nbsp;" + event.target.dataset.date +
-                        ". Auswertung:&nbsp;" + event.target.dataset.value + ". ";
+                        ". Auswertung:&nbsp;Keine. ";
                     if (event.target.dataset.optimalValue != -1)
                         bottomHint += "Ziel:&nbsp;" + event.target.dataset.optimalValue + ".";
 
@@ -306,39 +327,114 @@ function render(params) {
 
 
             tmpRowDiv.appendChild(tmpDiv);
-
-            heatMapElement.appendChild(tmpRowDiv);
+            d++;
         }
-    // }
-
-    /*
-        let tmpRowDiv = document.createElement("div");
-        tmpRowDiv.classList.add("heat-map-row");
-        tmpRowDiv.classList.add("heat-map-row-common");
-
-        let tmpDiv = document.createElement("div");
-        tmpDiv.classList.add("category-name"); //empty space
-        tmpRowDiv.appendChild(tmpDiv);
-
-        if (src.length > 0)
-            for (var j = 0; j < src[0].data.length; j++) {
-                let tmpDiv = document.createElement("div");
-                tmpRowDiv.classList.add("heat-map-row");
-                tmpRowDiv.classList.add("heat-map-row-common");
-
-                tmpDiv.classList.add("heat-map-date");
-                tmpDiv.style.width = "50px";
-                tmpDiv.style.height = "45px";
-                tmpDiv.style.fontSize = "10px";
 
 
-                let tmpSpan = document.createElement("span");
-                if (src[0].data[j].item.date)
-                    tmpSpan.innerHTML = src[0].data[j].item.date;
+        //elements of row
+        tmpDiv = document.createElement("div");
+        tmpDiv.classList.add("tooltip");
 
-                tmpDiv.appendChild(tmpSpan);
-                tmpRowDiv.appendChild(tmpDiv);
+        let tmpSpan = document.createElement("span");
+        tmpSpan.classList.add("tooltiptext");
+
+        let str = "Wert:" + params.src[i].value;
+        if (params.goals.hasOwnProperty(params.src[i].categoryId * 100 + params.src[i].questionId))
+            str += " von " + params.goals[params.src[i].categoryId * 100 + params.src[i].questionId];
+
+        tmpSpan.innerHTML = str;
+        tmpDiv.classList.add("heat-map-item");
+
+        tmpDiv.style.backgroundColor = getColor(0, params.goals[params.src[i].categoryId * 100 + params.src[i].questionId],
+            (! params.src[i].value ||  params.src[i].value == "null" ? -1 :  params.src[i].value) );
+        tmpDiv.style.cursor = "pointer";
+        tmpDiv.dataset.value = params.src[i].value;
+        tmpDiv.dataset.name = params.names[params.src[i].categoryId * 100 + params.src[i].questionId];
+        tmpDiv.dataset.id = params.src[i].id;
+        tmpDiv.dataset.date = params.src[i].date;
+        if (params.goals.hasOwnProperty(params.src[i].categoryId * 100 + params.src[i].questionId))
+            tmpDiv.dataset.optimalValue = params.goals[params.src[i].categoryId * 100 + params.src[i].questionId];
+        else
+            tmpDiv.dataset.optimalValue = -1;
+
+        tmpDiv.appendChild(tmpSpan);
+        tmpDiv.addEventListener("click", function (event) {
+            let bottomHint = "";
+            if (!event.target.dataset.category &&
+                !event.target.dataset.date &&
+                !event.target.dataset.value
+            ) {
+                //stub: clicked on the tooltip
+            } else {
+                bottomHint = event.target.dataset.name +
+                    ". Datum:&nbsp;" + event.target.dataset.date +
+                    ". Auswertung:&nbsp;" + (!event.target.dataset.value || event.target.dataset.value == "null" ? "Keine." : event.target.dataset.value) + ". ";
+                if (event.target.dataset.optimalValue != -1)
+                    bottomHint += "Ziel:&nbsp;" + event.target.dataset.optimalValue + ".";
 
             }
-    heatMapElement.appendChild(tmpRowDiv);*/
+            document.getElementsByClassName("bottom-tooltip")[0].innerHTML = bottomHint;
+        }, false);
+
+        tmpRowDiv.appendChild(tmpDiv);
+        //the last positions may be empty. add empty divs
+        //if ()
+
+        //add empty fields. in the end. i +1 , d +1 because of the for loop
+        //send everything in the java class.
+        if (i + 1 == params.src.length)
+            while (d + 1 < params.dates.length) {
+                // console.log("-----------------------------------------------")
+                // console.log(params.names[params.src[i].categoryId * 100 + params.src[i].questionId] + "add empty fields: d: " + d + ", params.dates[d]: " + params.dates[d] + ", params.src[i].date" + params.src[i].date);
+                // add divs with no value
+                // elements of row
+                //("params.dates[d]:  " + params.dates[d] + ", params.src[i].date:" + params.src[i].date)
+                let tmpDiv = document.createElement("div");
+                tmpDiv.classList.add("tooltip");
+
+                let tmpSpan = document.createElement("span");
+                tmpSpan.classList.add("tooltiptext");
+
+                tmpSpan.innerHTML = "Keine Auswertung";
+                tmpDiv.style.cursor = "pointer";
+                tmpDiv.classList.add("heat-map-item");
+
+                tmpDiv.style.backgroundColor = getColor(0, params.goals[params.src[i].categoryId * 100 + params.src[i].questionId],
+                    -1);
+                tmpDiv.dataset.value = "Keine Auswertung.";
+                tmpDiv.dataset.name = params.names[params.src[i].categoryId * 100 + params.src[i].questionId];
+                tmpDiv.dataset.id = params.src[i].id;
+                tmpDiv.dataset.date = params.dates[d];
+                if (params.goals.hasOwnProperty(params.src[i].categoryId * 100 + params.src[i].questionId))
+                    tmpDiv.dataset.optimalValue = params.goals[params.src[i].categoryId * 100 + params.src[i].questionId];
+                else
+                    tmpDiv.dataset.optimalValue = -1;
+
+                tmpDiv.appendChild(tmpSpan);
+                tmpDiv.addEventListener("click", function (event) {
+                    let bottomHint = "";
+                    if (!event.target.dataset.category &&
+                        !event.target.dataset.date &&
+                        !event.target.dataset.value
+                    ) {
+                        // stub: clicked on the tooltip
+                    } else {
+                        bottomHint = event.target.dataset.name +
+                            ". Datum:&nbsp;" + event.target.dataset.date +
+                            ". Auswertung:&nbsp;Keine. ";
+                        if (event.target.dataset.optimalValue != -1)
+                            bottomHint += "Ziel:&nbsp;" + event.target.dataset.optimalValue + ".";
+
+                    }
+                    document.getElementsByClassName("bottom-tooltip")[0].innerHTML = bottomHint;
+                }, false);
+                tmpRowDiv.appendChild(tmpDiv);
+                d++;
+            }
+        heatMapElement.appendChild(tmpRowDiv);
+    }
+
+
 }
+
+//todo. add empty field make in a function

@@ -189,8 +189,10 @@
                 </div>
 
 
-                <textbox id="hiddenActuator" sclass="hiddenActuator" visible="false"
+                <textbox id="hiddenDeleteActuator" sclass="hiddenDeleteActuator" visible="false"
                          onChange="@command('deleteActivity', ev=event)"></textbox>
+                <textbox id="hiddenKaviatChartActuator" sclass="hiddenKaviatChartActuator" visible="false"
+                         onChange="@command('showKaviatChart', ev=event)"></textbox>
 
             </div>
 
@@ -200,8 +202,14 @@
 
         <script>
             function deleteActivity(id){
-            let hiddenActuator = zk.Widget.$(jq('$hiddenActuator')[0]);
+            let hiddenActuator = zk.Widget.$(jq('$hiddenDeleteActuator')[0]);
             hiddenActuator.setValue(id);
+            hiddenActuator.fireOnChange();
+            }
+
+            function showKaviatChart(date){
+            let hiddenActuator = zk.Widget.$(jq('$hiddenKaviatChartActuator')[0]);
+            hiddenActuator.setValue(date);
             hiddenActuator.fireOnChange();
             }
         </script>

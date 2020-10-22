@@ -126,44 +126,9 @@ public class TreeInOutput extends Window implements AfterCompose
     public void afterCompose() {
         ConventionWires.wireVariables(this, this);
 
-
-        /*stub*/
         TreeElement category = null, question;
         ArrayList<TreeElement> entryList = new ArrayList<>();
         ArrayList<TreeElement> subEntries;
-
-
-        subEntries = new ArrayList<>();
-
-
-//        category = new TreeElement(1, "Essen/Trinken", true);
-//        question = new TreeElement(11, "Wieviele Mahlzeiten haben Sie zu sich genommen?");
-//        subEntries.add(question);
-//        category.setSubEntries(subEntries);
-//        entryList.add(category);
-//
-//
-//        subEntries = new ArrayList<>();
-//        category = new TreeElement(2, "Wietere positive Aktivitäten", true);
-//        question = new TreeElement(21, "Wie haben Sie sich dabei gefühlt?");
-//        subEntries.add(question);
-//        category.setSubEntries(subEntries);
-//        entryList.add(category);
-//
-//        subEntries = new ArrayList<>();
-//        category = new TreeElement(3, "Schlaf", true);
-//        question = new TreeElement(31, "Wielange waren Sie im Bett (in Stunden)?");
-//        subEntries.add(question);
-//        category.setSubEntries(subEntries);
-//        entryList.add(category);
-//
-//        subEntries = new ArrayList<>();
-//        category = new TreeElement(4, "Entschpanungs- oder Atmenübungen", true);
-//        question = new TreeElement(41, "Wie haben Sie sich dabei gefühlt?");
-//        subEntries.add(question);
-//        category.setSubEntries(subEntries);
-//        entryList.add(category);
-
 
         entryList.clear();
         List<Object[]> assessmentEntities = new TreeSearchService().getCategoriesAndQuestions();
@@ -174,7 +139,7 @@ public class TreeInOutput extends Window implements AfterCompose
         subEntries = new ArrayList<>();
 
         for (Object[] assessmentEntityObject : assessmentEntities) {
-            questionFullId = ((Integer) assessmentEntityObject[0]).longValue() * 100 +((Integer) assessmentEntityObject[0]).longValue();
+            questionFullId = ((Integer) assessmentEntityObject[0]).longValue() * 100 +((Integer) assessmentEntityObject[1]).longValue();
             if (catId != (int) assessmentEntityObject[0]) {
                 catId = (int) assessmentEntityObject[0];
                 // add old
