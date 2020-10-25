@@ -1,20 +1,20 @@
 let map = {
     "chartData": {
         "chartHeight": 460,
-        "chartWidth": 460,
+        "chartWidth": 860,
         "centerOffset": 30
     },
     "axisData": [
-        { "axe": 0, "name": "Axes1", "value": 5, "displayValue": { "1": "Ja", "2": "Nein" }, "info": { "min": 1, "max": 10, "step": 1 } },
-        { "axe": 1, "name": "Axes2", "value": 2, "info": { "min": 1, "max": 6, "step": 1 } },
-        { "axe": 2, "name": "Axes3", "value": 3, "info": { "min": 1, "max": 7, "step": 1 } },
-        { "axe": 3, "name": "Axes4", "value": 4, "info": { "min": 1, "max": 8, "step": 1 } },
-        { "axe": 4, "name": "Axes5", "value": 5, "info": { "min": 1, "max": 9, "step": 1 } }
+        { "axeId": 0, "name": "Die Antwort ist Ja", "value": 1, "displayValues": { "1": "Ja", "0": "Nein" }, "info": { "min": 0, "max": 1, "step": 1 } },
+        { "axeId": 1, "name": "Wie war Ihre Schlafqualität?", "value": 2, "info": { "min": 1, "max": 6, "step": 1 } },
+        { "axeId": 2, "name": "Wie lang haben Sie davon tatsächlich geschlafen?", "value": 3, "info": { "min": 1, "max": 12, "step": 2 } },
+        { "axeId": 3, "name": "Wie lang waren Sie im Bett?", "value": 4, "info": { "min": 1, "max": 8, "step": 1 } },
+        { "axeId": 4, "name": "Achse mit Auswertungen ab 4 bis 9", "value": 5, "info": { "min": 4, "max": 9, "step": 1 } }
     ]
 }
 
 
-function renderRadarChart(map) {
+function render(map) {
 
     let lineFunction = d3.line()
         .x(function(d) {
@@ -31,16 +31,14 @@ function renderRadarChart(map) {
     //     .y(function(d) { return d.y; })
     //     .interpolate('linear');
 
-    let svgContainer = d3.select("body").append("svg")
+    let svgContainer = d3.select(".charts-kaviat").append("svg")
         .attr("width", map.chartData.chartWidth)
         .attr("height", map.chartData.chartHeight)
         .attr("background-color", "blue");
 
 
     svgContainer.on("click", function(event) {
-
-
-        console.log(">> x= " + event.clientX + ", y= " + event.clientY);
+        console.log(">> debug >> x= " + event.clientX + ", y= " + event.clientY);
     });
 
 
@@ -62,13 +60,58 @@ function renderRadarChart(map) {
 
         //add names
         let percent = Math.round((map.axisData[i].value - map.axisData[i].info.min) * 100 / (map.axisData[i].info.max - map.axisData[i].info.min));
-        svgContainer.append("text")
-            .attr("x", axeX)
-            .attr("y", axeY)
-            .attr("text-anchor", "middle")
-            .style("font-size", "16px")
-            .style("text-decoration", "underline")
-            .text(map.axisData[i].name + " (" + percent + "%)");
+
+        let textAnchor = null;
+        let dx = 0;
+        let dy = 0;
+        if (degree >= 0 && degree < 180) {
+            textAnchor = "begin";
+            dx = 5;
+
+        } else {
+            textAnchor = "end";
+            dx = -15;
+        }
+
+        if (degree >= 0 && degree < 90 || degree >= 180 && degree < 270) {
+            dy = 15;
+
+        } else {
+            dy = -15;
+        }
+
+
+        let printedLength = 0;
+        let textPart = "";
+        let wordIndex = 0;
+        let fullText =  (map.axisData[i].name + " (" + percent + "%)").trim();
+        let words = fullText.split(' ');
+        let rowIndex = 0;
+        while (printedLength < fullText.length) {
+            rowIndex++;
+            while (textPart.length < 15 && (textPart.length + printedLength)< fullText.length) {
+                textPart += words[wordIndex] + " ";
+                wordIndex++;
+            }
+
+            if(dy<0)
+                dy*=-1; 
+            svgContainer
+                .append("g")
+                .append("text")
+                .attr("x", axeX)
+                .attr("y", axeY)
+                .attr("dx", dx)
+                .attr("dy", rowIndex * dy)
+                .style("font-size", "12px")
+                .text(textPart)
+                .attr("text-anchor", textAnchor);
+            printedLength +=  textPart.length;
+            textPart = "";
+
+        }
+
+    
 
         outerCoordinates.push({ "x": axeX, "y": axeY });
     }
@@ -94,17 +137,17 @@ function renderRadarChart(map) {
         let smallestDifference = null;
 
         for (j = 0; j < drawAreaInformation.length; j++) {
-            if (smallestDifference == null && drawAreaInformation[j].axe == map.axisData[i].axe) {
+            if (smallestDifference == null && drawAreaInformation[j].axeId == map.axisData[i].axeId) {
                 smallestDifference = Math.abs(drawAreaInformation[j].data.value - map.axisData[i].value);
                 nearestStepCoordinate = drawAreaInformation[j].data.coordinate;
             }
-            if (drawAreaInformation[j].axe == map.axisData[i].axe)
+            if (drawAreaInformation[j].axeId == map.axisData[i].axeId)
                 if (Math.abs(drawAreaInformation[j].data.value - map.axisData[i].value) < smallestDifference) {
 
                     smallestDifference = Math.abs(drawAreaInformation[j].data.value - map.axisData[i].value);
                     nearestStepCoordinate = drawAreaInformation[j].data.coordinate;
-                    console.log("map.axisData[i].name: " + map.axisData[i].name + ", map.axisData[i].value " + map.axisData[i].value +
-                        "drawAreaInformation[j].data.coordinate x: " + drawAreaInformation[j].data.coordinate.x + ", y: " + drawAreaInformation[j].data.coordinate.y);
+                    // console.log("map.axisData[i].name: " + map.axisData[i].name + ", map.axisData[i].value " + map.axisData[i].value +
+                    //     "drawAreaInformation[j].data.coordinate x: " + drawAreaInformation[j].data.coordinate.x + ", y: " + drawAreaInformation[j].data.coordinate.y);
                 }
         }
 
@@ -151,33 +194,74 @@ function drawSteps(svgContainer, drawAreaInformation, chartData, axisData) {
                 .attr("cy", axeY)
                 .attr("r", 5);
             let pointText;
-            pointText = axisData[i].info.min + axisData[i].info.step * j;
 
 
-            let smallestDifference = null;  
+            pointText = null;
+
+            //change if there is exception for the defined value
+            //todo: find a solution to approximate value... !!!!! like upper nearestStepCoordinate
+            //it shouldn't be.. as this value is missed because of absence value on the axe
+            // in this case, it should be displayed the error!!!!!!
+
+            // !!!todo!!! show the error if exists
+
+
+            //if there is exception for this value
+            //there are several coordinates
+
+            //(axeX, axeY)
+            let exceptionName = null;
             for (jk = 0; jk < drawAreaInformation.length; jk++) {
-                if (smallestDifference == null && drawAreaInformation[jk].axe == axisData[i].axe) {
-                    smallestDifference = Math.abs(drawAreaInformation[jk].data.value - axisData[i].value);
-                    nearestStepCoordinate = drawAreaInformation[jk].data.coordinate;
+                if (axeX == drawAreaInformation[jk].data.coordinate.x &&
+                    axeY == drawAreaInformation[jk].data.coordinate.y) {
+                    if (axisData[i].hasOwnProperty("displayValues") && axisData[i].displayValues.hasOwnProperty(drawAreaInformation[jk].data.value))
+                        exceptionName = axisData[i].displayValues[drawAreaInformation[jk].data.value];
                 }
-                if (drawAreaInformation[jk].axe == axisData[i].axe)
-                    if (Math.abs(drawAreaInformation[jk].data.value - axisData[i].value) < smallestDifference) {
 
-                        smallestDifference = Math.abs(drawAreaInformation[jk].data.value - axisData[i].value);
-                        nearestStepCoordinate = drawAreaInformation[jk].data.coordinate;
-                        console.log("axisData[i].name: " + axisData[i].name + ", axisData[i].value " + axisData[i].value +
-                            "drawAreaInformation[j].data.coordinate x: " + drawAreaInformation[jk].data.coordinate.x +
-                             ", y: " + drawAreaInformation[jk].data.coordinate.y);
-                    }
+            }
+
+            if (exceptionName == null)
+                pointText = axisData[i].info.min + axisData[i].info.step * j;
+            else
+                pointText = exceptionName;
+
+            let dx = 0;
+            let dy = 0;
+            if (degree >= 0 && degree < 180) {
+                textAnchor = "begin";
+                dx = -5;
+
+            } else {
+                textAnchor = "end";
+                dx = 5;
+            }
+
+            if (degree >= 0 && degree < 90) {
+                dy = 5;
+
+            } else {
+                dy = -5;
+            }
+
+            if (degree >= 180 && degree < 270) {
+                dy = 5;
+
+                dx = -5;
+
+            } else {
+                dy = -5;
             }
 
             svgContainer.append("text")
                 .text(pointText)
                 .attr("y", axeY + 10)
                 .attr("x", axeX + 10)
+                .attr("dy", dx) //5 - dot's radius
+                .attr("dx", dy)
                 .attr("font-size", 12)
                 .attr("font-family", "sans-serif")
                 .attr("fill", "black");
+
         }
     }
 }
@@ -202,9 +286,9 @@ function initDrawAreaInformation(chartData, axisData) {
             let axeX = centerX + (stepLenght * j + offset) * Math.sin(toRadians(degree));
             let axeY = centerY + (stepLenght * j + offset) * Math.cos(toRadians(degree));
 
-            let stepValue = j * axisData[i].info.step + 1; //there is no 0 point for usability with Handys
+            let stepValue = j * axisData[i].info.step ; //there is no 0 point for usability with Handys
 
-            drawAreaInformation.push({ "axe": i, "data": { "value": stepValue, "coordinate": { "x": axeX, "y": axeY } } });
+            drawAreaInformation.push({ "axeId": i, "data": { "step": axisData[i].info.step, "value": stepValue+axisData[i].info.min , "coordinate": { "x": axeX, "y": axeY } } });
         }
     }
     return drawAreaInformation;
@@ -225,4 +309,4 @@ function drawLine(x1, y1, x2, y2, svgContainer) {
         .attr("class", "line")
 }
 
-renderRadarChart(map);
+render(map);

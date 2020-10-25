@@ -1,18 +1,222 @@
-<zk>
-    <window width="100%" height="100%">
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+    <window id="mainWindow" width="100%" height="100%">
         <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+        <?link rel="stylesheet" type="text/css" href="/css/charts/heat-map-style.css"?>
+
         <style>
-            .line {
-            stroke: #000000;
-            stroke-width: 0.5;
+
+            .heat-map-item {
+            width: 50px;
+            height: 50px;
+            margin: 1px;
+            border-radius: 2px;
+            border-style: none;
+
+            }
+
+            .heat-map {
+            border-style: solid;
+            border-width: 1px;
+            }
+
+            .heat-map-row {
+            display: flex;
+            flex-direction: row;
+            }
+
+            .heat-map-items-area {
+            display: flex;
+            flex-direction: column;
+
+
+            }
+
+            .category-name {
+            width: 100px;
+            font-size:10px;
+            }
+
+            .heat-map-date {
+            width: 50px;
+            height: 50px;
+            transform: rotate(-90deg) translate(-45px, 45px);
+            transform-origin: left top 0;
+            }
+
+            .rotate {
+            transform: rotate(-90deg) translate(-5px, -55px);
+            transform-origin: right top;
+            position: absolute;
+            }
+
+            .heat-map-row-common {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
             }
         </style>
+        <style>
+            /* Tooltip container */
+            .tooltip {
+            position: relative;
+            display: inline-block;
+            /* border-bottom: 1px dotted black;*/
+            /* If you want dots under the hoverable text */
+            }
 
-        <div sclass="charts kaviat" id="lineChartId" viewModel="@id('vm') @init('fhdo.ChartKaviatVM')">
-            <div sclass="column">
-                <div zclass="kaviat-chart">
+            /* Tooltip text */
+            .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+
+            /* Position the tooltip text */
+            position: absolute;
+            z-index: 999;
+            bottom: 75%;
+            left: 50%;
+            margin-left: -60px;
+
+            /* Fade in tooltip */
+            opacity: 0;
+            transition: opacity 0.3s;
+            }
+
+            /* Tooltip arrow */
+            .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+            }
+
+            /* Show the tooltip text when you mouse over the tooltip container */
+            .tooltip:hover .tooltiptext {
+            <!--            visibility: visible;-->
+            visibility: hidden;
+            opacity: 1;
+            }
+            div.row-with-images {
+            align-items: center;
+            }
+
+            .bottom-tooltip {
+            font-size: 11px;
+            }
+
+
+            .charts-heatmap-datebox .z-datebox-input, .charts-heatmap-search.z-textbox {
+            font-size: 12px;
+            }
+
+            .charts-heatmap-compare-area-column {
+            width: 300px;
+            height: 280px;
+            }
+
+            .charts-heatmap-controls-area-column {
+            width: 650px;
+            padding-top:10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            }
+
+            .charts-heatmap-row {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            }
+            .charts.heatmap {
+            justify-content: end;
+            padding-top: 0px;
+            }
+
+            div.charts-heatmap-row-with-icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            }
+
+            .bottom-tooltip {
+            margin-top: 10px;}
+        </style>
+
+
+        <div sclass="charts heatmap" id="lineChartId" viewModel="@id('vm') @init('fhdo.ChartKaviatVM')">
+            <div sclass="charts-heatmap-controls-area-column">
+                <div sclass="charts-row charts-heatmap-row-with-icons ">
+
+                    <div sclass="charts-row row-with-images">
+                        <label value="Fragebögen" sclass="control-elements"></label>
+                        <listbox selectedItem="@bind(vm.surveyType)" mold="select"
+                                 sclass="control-elements select"
+                                 model="@bind(vm.surveys)">
+                            <template name="children">
+                                <listitem label="${each[0]}"/>
+                            </template>
+                        </listbox>
+
+                    </div>
+                    <div>
+                        <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
+                                 constraint=" no future" weekOfYear="true"
+                                 showTodayLink="true" onChange="@command('renderChart')"
+                                 width="120px"  onChanging="@command('renderChart')"
+                                 placeholder="ab"
+                                 sclass="control-elements charts-heatmap-datebox"/>
+                    </div>
+                    <div>
+                        <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
+                                 constraint=" no future" weekOfYear="true"
+                                 showTodayLink="true" onChange="@command('renderChart')"
+                                 width="120px" onChanging="@command('renderChart')"
+                                 placeholder="bis"
+                                 sclass="control-elements charts-heatmap-datebox"/>
+                    </div>
                 </div>
+
+                <div zclass="charts-kaviat">
+
+
+                </div>
+
+
+
+                <textbox id="hiddenDeleteActuator" sclass="hiddenDeleteActuator" visible="false"
+                         onChange="@command('deleteActivity', ev=event)"></textbox>
+                <textbox id="hiddenKaviatChartActuator" sclass="hiddenKaviatChartActuator" visible="false"
+                         onChange="@command('showKaviatChart', ev=event)"></textbox>
+
             </div>
+
+
         </div>
+
+
+        <script>
+            function deleteActivity(id){
+            let hiddenActuator = zk.Widget.$(jq('$hiddenDeleteActuator')[0]);
+            hiddenActuator.setValue(id);
+            hiddenActuator.fireOnChange();
+            }
+
+            function showKaviatChart(date){
+            let hiddenActuator = zk.Widget.$(jq('$hiddenKaviatChartActuator')[0]);
+            hiddenActuator.setValue(date);
+            hiddenActuator.fireOnChange();
+            }
+        </script>
+
+
     </window>
 </zk>
