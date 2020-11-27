@@ -226,8 +226,7 @@
                         <div sclass="charts-8-result-item">
                             <custom-attributes b="${each.id}"/>
 
-                            <div sclass="charts-8-full-item-name-block charts-8-compare-field"
-                            >
+                            <div sclass="charts-8-full-item-name-block charts-8-compare-field">
                                 <div sclass="charts-8-compare-category">
                                     <label value="@load(each.category)" sclass="charts-8-compare-category"></label>
 

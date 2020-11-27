@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 public class TreeInOutput extends Window implements AfterCompose
-//        , IDoubleClick
-//        , IUpdateModal
 {
 
 
@@ -28,7 +26,6 @@ public class TreeInOutput extends Window implements AfterCompose
     private TreeFilter filter;
     private DefaultTreeModel treeModel;
     private TreeRenderer treeRenderer;
-//    private IUpdateModal updateModal;
 
     private void createTree(List<TreeElement> dataList) {
         root = new DefaultTreeNode(null, createTreeNodeList(dataList));
@@ -104,14 +101,6 @@ public class TreeInOutput extends Window implements AfterCompose
 
     }
 
-//    public IUpdateModal getUpdateModal() {
-//        return updateModal;
-//    }
-//
-//    public void setUpdateModal(IUpdateModal updateModal) {
-//        this.updateModal = updateModal;
-//    }
-
     public ArrayList<TreeElement> getEntryList() {
         return entryList;
     }
@@ -176,7 +165,6 @@ public class TreeInOutput extends Window implements AfterCompose
         Object value = null;
         if (mainTree.getSelectedItem() != null) {
             value = mainTree.getSelectedItem().getValue();
-//            updateModal.update(value, true);
             data.put("data", ((TreeElement) value).getId());
         }
         this.detach();

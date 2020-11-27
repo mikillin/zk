@@ -33,23 +33,45 @@ public class AssessmentEntity {
     private String surveyName;
     @Column(name = "survey_id")
     private int surveyId;
+    @Column(name = "survey_date")
+    private Date surveyDate;
     @Column(name = "status")
     private String status;
     @Column(name = "goal")
     private Integer goal;
+    @Column(name = "exception_names")
+    private String exceptionNames;
 
 
     public AssessmentEntity() {
     }
 
     public AssessmentEntity(int id, int category, String question, Date date, Integer value, String categoryName,
-                            String surveyName, int surveyId, String status, Integer goal) {
+                            String surveyName, int surveyId, String status, Integer goal, String exceptionNames, Date surveyDate) {
         this.id = id;
         this.categoryId = category;
         this.question = question;
         this.date = date;
         this.value = value;
         this.categoryName = categoryName;
+        this.surveyName = surveyName;
+        this.surveyId = surveyId;
+        this.status = status;
+        this.goal = goal;
+        this.exceptionNames = exceptionNames;
+        this.surveyDate = surveyDate;
+    }
+
+    public AssessmentEntity(int id, int categoryId, int questionId, String question, Date date, Integer value, String categoryName, String minValue, String maxValue, String surveyName, int surveyId, String status, Integer goal) {
+        this.id = id;
+        this.categoryId = categoryId;
+        this.questionId = questionId;
+        this.question = question;
+        this.date = date;
+        this.value = value;
+        this.categoryName = categoryName;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
         this.surveyName = surveyName;
         this.surveyId = surveyId;
         this.status = status;
@@ -158,5 +180,22 @@ public class AssessmentEntity {
 
     public void setGoal(Integer goal) {
         this.goal = goal;
+    }
+
+
+    public String getExceptionNames() {
+        return exceptionNames;
+    }
+
+    public void setExceptionNames(String exceptionNames) {
+        this.exceptionNames = exceptionNames;
+    }
+
+    public Date getSurveyDate() {
+        return surveyDate;
+    }
+
+    public void setSurveyDate(Date surveyDate) {
+        this.surveyDate = surveyDate;
     }
 }

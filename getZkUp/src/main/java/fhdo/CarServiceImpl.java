@@ -150,11 +150,7 @@ public class CarServiceImpl implements CarService {
 			result = frageboegenList;
 		} else {
 			for (Survey survey : frageboegenList) {
-				if (survey.getDate().toLowerCase().contains(keyword.toLowerCase())
-						|| survey.getName().toLowerCase().contains(keyword.toLowerCase())
-						|| survey.getStatus().toLowerCase().contains(keyword.toLowerCase())) {
-					result.add(survey);
-				}
+
 			}
 		}
 		return result;

@@ -1,0 +1,234 @@
+<zk>
+    <window width="100%" height="100%" apply="fhdo.Chart8Controller">
+        <?link rel="stylesheet" type="text/css" href="/css/charts/style.css"?>
+
+        <style>
+            div.row-half{
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-evenly;
+
+            height: 22px;
+            padding: 0 8px 0 8px;
+            }
+            .row.datebox {
+            padding: 0px 5px 10px 5px;
+            }
+
+            .row.result {
+            padding: 3px 5px 3px 5px
+            }
+
+            div.time-period-buttons{
+            padding: 3px 5px 3px 5px
+            }
+
+            .charts.narrow {
+            width: 450px;
+            height: 300px;
+            }
+
+            .row-no-paddings {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 0;
+            }
+
+            div.south{
+            margin-top: 20px;
+            }
+
+
+            div.controls-block {
+            width: 155px
+
+            }
+            .list-compared-activities {
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            align-self: flex-start;
+            height: 175px;
+            width: 530px;
+            justify-content: flex-start;
+            }
+
+
+            .compare-name {
+            width: 370px;
+            }
+
+            .row {
+            display: flex;
+            flex-direction: row;
+            align-items: baseline;
+            }
+
+            .charts.narrow {
+            width: 550px;
+            height: 290px;
+            }
+
+
+            div.charts {
+            border-style: double;
+            border-width: 2px;
+            border-color: lightgrey;
+            display: flex;
+            flex-direction: row;
+            width: 650px;
+            padding: 10px;
+            }
+
+            .control-elements.select.z-select {
+            width: 80px;
+            height: 35px;
+            }
+
+            div.items, div.item {
+            align-self: center;
+            font-size: 8px;
+            text-align: left;
+            }
+
+            span.compare-category.z-label {
+            font-size: 8px;
+            }
+            span.compare-name.z-label, span.compare-value.z-label {
+            font-size: 12px;
+            }
+
+
+            compare.name {
+            padding-left: 0px;
+            }
+
+            div.row.result {
+            height: 55px;
+            }
+
+            div.column.result {
+            height: 55px;
+            display: flex;
+            flex-direction: column;
+            padding : 10px 0 10px 0;
+
+            }
+
+            div.result-item{
+            display: flex;
+            flex-direction: row;
+            align-items: baseline;
+            background: whitesmoke;
+            border-radius: 30px;
+            height: 60px;
+            width:505px;
+            margin: 5px;
+            }
+
+            div.full-item-name-block {
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+            width: 380px;
+            padding-left: 10px;
+            }
+
+            .compare-field {
+            align-self: center;}
+
+            button.time-period {
+            margin: 0 9px 9px 5px;
+            }
+
+            .row-with-images {
+            align-items: inherit;
+            }
+
+            .search-icon {
+            margin: 0 2px 0 2px;
+            }
+
+            .compare-value.compare-field span {
+            font-size: 14px;
+            }
+        </style>
+
+
+        <div sclass="charts narrow" id="lineChartId" viewModel="@id('vm') @init('fhdo.Chart8VM')">
+            <div sclass="column">
+                <div sclass="row " style="justify-content: center">
+
+                    <div>
+                        <datebox id="chart1_db0" value="@bind(vm.chart1_db0)"
+                                 constraint="no empty, no future" weekOfYear="true"
+                                 showTodayLink="true"
+                                 sclass="control-elements datebox"/>
+                    </div>
+                    <div>
+                        <datebox id="chart1_db1" value="@bind(vm.chart1_db1)"
+                                 constraint="no empty, no future" weekOfYear="true" placeholder=""
+                                 showTodayLink="true"
+                                 sclass="control-elements datebox"/>
+                    </div>
+                </div>
+                <div sclass="row" style="justify-content: center">
+
+                    <image id="buttonId" onClick="@command('openModalQuestions')" src="/img/search.png"
+                           width="20px" sclass="search-icon"></image>
+                    <button id="woche" label="Seit 1 Woche" sclass="time-period"/>
+                    <button id="monat" label="Seit 1 Monat" sclass="time-period"/>
+                    <button id="jahr" label="Seit 1 Jahr" sclass="time-period"/>
+                    <image src="/img/add.png" id="suchen" onClick="@command('renderChart')"
+                           sclass="add-image-icon"/>
+                </div>
+
+
+                <div sclass="list-compared-activities" children="@bind(vm.comparedActivities)">
+                    <template name="children">
+
+
+                        <div sclass="result-item">
+
+                            <custom-attributes b="${each.id}"/>
+                            <div sclass="full-item-name-block compare-field">
+                                <div sclass="compare-category ">
+                                    <label value="@load(each.category)" sclass="compare-category"></label>
+
+                                    <label value="@load(each.periodFrom) @converter('fhdo.DateConverter')"
+                                           sclass="compare-category"
+                                           visible="@load(not empty each.periodFrom)"></label>
+                                    <label value="-" visible="@load(not empty each.periodFrom)"></label>
+                                    <label value="@load(each.periodTo) @converter('fhdo.DateConverter')"
+                                           sclass="compare-category"
+                                           visible="@load(not empty each.periodTo)"></label>
+                                </div>
+                                <div sclass="compare-name ">
+                                    <label value="@load(each.name)" sclass="compare-name" maxlength="80">
+                                    </label>
+                                </div>
+                            </div>
+                            <div sclass="arrow-image compare-field">
+                                <image if="${each.value != 0}"
+                                       src="@bind(each.value lt 0 ?'/img/redArrow.png':'/img/greenArrow.png')"
+                                       width="20px"></image>
+                            </div>
+                            <div sclass="compare-value compare-field">
+                                <label value="@load(each.value)"></label>
+                                <label value="%"></label>
+                            </div>
+                            <div sclass="delete-image-icon compare-field">
+                                <image src="/img/cancel.png" sclass="icon" width="20px"
+                                       onClick="@command('deleteActivity',activityId=b)"/>
+                            </div>
+
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </window>
+</zk>

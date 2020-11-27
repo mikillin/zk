@@ -108,7 +108,7 @@ function render(params) {
 
     var heatMapElement = document.getElementsByClassName("charts-heatmap")[0];
 
-    heatMapElement.style.width = "800px"; // name + margin + item-amount * 30px
+    heatMapElement.style.width = "450px"; // name + margin + item-amount * 30px
     heatMapElement.style.height = "300px";
     heatMapElement.style.fontSize = "12px";
     heatMapElement.style.overflowX = "auto";

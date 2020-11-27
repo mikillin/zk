@@ -2,6 +2,7 @@ package db.service;
 
 import db.HibernateUtil;
 import db.entity.AssessmentEntity;
+import fhdo.Survey;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -36,6 +37,93 @@ public class AssessmentService {
         }
 
         return result;
+    }
+
+
+    public List<Survey> getSurveysByDatesAndName(Date chart1_db0, Date chart1_db1, Integer surveyType) {
+        Transaction tx = null;
+        List<Object[]> result = Collections.EMPTY_LIST;
+
+        String hql = "select distinct surveyId, surveyName FROM AssessmentEntity AE " +
+                "WHERE AE.surveyId = :surveyId and AE.date BETWEEN :startDate AND :endDate ORDER BY AE.date"; //todo: change to Id or to type
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery(hql);
+            query.setParameter("surveyId", surveyType);
+            query.setParameter("startDate", chart1_db0, TemporalType.DATE);
+            query.setParameter("endDate", chart1_db1, TemporalType.DATE);
+            // query.uniqueResult();
+            result = query.list();
+
+            tx.commit();
+        } catch (HibernateException ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            ex.printStackTrace(System.err);
+        } finally {
+            session.close();
+        }
+
+
+        List<Survey> surveys = new ArrayList<>();
+        for (Object[] obj : result) {
+            surveys.add(new Survey(String.valueOf(obj[0]), String.valueOf(obj[1])));
+        }
+
+        return surveys;
+    }
+
+    public List<Survey> getSurveysByDates(Date chart1_db0, Date chart1_db1) {
+        Transaction tx = null;
+        List<Object[]> result = Collections.EMPTY_LIST;
+
+        String hql = "select distinct surveyId, surveyName FROM AssessmentEntity AE ";
+
+        if (chart1_db0 != null && chart1_db1 != null)
+            hql += " WHERE   AE.date BETWEEN :startDate AND :endDate ORDER BY AE.date";
+
+        else if (chart1_db0 != null)
+            hql += " WHERE   AE.date >= :startDate ORDER BY AE.date";
+
+        else if (chart1_db1 != null)
+            hql += " WHERE   AE.date <= :endDate ORDER BY AE.date";
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            tx = session.beginTransaction();
+
+            Query query = session.createQuery(hql);
+            if (chart1_db0 != null && chart1_db1 != null) {
+                query.setParameter("startDate", chart1_db0, TemporalType.DATE);
+                query.setParameter("endDate", chart1_db1, TemporalType.DATE);
+            } else if (chart1_db0 != null) {
+                query.setParameter("startDate", chart1_db0, TemporalType.DATE);
+            } else if (chart1_db1 != null) {
+                query.setParameter("endDate", chart1_db1, TemporalType.DATE);
+            }
+            result = query.list();
+
+            tx.commit();
+        } catch (HibernateException ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            ex.printStackTrace(System.err);
+        } finally {
+            session.close();
+        }
+
+
+        List<Survey> surveys = new ArrayList<>();
+        for (Object[] obj : result) {
+            surveys.add(new Survey(String.valueOf(obj[0]), String.valueOf(obj[1])));
+        }
+
+        return surveys;
     }
 
     public AssessmentEntity getAssessmentById(int id) {

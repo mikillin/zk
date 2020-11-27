@@ -1,11 +1,14 @@
 package db;
 
+import db.service.AssessmentService;
 import db.service.TreeSearchService;
+import fhdo.Survey;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -39,7 +42,7 @@ public class HibernateUtil {
 //        AssessmentEntity assessment = new AssessmentService().getAssessmentByQuestionId(1);
 //        List<AssessmentEntity> listAssessments = new AssessmentService().getAssessmentByDatesAndQuestionId(new Date(1990), new Date(), 1);
 
-        List<Object[]> listAssessments = new TreeSearchService().getCategoriesAndQuestions();
+        List<Survey> listAssessments = new AssessmentService().getSurveysByDatesAndName(new Date(1990), new Date(), 1);
         System.out.println("after select");
 
 

@@ -1,15 +1,26 @@
 let map = {
     "chartData": {
-        "chartHeight": 460,
-        "chartWidth": 860,
-        "centerOffset": 30
+        "chartHeight": 270,
+        "chartWidth": 430,
+        "centerOffset": 10
     },
     "axisData": [
-        { "axeId": 0, "name": "Die Antwort ist Ja", "value": 1, "displayValues": { "1": "Ja", "0": "Nein" }, "info": { "min": 0, "max": 1, "step": 1 } },
-        { "axeId": 1, "name": "Wie war Ihre Schlafqualität?", "value": 2, "info": { "min": 1, "max": 6, "step": 1 } },
-        { "axeId": 2, "name": "Wie lang haben Sie davon tatsächlich geschlafen?", "value": 3, "info": { "min": 1, "max": 12, "step": 2 } },
-        { "axeId": 3, "name": "Wie lang waren Sie im Bett?", "value": 4, "info": { "min": 1, "max": 8, "step": 1 } },
-        { "axeId": 4, "name": "Achse mit Auswertungen ab 4 bis 9", "value": 5, "info": { "min": 4, "max": 9, "step": 1 } }
+        {
+            "axeId": 0,
+            "name": "Die Antwort ist Ja",
+            "value": 1,
+            "displayValues": {"1": "Ja", "0": "Nein"},
+            "info": {"min": 0, "max": 1, "step": 1}
+        },
+        {"axeId": 1, "name": "Wie war Ihre Schlafqualität?", "value": 2, "info": {"min": 1, "max": 6, "step": 1}},
+        {
+            "axeId": 2,
+            "name": "Wie lang haben Sie davon tatsächlich geschlafen?",
+            "value": 3,
+            "info": {"min": 1, "max": 12, "step": 2}
+        },
+        {"axeId": 3, "name": "Wie lang waren Sie im Bett?", "value": 4, "info": {"min": 1, "max": 8, "step": 1}},
+        {"axeId": 4, "name": "Achse mit Auswertungen ab 4 bis 9", "value": 5, "info": {"min": 4, "max": 9, "step": 1}}
     ]
 }
 
@@ -17,10 +28,10 @@ let map = {
 function render(map) {
 
     let lineFunction = d3.line()
-        .x(function(d) {
+        .x(function (d) {
             return d.x;
         })
-        .y(function(d) {
+        .y(function (d) {
             return d.y;
         })
         .curve(d3.curveLinear);
@@ -31,13 +42,15 @@ function render(map) {
     //     .y(function(d) { return d.y; })
     //     .interpolate('linear');
 
+        d3.select(".charts-kaviat").html("");
+
     let svgContainer = d3.select(".charts-kaviat").append("svg")
         .attr("width", map.chartData.chartWidth)
         .attr("height", map.chartData.chartHeight)
         .attr("background-color", "blue");
 
 
-    svgContainer.on("click", function(event) {
+    svgContainer.on("click", function (event) {
         console.log(">> debug >> x= " + event.clientX + ", y= " + event.clientY);
     });
 
@@ -84,36 +97,35 @@ function render(map) {
         let printedLength = 0;
         let textPart = "";
         let wordIndex = 0;
-        let fullText =  (map.axisData[i].name + " (" + percent + "%)").trim();
+        let fullText = (map.axisData[i].name + " (" + percent + "%)").trim();
         let words = fullText.split(' ');
         let rowIndex = 0;
         while (printedLength < fullText.length) {
             rowIndex++;
-            while (textPart.length < 15 && (textPart.length + printedLength)< fullText.length) {
+            while (textPart.length < 15 && (textPart.length + printedLength) < fullText.length) { //15 the length of row by default
                 textPart += words[wordIndex] + " ";
                 wordIndex++;
             }
 
-            if(dy<0)
-                dy*=-1; 
+            if (dy < 0)
+                dy *= -1;
             svgContainer
                 .append("g")
                 .append("text")
                 .attr("x", axeX)
                 .attr("y", axeY)
                 .attr("dx", dx)
-                .attr("dy", rowIndex * dy)
+                .attr("dy", rowIndex * dy + 5)
                 .style("font-size", "12px")
                 .text(textPart)
                 .attr("text-anchor", textAnchor);
-            printedLength +=  textPart.length;
+            printedLength += textPart.length;
             textPart = "";
 
         }
 
-    
 
-        outerCoordinates.push({ "x": axeX, "y": axeY });
+        outerCoordinates.push({"x": axeX, "y": axeY});
     }
     //form  outer border coordinates
     outerCoordinates.push({
@@ -192,7 +204,7 @@ function drawSteps(svgContainer, drawAreaInformation, chartData, axisData) {
             svgContainer.append("circle")
                 .attr("cx", axeX)
                 .attr("cy", axeY)
-                .attr("r", 5);
+                .attr("r", 3);
             let pointText;
 
 
@@ -229,28 +241,63 @@ function drawSteps(svgContainer, drawAreaInformation, chartData, axisData) {
             let dy = 0;
             if (degree >= 0 && degree < 180) {
                 textAnchor = "begin";
-                dx = -5;
+
 
             } else {
                 textAnchor = "end";
-                dx = 5;
+
             }
 
-            if (degree >= 0 && degree < 90) {
-                dy = 5;
-
-            } else {
-                dy = -5;
+            if (degree == 0) {
+                dx = -3;
+                dy = 3;
+            }
+            if (degree == 90) {
+                dx = -10;
+                dy = -7;
+            }
+            if (degree == 180) {
+                dx = -3;
+                dy = 0;
+            }
+            if (degree == 270) {
+                dx = -10;
+                dy = -7;
+            }
+            if (degree == 360) {
+                dx = -3;
+                dy = 3;
             }
 
-            if (degree >= 180 && degree < 270) {
-                dy = 5;
+            if (degree > 0 && degree < 90) {
 
-                dx = -5;
+                dx = 1 * 1 / Math.tan(degree);
+                dy = 3 * Math.tan(degree);
 
-            } else {
-                dy = -5;
+
             }
+            if (degree > 90 && degree < 180) {
+
+                dx = -3 * Math.tan(degree);
+                dy = 3 * Math.tan(degree);
+
+            }
+
+
+            if (degree > 180 && degree < 270) {
+
+                dx = 3 * Math.tan(degree);
+                dy = -3 * Math.tan(degree);
+
+            }
+
+            if (degree > 270 && degree < 360) {
+
+                dx = -3 * Math.tan(degree);
+                dy = 3 * Math.tan(degree);
+
+            }
+
 
             svgContainer.append("text")
                 .text(pointText)
@@ -286,9 +333,16 @@ function initDrawAreaInformation(chartData, axisData) {
             let axeX = centerX + (stepLenght * j + offset) * Math.sin(toRadians(degree));
             let axeY = centerY + (stepLenght * j + offset) * Math.cos(toRadians(degree));
 
-            let stepValue = j * axisData[i].info.step ; //there is no 0 point for usability with Handys
+            let stepValue = j * axisData[i].info.step; //there is no 0 point for usability with Handys
 
-            drawAreaInformation.push({ "axeId": i, "data": { "step": axisData[i].info.step, "value": stepValue+axisData[i].info.min , "coordinate": { "x": axeX, "y": axeY } } });
+            drawAreaInformation.push({
+                "axeId": i,
+                "data": {
+                    "step": axisData[i].info.step,
+                    "value": stepValue + axisData[i].info.min,
+                    "coordinate": {"x": axeX, "y": axeY}
+                }
+            });
         }
     }
     return drawAreaInformation;
@@ -307,6 +361,15 @@ function drawLine(x1, y1, x2, y2, svgContainer) {
         .attr("x2", x2)
         .attr("y2", y2)
         .attr("class", "line")
+        .style({
+            "stroke": function (d) {
+                return "black"
+            },
+            "stroke-width": function (d) {
+                return 2
+            }
+
+        });
 }
 
-render(map);
+//render(map);

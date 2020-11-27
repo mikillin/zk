@@ -2,29 +2,13 @@ package fhdo;
 
 import com.google.gson.Gson;
 
-public class Survey {
+public class Fragebogen {
     private String id;
     private String name;
     private String date;
     private String status;
     private Gson data;
 
-
-    public Survey() {
-    }
-
-    public Survey(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public Survey(String id, String name, String date, String status, Gson data) {
-        this.id = id;
-        this.name = name;
-        this.date = date;
-        this.status = status;
-        this.data = data;
-    }
 
     public String getId() {
         return id;
